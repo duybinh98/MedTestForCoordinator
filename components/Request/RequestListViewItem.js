@@ -6,14 +6,35 @@ export default class RequestListPendingItem extends Component {
     constructor(props) {
         super(props)
         this.state = {            
-            // appointment_date: convertDateTimeToDate(this.props.appoint_date),
-            // appointment_time: convertDateTimeToTime(this.props.appoint_date),
+            
         };
-    }
-    componentDidMount(){
-          
+        this.onRequestPress = this.onRequestPress.bind(this)
     }
 
+
+    componentDidMount(){
+    }
+
+    onRequestPress(){
+        const request= { 
+            "requestId": this.props.requestId,
+            "requestCreatedTime":this.props.requestCreatedTime,
+            "customerName":this.props.customerName,
+            "customerPhoneNumber":this.props.customerPhoneNumber,
+            "customerDOB":this.props.customerDOB,
+            "requestAddress":this.props.requestAddress,
+            "requestDistrictName":this.props.requestDistrictName,
+            "requestTownName": this.props.requestTownName,
+            "requestMeetingTime": this.props.requestMeetingTime,
+            "nurseName":this.props.nurseName,
+            "nurseID":this.props.nurseID,
+            "lsSelectedTest":this.props.lsSelectedTest,
+            "requestAmount":this.props.requestAmount,
+            "requestStatus":this.props.requestStatus,
+            }
+        this.props.setSelectedRequest?this.props.setSelectedRequest(request):null
+        this.props.changeShowView?this.props.changeShowView('RequestView'):null
+    }
 
 
     render(){        
@@ -21,28 +42,8 @@ export default class RequestListPendingItem extends Component {
             <View>            
             <TouchableOpacity 
                 style={styles.requestListItem}
-                // onPress={() => {
-                //     this.props.navigation.dispatch(
-                //         CommonActions.navigate({
-                //             name: 'RequestViewScreen',
-                //             params: {
-                //                 requestId: this.props.requestId,
-                //                 name: this.props.cust_name,
-                //                 address: this.props.appoint_address,
-                //                 phone: this.props.cust_phone,
-                //                 dob: this.props.cust_DOB,
-                //                 date: this.props.appoint_date,
-                //                 selectedTest: this.props.selectedTest,   
-                //                 status: this.props.req_status,
-                //                 testsList: this.props.testList,
-                //                 totalAmount: this.props.req_amount,
-                //                 nurseName: this.props.nurse_name,
-                //             },
-                //         })
-                //     )
-                // }}
-            
-            >                                
+                onPress={() => this.onRequestPress()}
+                >                                
                 <View style={[styles.requestListTextContainer,{
                     marginTop:5,
                 }]}>                    
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
         width:250,
     },
     requestListSecondColumnContainer:{
-        width:200,
+        width:230,
         marginLeft:20,
         marginRight:50,
 

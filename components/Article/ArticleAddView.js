@@ -4,18 +4,24 @@ import {getApiUrl} from './../Common/CommonFunction'
 import appointmentList from './../../Data/appointmentList'
 import districtList from './../../Data/districtList'
 import userList from './../../Data/userList'
-// import ImagePicker from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
+// import * as DocumentPicker from 'expo-document-picker';
 
 export default class ArticleAddView extends Component  {
     constructor(props) {
         super(props)
-        this.state = {            
-            imageUri: '',
-            imageType: '',
+        this.state = {      
             imageResultUri: '',
+            articleTitle: '',
+            articleShortContent: '',
+            articleContent: '',
+            error: '',
+            errorList: ['','Phải điền tiêu đề bài viết','Phải điền nội dung ngắn ngọn bài viết', 'Phải điền nội dung bài viết','Bài viết chưa có ảnh min họa'],
+
         };
         this.selectPicture = this.selectPicture.bind(this)
+        this.handleChange = this.handleChange.bind(this)
+        this.createArticle = this.createArticle.bind(this)
     }
 
     componentDidUpdate  (prevProps, prevState) {        
@@ -27,38 +33,104 @@ export default class ArticleAddView extends Component  {
     }
 
 
-    selectPicture = async () =>{
-        const { cancelled, uri, width, height, type } = await ImagePicker.launchImageLibraryAsync()
-        console.log(cancelled)
-        if (!cancelled) {
-            console.log(uri)
-            this.setState({ imageUri: uri });
-            const data = new FormData();
-            data.append('file', {
-                uri: this.state.imageUri,
-                // type: 'image/jpeg', 
-                // name: 'testPhotoName'
-            });
-            this.callApiUploadImage(data)
-        } 
-
+    createArticle(){
+        if(this.checkValid()){
+            this.callApiCreateArticle()
+        }
     }
 
-    
-    callApiUploadImage  = async (_data) => {
+    checkValid(){        
+        if (this.state.articleTitle == '') 
+            return this.setState(previousState => ({ 
+                error: this.state.errorList[1]
+            }));
+        if (this.state.articleShortContent == '') 
+            return this.setState(previousState => ({ 
+                error: this.state.errorList[2]
+            }));
+        if (this.state.articleContent == '') 
+            return this.setState(previousState => ({ 
+                error: this.state.errorList[3]
+            }));
+        if (this.state.imageResultUri == '') 
+            return this.setState(previousState => ({ 
+                error: this.state.errorList[4]
+            }));
+        this.setState(previousState => ({ 
+                error: this.state.errorList[0]
+        }));
+        return true;
         
-        fetch(getApiUrl()+'/uploadFile', {
+    }
+
+    callApiCreateArticle(){
+        fetch(getApiUrl()+'/articles/create', {
         method: 'POST',
-        headers: {
+        headers: {      
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            Authorization: 'Bearer '+this.props.token,
         },
-        body: _data,
+        body: JSON.stringify({
+            tittle: this.state.articleTitle,
+            shortContent:this.state.articleShortContent,
+            content: this.state.articleContent,
+            image: this.state.imageResultUri,
+            userID: this.props.userInfo.id
+        }),
         })
         .then(res => res.json())
         .then(
             (result) => {
-                console.log('result:'+result)
+                console.log('result:'+JSON.stringify(result))
+                let success = false
+                result ? result.success? success=result.success : null : null;
+                if (success) 
+                this.props.changeShowView('ArticleListView')
+            },
+            (error) => {
+                console.log('error:'+error)    
+            }
+        );
+    }
+
+
+    handleChange(event) {
+        const name = event.target && event.target.name;
+        const value = event.target && event.target.value;        
+        // console.log('event name'+name+', event value:'+value)
+        this.setState({[name]: value});
+    }
+
+
+    selectPicture = async () =>{
+        // const result = await DocumentPicker.getDocumentAsync({copyToCacheDirectory:true})
+        // console.log(result)
+        const result = await ImagePicker.launchImageLibraryAsync()
+        console.log(result)
+        if (!result.cancelled) {
+            this.callApiUploadImage(result)
+        }
+    }
+
+    
+    callApiUploadImage (_data) {
+        fetch(getApiUrl()+'/uploadImage', {
+        method: 'POST',
+        headers: {      
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer '+this.props.token,
+        },
+        body: JSON.stringify({
+            "file": _data.uri
+        }),
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                // console.log('result:'+JSON.stringify(result))
+                this.setState({ imageResultUri: result.uri });
             },
             (error) => {
                 console.log('error:'+error)    
@@ -78,7 +150,11 @@ export default class ArticleAddView extends Component  {
                     <View style={styles.articleAddRowContainer}>
                         <Text style={styles.rowText}>Tiêu đề: </Text>
                         <TextInput style={styles.rowTextInput}
-                        placeholder={'Nhập tiêu đề'}>                
+                        placeholder={'Nhập tiêu đề'}   
+                        name={"articleTitle"}
+                        onChange={this.handleChange}
+                        value={this.state.articleTitle}  
+                        >           
                         </TextInput>
                     </View>
                     <View style={styles.articleAddRowContainer}>
@@ -87,7 +163,11 @@ export default class ArticleAddView extends Component  {
                             style={styles.rowTextInput}
                             multiline={true}
                             numberOfLines={4}
-                            placeholder={'nhập nội dung ngắn gọn'}>                
+                            placeholder={'Nhập nội dung ngắn gọn'}
+                            name={"articleShortContent"}
+                            onChange={this.handleChange}
+                            value={this.state.articleShortContent}  
+                            >                
                         </TextInput>
                     </View>
                     <View style={styles.articleAddRowContainer}>
@@ -96,7 +176,11 @@ export default class ArticleAddView extends Component  {
                             style={styles.rowTextInput}
                             multiline={true}
                             numberOfLines={12}
-                            placeholder={'nhập nội dung '}>                
+                            placeholder={'Nhập nội dung '}
+                            name={"articleContent"}
+                            onChange={this.handleChange}
+                            value={this.state.articleContent} 
+                            >                
                         </TextInput>
                     </View>
                     <View style={styles.articleAddRowContainer}>
@@ -107,17 +191,24 @@ export default class ArticleAddView extends Component  {
                         >
                             <Text>Chọn ảnh</Text>
                         </TouchableOpacity>
-                        <Text style={styles.rowText}>{'Ảnh Uri: '+this.state.imageResultUri}</Text>
+                        <Text style={[styles.rowText,{fontSize:15,width:600,paddingTop:3}]}>{' '+this.state.imageResultUri}</Text>
                     </View>
+                    {this.state.imageResultUri?
                     <View style={styles.articleAddRowContainer}>
+                        <Text style={styles.rowText}>{' '}</Text>
                         <Image 
-                            style={{width:100,height:100,backgroundColor:'red'}}
-                            source={{ uri: this.state.imageUri }}
+                            style={styles.imagePreview}
+                            source={{ uri: this.state.imageResultUri}}
                             >
-                            </Image>
+                        </Image>
+                    </View>
+                    :null
+                    }
+                    <View style={styles.articleAddRowContainer}>
+                        <Text style={styles.rowTextError}>{this.state.error}</Text>                        
                     </View>
                 </View>
-                <TouchableOpacity style={styles.articleAddConfirmButton}>
+                <TouchableOpacity style={styles.articleAddConfirmButton} onPress={() => this.createArticle()}>
                     <Text>Tạo bài bài viết</Text>
                 </TouchableOpacity>
             </View>
@@ -221,5 +312,19 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    imagePreview:{
+        width:200,
+        height:200,
+        backgroundColor:''
+    },
+    rowTextError:{
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width:300,
+        fontSize:13,
+        color:'red',        
     },
 });

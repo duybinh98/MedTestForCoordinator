@@ -51,7 +51,7 @@ export default class Login extends Component  {
     }
 
     callApiLogin(){
-        fetch(getApiUrl()+"/users/coordinators/login",{
+        fetch(getApiUrl()+"/users/login",{
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -60,7 +60,6 @@ export default class Login extends Component  {
             body: JSON.stringify({
                 phoneNumber: this.state.phoneNumber,
                 password: this.state.password,
-                role:'COORDINATOR'
             }),
         })
         .then(res => res.json())
@@ -69,7 +68,7 @@ export default class Login extends Component  {
                 console.log(result)
                 let success = false
                 result ? result.message? null : success=true : null;
-                if (success) this.props.loginSuccess(result.customerInfo,result.token)
+                if (success) this.props.loginSuccess(result.userInfo,result.token)
             },            
             (error) => {
                 console.log(error)

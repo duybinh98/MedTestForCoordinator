@@ -17,7 +17,7 @@ export default class AccountListScreen extends Component  {
             Button4Selected: false,
             districtsList: districtList,
             accountSelected: 'all',
-            userList: this.props.userList,
+            userList: this.props.userList?this.props.userList:[],
             dataChanged: true,
         };
         this.menuButtonPress = this.menuButtonPress.bind(this)
@@ -90,7 +90,10 @@ export default class AccountListScreen extends Component  {
                     <TextInput style={styles.topMenuTextInput}
                     placeholder={'Tìm kiếm tài khoản theo số điện thoại'}>                
                     </TextInput>
-                    <TouchableOpacity style={styles.createNewAccountButton}>
+                    <TouchableOpacity 
+                        style={styles.createNewAccountButton} 
+                        onPress={() => this.props.changeShowView ? this.props.changeShowView('AccountCreateView'): null}
+                        >
                         <Text>Tạo tài khoản nhân viên</Text>
                     </TouchableOpacity>
                 </View>
@@ -175,13 +178,15 @@ export default class AccountListScreen extends Component  {
                                     accountDob={item.dob}    
                                     accountAddress={item.address}
                                     accountPassword={item.password}
-                                    articleActive={item.active}
+                                    accountActive={item.active}
                                     accountEmail={item.email}         
                                     accountRole={item.role}                            
                                     accountGender={item.gender}    
                                     accountImageUrl={item.image}    
                                     accountTownCode={item.townCode}
                                     accountDistrictCode={item.districtCode}
+                                    changeShowView={this.props.changeShowView?this.props.changeShowView: null}
+                                    setSelectedAccount={this.props.setSelectedAccount?this.props.setSelectedAccount: null}  
                                                                                                     
                                 />   
                                 </View>                             

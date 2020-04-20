@@ -9,13 +9,18 @@
   },
   "dependencies": {
     "expo": "~36.0.0",
+    "expo-image-picker": "~8.0.1",
     "react": "~16.9.0",
     "react-dom": "~16.9.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-36.0.0.tar.gz",
+    "react-native-date-picker": "^2.7.9",
+    "react-native-fs": "^2.16.6",
     "react-native-image-picker": "^2.3.1",
     "react-native-modal-dropdown": "^0.7.0",
     "react-native-web": "~0.11.7",
-    "expo-image-picker": "~8.0.1"
+    "react-native-windows": "^0.61.5",
+    "expo-document-picker": "~8.0.0",
+    "expo-web-browser": "~8.0.0"
   },
   "devDependencies": {
     "babel-preset-expo": "~8.0.0",

@@ -153,7 +153,8 @@ export default class RequestListView extends Component  {
                                     requestAmount={item.requestAmount}
                                     requestStatus={item.requestStatus}
                                     testList={this.state.testsList} 
-                                                                                  
+                                    changeShowView={this.props.changeShowView?this.props.changeShowView: null}
+                                    setSelectedRequest={this.props.setSelectedRequest?this.props.setSelectedRequest: null}         
                                 />   
                                 </View>                             
                             );

@@ -125,6 +125,6 @@ const styles = StyleSheet.create({
     rowImage:{
         width:400,
         height:400,
-        backgroundColor:'red'
+        backgroundColor:''
     }
 });

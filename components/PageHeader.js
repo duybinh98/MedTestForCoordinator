@@ -1,7 +1,39 @@
 import React,{Component} from 'react';
-import { StyleSheet, Text, View, TextInput, Image, ImageBackground, Picker } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Image, ImageBackground, Picker, TouchableOpacity } from 'react-native';
 
 export default class ListScreen extends Component  {
+    constructor(props) {
+        super(props)
+        this.state = {
+        }
+        this.editProfile = this.editProfile.bind(this)
+    }
+
+    editProfile(){
+        if (this.props.userInfo){
+            const account= { 
+            'accountId':this.props.userInfo.id, 
+            'accountPhoneNumber':this.props.userInfo.phoneNumber,                      
+            'accountName':this.props.userInfo.name,
+            'accountDob':this.props.userInfo.dob,
+            'accountAddress':this.props.userInfo.address,
+            'accountPassword':this.props.userInfo.password,
+            'accountActive':this.props.userInfo.active,
+            'accountEmail':this.props.userInfo.email,
+            'accountRole':this.props.userInfo.role,
+            'accountGender':this.props.userInfo.gender,
+            'accountImageUrl':this.props.userInfo.image,
+            'accountTownCode':this.props.userInfo.townCode,
+            'accountDistrictCode':this.props.userInfo.districtCode,
+            }
+
+            this.props.changeShowView?this.props.changeShowView('AccountView'):null
+            this.props.changeShowView?this.props.setSelectedAccount(account):null
+        }
+
+        
+    }
+
     render(){
     return (
         <ImageBackground  style={styles.headerContainer} 
@@ -30,12 +62,12 @@ export default class ListScreen extends Component  {
                             height:100,
                         }}
                         // source={{uri:'https://www.kindpng.com/picc/m/10-104902_simple-user-icon-user-icon-white-png-transparent.png'}}>
-                        source={{uri:this.props.imageUri?this.props.imageUri:''}}>
+                        source={{uri:this.props.userInfo?this.props.userInfo.image:''}}>
                     </Image>
                 </View>
-                <View style={styles.nameContainer}>
-                    <Text style={{fontSize:14,color:'white'}}>{this.props.userName?this.props.userName:''}</Text>
-                </View>
+                <TouchableOpacity style={styles.nameContainer} onPress={() => this.editProfile()}>
+                    <Text style={{fontSize:14,color:'white'}}>{this.props.userInfo?this.props.userInfo.name:''}</Text>
+                </TouchableOpacity>
 
             </View>
 

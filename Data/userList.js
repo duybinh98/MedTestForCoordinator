@@ -23,7 +23,7 @@ var userList = [
         "password":"$2a$10$Rqs8uzm/mZzJHWABOeOi7OuqyPsptBgWNL5k7Cf9bDnWpRL4gSfbW",
         "active":1,
         "email":"medtest.default@gmail.com",
-        "role":"COORDINATOR",
+        "role":"ADMIN",
         "gender":0,
         "image":"https://www.kindpng.com/picc/m/10-104902_simple-user-icon-user-icon-white-png-transparent.png",
         "townCode":"T0",

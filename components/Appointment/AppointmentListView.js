@@ -123,7 +123,9 @@ export default class AppointmentListView extends Component  {
                                     customerPhoneNumber={item.appointment_phoneNumber}
                                     customerDOB={item.appointment_DOB}
                                     appointmentMeetingTime={item.appointment_meetingTime}
-                                    appointmentStatus={item.appointment_status}                                                                         
+                                    appointmentStatus={item.appointment_status}        
+                                    changeShowView={this.props.changeShowView?this.props.changeShowView: null}
+                                    setSelectedAppointment={this.props.setSelectedAppointment?this.props.setSelectedAppointment: null}                                                                 
                                 />   
                                 </View>                             
                             );

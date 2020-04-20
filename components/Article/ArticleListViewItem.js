@@ -36,28 +36,7 @@ export default class ArticleListViewItem extends Component {
             <TouchableOpacity 
                 style={styles.articleListItem}
                 onPress={() => this.onArticlePress()}
-                // onPress={() => {
-                //     this.props.navigation.dispatch(
-                //         CommonActions.navigate({
-                //             name: 'RequestViewScreen',
-                //             params: {
-                //                 requestId: this.props.requestId,
-                //                 name: this.props.cust_name,
-                //                 address: this.props.appoint_address,
-                //                 phone: this.props.cust_phone,
-                //                 dob: this.props.cust_DOB,
-                //                 date: this.props.appoint_date,
-                //                 selectedTest: this.props.selectedTest,   
-                //                 status: this.props.req_status,
-                //                 testsList: this.props.testList,
-                //                 totalAmount: this.props.req_amount,
-                //                 nurseName: this.props.nurse_name,
-                //             },
-                //         })
-                //     )
-                // }}
-            
-            >                                
+                >                                
                 <View style={styles.articleImageContainer}>
                     <Image 
                         style={styles.articleImage}

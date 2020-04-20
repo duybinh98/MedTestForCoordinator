@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity} from 'react-native';
-import {convertDateTimeToDate, convertDateTimeToTime, getAppointmentStateName, getStateColor} from './../Common/CommonFunction'
+import {convertDateTimeToDate, convertDateTimeToTime, getRoleName} from './../Common/CommonFunction'
 
 
 export default class AccountListViewItem extends Component {
@@ -10,11 +10,33 @@ export default class AccountListViewItem extends Component {
             // appointment_date: convertDateTimeToDate(this.props.appoint_date),
             // appointment_time: convertDateTimeToTime(this.props.appoint_date),
         };
+        this.onAccountPress = this.onAccountPress.bind(this)
     }
     componentDidMount(){
           
     }
 
+
+    onAccountPress(){
+        const account= { 
+            'accountId':this.props.accountId, 
+            'accountPhoneNumber':this.props.accountPhoneNumber,                      
+            'accountName':this.props.accountName,
+            'accountDob':this.props.accountDob,
+            'accountAddress':this.props.accountAddress,
+            'accountPassword':this.props.accountPassword,
+            'accountActive':this.props.accountActive,
+            'accountEmail':this.props.accountEmail,
+            'accountRole':this.props.accountRole,
+            'accountGender':this.props.accountGender,
+            'accountImageUrl':this.props.accountImageUrl,
+            'accountTownCode':this.props.accountTownCode,
+            'accountDistrictCode':this.props.accountDistrictCode,
+            }
+        // console.log(account)
+        this.props.setSelectedAccount?this.props.setSelectedAccount(account):null
+        this.props.changeShowView?this.props.changeShowView('AccountView'):null
+    }
 
 
     render(){        
@@ -22,27 +44,7 @@ export default class AccountListViewItem extends Component {
             <View>            
             <TouchableOpacity 
                 style={styles.accountListItem}
-                // onPress={() => {
-                //     this.props.navigation.dispatch(
-                //         CommonActions.navigate({
-                //             name: 'RequestViewScreen',
-                //             params: {
-                //                 requestId: this.props.requestId,
-                //                 name: this.props.cust_name,
-                //                 address: this.props.appoint_address,
-                //                 phone: this.props.cust_phone,
-                //                 dob: this.props.cust_DOB,
-                //                 date: this.props.appoint_date,
-                //                 selectedTest: this.props.selectedTest,   
-                //                 status: this.props.req_status,
-                //                 testsList: this.props.testList,
-                //                 totalAmount: this.props.req_amount,
-                //                 nurseName: this.props.nurse_name,
-                //             },
-                //         })
-                //     )
-                // }}
-            
+                onPress={() => this.onAccountPress()}
                 >
                 <View style={styles.accountNameContainer}>                                       
                 <Text style={{fontSize:17}}>{this.props.accountName}</Text>
@@ -51,7 +53,7 @@ export default class AccountListViewItem extends Component {
                 <Text style={{fontSize:17}}>{this.props.accountPhoneNumber}</Text>
                 </View>
                 <View style={styles.accountRoleContainer}>                                       
-                <Text style={{fontSize:17}}>{this.props.accountRole}</Text>  
+                <Text style={{fontSize:17}}>{getRoleName(this.props.accountRole)}</Text>  
                 </View>
                      
             </TouchableOpacity>             

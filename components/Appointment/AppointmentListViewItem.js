@@ -7,14 +7,28 @@ export default class AppointmentListView extends Component {
     constructor(props) {
         super(props)
         this.state = {            
-            // appointment_date: convertDateTimeToDate(this.props.appoint_date),
-            // appointment_time: convertDateTimeToTime(this.props.appoint_date),
         };
+        this.onAppointmentPress = this.onAppointmentPress.bind(this)
     }
     componentDidMount(){
           
     }
 
+
+    onAppointmentPress(){
+        const appointment= { 
+            "appointmentId": this.props.appointmentId,
+            "appointmentCreatedTime":this.props.appointmentCreatedTime,
+            "customerName":this.props.customerName,
+            "customerPhoneNumber":this.props.customerPhoneNumber,
+            "customerDOB":this.props.customerDOB,
+            "appointmentMeetingTime":this.props.appointmentMeetingTime,
+            "appointmentStatus":this.props.appointmentStatus,
+            }
+            
+        this.props.setSelectedAppointment?this.props.setSelectedAppointment(appointment):null
+        this.props.changeShowView?this.props.changeShowView('AppointmentView'):null
+    }
 
 
     render(){        
@@ -22,28 +36,8 @@ export default class AppointmentListView extends Component {
             <View>            
             <TouchableOpacity 
                 style={styles.appointmentListItem}
-                // onPress={() => {
-                //     this.props.navigation.dispatch(
-                //         CommonActions.navigate({
-                //             name: 'RequestViewScreen',
-                //             params: {
-                //                 requestId: this.props.requestId,
-                //                 name: this.props.cust_name,
-                //                 address: this.props.appoint_address,
-                //                 phone: this.props.cust_phone,
-                //                 dob: this.props.cust_DOB,
-                //                 date: this.props.appoint_date,
-                //                 selectedTest: this.props.selectedTest,   
-                //                 status: this.props.req_status,
-                //                 testsList: this.props.testList,
-                //                 totalAmount: this.props.req_amount,
-                //                 nurseName: this.props.nurse_name,
-                //             },
-                //         })
-                //     )
-                // }}
-            
-            >                                
+                onPress={() => this.onAppointmentPress()}
+                >                          
                 <View style={[styles.appointmentTextContainer,{
                     marginTop:5,
                 }]}>                    

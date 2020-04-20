@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput} from 'react-native';
 import TestListItem from './TestListItem'
-import {getApiUrl} from './../Common/CommonFunction'
+import {getApiUrl, convertDateTimeToDate, convertDateTimeToTime} from './../Common/CommonFunction'
 import appointmentList from './../../Data/appointmentList'
 import districtList from './../../Data/districtList'
 import userList from './../../Data/userList'
@@ -10,26 +10,103 @@ export default class TestUpdateView extends Component  {
     constructor(props) {
         super(props)
         this.state = {            
-            versionSelected:'1.2',
+            versionSelected:'2',
+            versionCreatedTime: null,
+            versionCreatorName: null,
             testTypeSelected: 'none',
             testTypeSelectedForCreate: 'none',
             dataChanged: true,
-            testList: this.props.testList,
+            testList: [],
+            testListTemp: [],
+            versionList: null,
             testName: '',
             testPrice: '',
+            newTestId: 1,
             error: '',
-            errorList: ['','Phải chọn loại xét nghiệm','Phải điền tên xét nghiệm', 'Phải điền giá xét nghiệm']
-            
+            errorList: ['','Phải chọn loại xét nghiệm','Phải điền tên xét nghiệm', 'Phải điền giá xét nghiệm'],
         };
         this.createTest = this.createTest.bind(this)
-        this.handleChange= this.handleChange.bind(this);
+        this.handleChange= this.handleChange.bind(this)
         this.getTestList = this.getTestList.bind(this)
+        this.updatePrice = this.updatePrice.bind(this)
+        this.setSelectedVersion = this.setSelectedVersion.bind(this)
+        this.callApiUpdateVersion = this.callApiUpdateVersion.bind(this)
     }
+
+
+    componentDidMount(){
+        this.callApiGetVersionList()
+        this.callApiGetTestList()
+    }
+
+
+    componentDidUpdate  (prevProps, prevState) {        
+         if (prevProps !== this.props) {
+            this.setState(previousState => ({ 
+                // testList: this.props.testList,
+                // testListTemp: this.props.testList,
+            }));
+        }
+    }
+
+    callApiGetVersionList(){
+        fetch(getApiUrl()+"/tests/versions/list",{
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.props.token,
+            }
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                // console.log(result)
+                let success = false
+                result ? result.message? null : success=true : null;
+                if (success){
+                    this.setState(previousState => ({
+                        versionList: result,
+                        versionSelected: result[0].versionID,
+                        versionCreatedTime: result[0].createdTime,
+                        versionCreatorName: result[0].creatorName,
+                    }));
+                    // this.callApiGetTestList()
+                }
+            },            
+            (error) => {
+                console.log(error)
+            }
+        )  
+    }
+
 
     createTest(){
         if(this.checkValid()){
-            
-            // this.callApiCreateTest()
+            let result = []
+            let index = this.state.testListTemp.length - 1;
+            while (index >= 0) {
+                if (this.state.testListTemp[index].testTypeID == this.state.testTypeSelectedForCreate) {
+                    let testList = this.state.testListTemp[index].listTest
+                    let newTest = {
+                        'testID':("new"+this.state.newTestId),
+                        'testName':this.state.testName,                   
+                        'price':this.state.testPrice,
+                        'testTypeID': this.state.testTypeSelectedForCreate,
+                        'testTypeName': this.state.testListTemp[index].testTypeName,
+                        }
+                    testList.push(newTest)
+
+                    // let indexTest = this.state.testListTemp[index].listTest.length -1
+                    // while(indexTest >= 0){
+                    //     var test = this.state.testListTemp[index].listTest[indexTest]
+                    //     test['testTypeName'] = this.state.testListTemp[index].testTypeName
+                    //     result.push(test)
+                    //     indexTest -=1;
+                    // }
+                }
+                index -= 1;   
+            } 
         }    
     }
     
@@ -53,28 +130,63 @@ export default class TestUpdateView extends Component  {
         
     }
 
-    callApiCreateTest  = async () => {
-        fetch(getApiUrl()+'/test-types/tests/create', {
+    callApiUpdateVersion  = async () => {
+        let result = []
+        let index = this.state.testListTemp.length - 1;
+        while (index >= 0) {
+            let indexTest = this.state.testListTemp[index].listTest.length -1
+            while(indexTest >= 0){     
+                var test = this.state.testListTemp[index].listTest[indexTest]           
+                result.push(test)
+                indexTest -=1;
+            }
+            index -= 1;
+        }        
+        fetch(getApiUrl()+'/tests/versions/upgrade-version', {
         method: 'POST',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            Authorization: 'Bearer '+this.props.token,
         },
         body: JSON.stringify({
-            testName: this.state.testName,
-            testTypeID: this.state.testTypeSelected,
-            price: this.state.testPrice,
+            creatorID: this.props.userInfo.id,
+            lsInputTest: result,
         }),
         })
         .then(res => res.json())
         .then(
             (result) => {
-                console.log('result:'+result)
+                // console.log('result:'+result)
+                this.callApiGetVersionList()
+                this.callApiGetTestList()
             },
             (error) => {
                 console.log('error:'+error)    
             }
         );
+    }
+
+    updatePrice(testId,newPrice){
+        let result = []
+        let index = this.state.testListTemp.length - 1;
+        while (index >= 0) {
+            var testType = this.state.testListTemp[index]
+            let testList = []
+            let indexTest = this.state.testListTemp[index].listTest.length -1
+            while(indexTest >= 0){
+                var test = this.state.testListTemp[index].listTest[indexTest]
+                if (test.testID == testId){
+                    test.price = newPrice
+                } 
+                testList.push(test)               
+                indexTest -=1;
+            }
+            testType['listTest'] = testList;
+            result.push(testType)
+            index -= 1;            
+        }      
+        // console.log(this.state.testListTemp)
     }
 
     handleChange(event) {
@@ -84,25 +196,72 @@ export default class TestUpdateView extends Component  {
         this.setState({[name]: value});
     }
 
-
-    componentDidUpdate  (prevProps, prevState) {        
-         if (prevProps !== this.props) {
-            this.setState(previousState => ({ 
-                testList: this.props.testList
-            }));
-        }
+    setSelectedVersion(versionId){
+        let index = this.state.versionList.length -1
+        while(index >= 0){
+            var version = this.state.versionList[index]
+            if (version.versionID == versionId){
+                this.setState({
+                    versionSelected: versionId,
+                    versionCreatedTime: version.createdTime,
+                    versionCreatorName: version.creatorName,
+                })
+            }     
+            index -= 1;
+        }      
+        this.callApiGetTestList(versionId)
+        
+        
     }
 
+    callApiGetTestList(version){
+        let url = ''
+        if (version) url =  getApiUrl()+"/tests/versions/list-all-test/"+version
+        else url =  getApiUrl()+"/tests/versions/lastest-version-test/"
+        fetch(url,{
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.props.token,
+            }
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                console.log(result)
+                let success = false
+                let list = []
+                result ? result.message? null : success=true : null;
+                if (success)
+                {
+                    this.setState(previousState => ({
+                        testList: result.lsTests ,
+                        testListTemp: result.lsTests ,
+                    }));
+                }
+                else 
+                this.setState(previousState => ({
+                        testList: [],
+                        testListTemp: [],
+                    }));
+            },            
+            (error) => {
+                console.log(error)
+            }
+        )  
+
+    }
 
     getTestList(){
         if (this.state.testTypeSelected =='none'){
             let result = []
-            let index = this.state.testList.length - 1;
+            let index = this.state.testListTemp.length - 1;
             while (index >= 0) {
-                let indexTest = this.state.testList[index].listTest.length -1
+                let indexTest = this.state.testListTemp[index].listTest.length -1
                 while(indexTest >= 0){
-                    var test = this.state.testList[index].listTest[indexTest]
-                    test['testTypeName'] = this.state.testList[index].testTypeName
+                    var test = this.state.testListTemp[index].listTest[indexTest]
+                    test['testTypeName'] = this.state.testListTemp[index].testTypeName
                     result.push(test)
                     indexTest -=1;
                 }
@@ -111,16 +270,16 @@ export default class TestUpdateView extends Component  {
             return result;
         }
         else{
-            console.log(this.state.testTypeSelected)
+            // console.log(this.state.testTypeSelected)
             let result = []
-            let index = this.state.testList.length - 1;
+            let index = this.state.testListTemp.length - 1;
             while (index >= 0) {
-                console.log(this.state.testList[index].testTypeName+ ", "+this.state.testList[index].testTypeID)
-                if (this.state.testList[index].testTypeID == this.state.testTypeSelected) {
-                    let indexTest = this.state.testList[index].listTest.length -1
+                // console.log(this.state.testListTemp[index].testTypeName+ ", "+this.state.testListTemp[index].testTypeID)
+                if (this.state.testListTemp[index].testTypeID == this.state.testTypeSelected) {
+                    let indexTest = this.state.testListTemp[index].listTest.length -1
                     while(indexTest >= 0){
-                        var test = this.state.testList[index].listTest[indexTest]
-                        test['testTypeName'] = this.state.testList[index].testTypeName
+                        var test = this.state.testListTemp[index].listTest[indexTest]
+                        test['testTypeName'] = this.state.testListTemp[index].testTypeName
                         result.push(test)
                         indexTest -=1;
                     }
@@ -132,33 +291,26 @@ export default class TestUpdateView extends Component  {
         return this.state.testList
     }
 
-
-
     render(){
     const WIDTH = Dimensions.get('window').width
     return (
         <View style={styles.testUpdateViewArea}>
-
-
             <View style={styles.testUpdateMenuArea}>
                 <Picker
                     selectedValue={this.state.versionSelected}
                     style={styles.versionDropdown}
-                    onValueChange={(itemValue, itemIndex) => this.setState({
-                        versionSelected:itemValue,
-                    })}                    
+                    onValueChange={(itemValue, itemIndex) => this.setSelectedVersion(itemValue)}                    
                     >
-                    <Picker.Item label="1.2" value="1.2" key='1.2'/>
-                    <Picker.Item label="1.1" value="1.1" key='1.1'/>
-                    <Picker.Item label="1.0" value="1.0" key='1.0'/>
+                    {this.state.versionList?this.state.versionList.map(version => (
+                        <Picker.Item label={version.versionID} value={version.versionID} key={version.versionID}/>
+                    )):null}
                 </Picker> 
-                <Text style={[styles.rowText,{width:200}]}>Cập nhật: 12/4/20202</Text>   
-                <Text style={[styles.rowText,{width:270}]}>Người cập nhật: Nguyễn Văn An</Text>  
-                <TouchableOpacity style={styles.testUpdateConfirmButton} onPress={() => this.createTest()}>
+                <Text style={[styles.rowText,{width:250}]}>{"Cập nhật: "+(this.state.versionCreatedTime?convertDateTimeToDate(this.state.versionCreatedTime)+"   "+convertDateTimeToTime(this.state.versionCreatedTime):'')}</Text>   
+                <Text style={[styles.rowText,{width:300}]}>{"Người cập nhật: "+(this.state.versionCreatorName?this.state.versionCreatorName:'')}</Text>  
+                <TouchableOpacity style={styles.testUpdateConfirmButton} onPress={() => this.callApiUpdateVersion()}>
                     <Text>Cập nhật</Text>
                 </TouchableOpacity>  
             </View>
-
             
             <View style={styles.testUpdateArea}>
                 <View style={styles.testUpdateContainer}>
@@ -176,7 +328,7 @@ export default class TestUpdateView extends Component  {
                                 <Picker.Item label={testType.testTypeName} value={testType.testTypeID} key={testType.testTypeID}/>
                             )):null}
                         </Picker>
-                        <TouchableOpacity style={styles.testUpdateConfirmButton} onPress={() => this.createTest()}>
+                        <TouchableOpacity style={styles.createTestButton} onPress={() => this.createTest()}>
                             <Text>Tạo bài test</Text>
                         </TouchableOpacity>   
                     </View>
@@ -193,7 +345,7 @@ export default class TestUpdateView extends Component  {
                     <View style={styles.testUpdateRowContainer}>
                         <Text style={styles.rowText}>Giá tiền:</Text>
                         <TextInput style={styles.rowTextInput}
-                            placeholder={'nhập giá tiền (VNĐ)'}
+                            placeholder={'Nhập giá tiền (VNĐ)'}
                             name="testPrice"
                             onChange={this.handleChange}
                             value={this.state.testPrice}
@@ -205,7 +357,6 @@ export default class TestUpdateView extends Component  {
                     </View>
                 </View>    
             </View>
-
 
             <View style={styles.testUpdateMenuArea}>
                 <Picker
@@ -221,9 +372,9 @@ export default class TestUpdateView extends Component  {
                         <Picker.Item label={testType.testTypeName} value={testType.testTypeID} key={testType.testTypeID}/>
                     )):null}
                 </Picker>
-                <View style={styles.rowText}>
-                    <Text style={[styles.rowText,{width:500}]}>Số lượng: {this.getTestList()?this.getTestList().length:'0'}</Text>
-                </View>
+                
+                <Text style={[styles.rowText,{width:500}]}>Số lượng: {this.getTestList()?this.getTestList().length:'0'}</Text>
+                
             </View>
 
             <View style={styles.testListFlatListArea}>        
@@ -244,7 +395,8 @@ export default class TestUpdateView extends Component  {
                                     testName={item.testName}                             
                                     testPrice={item.price}
                                     testTypeId={item.testTypeID}  
-                                    testTypeName={item.testTypeName}                                                                     
+                                    testTypeName={item.testTypeName}  
+                                    updatePrice={this.updatePrice}                                                                   
                                 />   
                                 </View>                             
                             );
@@ -252,8 +404,6 @@ export default class TestUpdateView extends Component  {
                     >                   
                 </FlatList>        
             </View>
-
-
         </View>
     );
     }
@@ -354,6 +504,17 @@ const styles = StyleSheet.create({
         paddingLeft:10,        
     },
     testUpdateConfirmButton:{
+        height:30,
+        width:200,
+        backgroundColor:'#e6e6e6',
+        borderRadius:5,
+        borderWidth:1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginLeft:50,
+    },
+    createTestButton:{
         height:30,
         width:200,
         backgroundColor:'#e6e6e6',
