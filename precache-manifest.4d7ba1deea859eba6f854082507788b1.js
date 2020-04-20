@@ -1,15 +1,15 @@
 self.__precacheManifest = [
   {
-    "revision": "bc88f26e26140e5e7218",
-    "url": "/MedTestForCoordinator/static/js/app.729c7822.chunk.js"
+    "revision": "553ef28bf844991a9a82",
+    "url": "/MedTestForCoordinator/static/js/app.6c0fb9e2.chunk.js"
   },
   {
     "revision": "15eee14489800ef29d40",
     "url": "/MedTestForCoordinator/static/js/runtime~app.90dec588.js"
   },
   {
-    "revision": "01f2caa10bc211d940ba",
-    "url": "/MedTestForCoordinator/static/js/2.610fae2d.chunk.js"
+    "revision": "cba21bbf4b0434a65105",
+    "url": "/MedTestForCoordinator/static/js/2.475bcc1f.chunk.js"
   },
   {
     "revision": "d0c694b562b2208635f250762cd7fc79",
@@ -32,7 +32,7 @@ self.__precacheManifest = [
     "url": "/MedTestForCoordinator/favicon.ico"
   },
   {
-    "revision": "1a0929438da3730b30b2612a756311e2",
+    "revision": "1bae053701b99b63f6a3f35aed50db21",
     "url": "/MedTestForCoordinator/index.html"
   },
   {
