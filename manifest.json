@@ -1,0 +1,27 @@
+{
+  "background_color": "#ffffff",
+  "dir": "auto",
+  "display": "standalone",
+  "lang": "en",
+  "name": "MedTest",
+  "orientation": "portrait",
+  "short_name": "MedTest",
+  "start_url": ".",
+  "icons": [
+    {
+      "src": "\\MedTestForCoordinator\\pwa\\chrome-icon\\chrome-icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "\\MedTestForCoordinator\\pwa\\chrome-icon\\chrome-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "\\MedTestForCoordinator\\pwa\\chrome-icon\\chrome-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

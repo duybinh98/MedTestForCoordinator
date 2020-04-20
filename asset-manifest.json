@@ -1,0 +1,21 @@
+{
+  "files": {
+    "app.js": "/MedTestForCoordinator/static/js/app.729c7822.chunk.js",
+    "app.js.map": "/MedTestForCoordinator/static/js/app.729c7822.chunk.js.map",
+    "runtime~app.js": "/MedTestForCoordinator/static/js/runtime~app.90dec588.js",
+    "runtime~app.js.map": "/MedTestForCoordinator/static/js/runtime~app.90dec588.js.map",
+    "static/js/2.610fae2d.chunk.js": "/MedTestForCoordinator/static/js/2.610fae2d.chunk.js",
+    "static/js/2.610fae2d.chunk.js.map": "/MedTestForCoordinator/static/js/2.610fae2d.chunk.js.map",
+    "favicon-16.png": "/MedTestForCoordinator/favicon-16.png",
+    "favicon-32.png": "/MedTestForCoordinator/favicon-32.png",
+    "favicon.ico": "/MedTestForCoordinator/favicon.ico",
+    "index.html": "/MedTestForCoordinator/index.html",
+    "manifest.json": "/MedTestForCoordinator/manifest.json",
+    "serve.json": "/MedTestForCoordinator/serve.json"
+  },
+  "entrypoints": [
+    "static/js/runtime~app.90dec588.js",
+    "static/js/2.610fae2d.chunk.js",
+    "static/js/app.729c7822.chunk.js"
+  ]
+}
