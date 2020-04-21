@@ -98,7 +98,7 @@ export default class RequestListView extends Component  {
                         <Picker.Item label="Tất cả" value="all" />
                         <Picker.Item label="Đang đợi y tá nhận đơn" value="pending" />
                         <Picker.Item label="Đơn đã được y tá chấp nhận" value="accepted" />
-                        <Picker.Item label="Đơn đã được y tá lấy mẫu" value="transporting" />
+                        <Picker.Item label="Đơn đã được lấy mẫu" value="transporting" />
                         <Picker.Item label="Đang đợi kết quả" value="waitingforresult" />
                         <Picker.Item label="Đơn đã xong" value="closed" />
                         <Picker.Item label="Y tá làm mất mẫu" value="lostsample" />

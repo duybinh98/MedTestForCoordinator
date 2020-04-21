@@ -36,7 +36,7 @@ export default class TestUpdateView extends Component  {
 
     componentDidMount(){
         this.callApiGetVersionList()
-        this.callApiGetTestList()
+        // this.callApiGetTestList()
     }
 
 
@@ -71,7 +71,7 @@ export default class TestUpdateView extends Component  {
                         versionCreatedTime: result[0].createdTime,
                         versionCreatorName: result[0].creatorName,
                     }));
-                    // this.callApiGetTestList()
+                    this.callApiGetTestList()
                 }
             },            
             (error) => {
@@ -142,6 +142,7 @@ export default class TestUpdateView extends Component  {
             }
             index -= 1;
         }        
+        console.log(result)
         fetch(getApiUrl()+'/tests/versions/upgrade-version', {
         method: 'POST',
         headers: {
@@ -157,9 +158,9 @@ export default class TestUpdateView extends Component  {
         .then(res => res.json())
         .then(
             (result) => {
-                // console.log('result:'+result)
+                console.log('result:'+JSON.stringify(result))
                 this.callApiGetVersionList()
-                this.callApiGetTestList()
+                // this.callApiGetTestList()
             },
             (error) => {
                 console.log('error:'+error)    

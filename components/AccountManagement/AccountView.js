@@ -21,6 +21,7 @@ export default class TestListView extends Component {
             townSelected: this.props.districtList?this.props.districtList[0].listTown[0]?this.props.districtList[0].listTown[0].townCode:'none':'none',
             accountAddress: '',
             accountRole: '',
+            accountActive: '',
             year: new Date().getFullYear(),
             month: new Date().getMonth() + 1,
             day: new Date().getDate(),
@@ -34,6 +35,10 @@ export default class TestListView extends Component {
         this.getNumberOfDayInMonth = this.getNumberOfDayInMonth.bind(this)
         this.updateAccountInformation = this.updateAccountInformation.bind(this)
         this.resetPassword = this.resetPassword.bind(this)
+        this.checkCurrentUser = this.checkCurrentUser.bind(this)
+        this.checkAdmin = this.checkAdmin.bind(this)
+        this.changePassword = this.changePassword.bind(this)
+        this.getDob = this.getDob.bind(this)
 
     }
 
@@ -51,6 +56,7 @@ export default class TestListView extends Component {
             accountGender: this.props.account?this.props.account.accountGender:'',
             accountRole: this.props.account?this.props.account.accountRole:'',
             accountAddress: this.props.account?this.props.account.accountAddress:'',
+            accountActive: this.props.account?this.props.account.accountActive:'',
             year: this.props.account?this.props.account.accountDob? this.props.account.accountDob.substring(0,4):'2020':'2020',
             month: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(5,7)).toString():'2020':'2020',
             day: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(8,10)).toString():'2020':'2020',
@@ -72,6 +78,7 @@ export default class TestListView extends Component {
             accountGender: this.props.account?this.props.account.accountGender:'',
             accountRole: this.props.account?this.props.account.accountRole:'',
             accountAddress: this.props.account?this.props.account.accountAddress:'',
+            accountActive: this.props.account?this.props.account.accountActive:'',
             year: this.props.account?this.props.account.accountDob? this.props.account.accountDob.substring(0,4):'2020':'2020',
             month: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(5,7)).toString():'2020':'2020',
             day: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(8,10)).toString():'2020':'2020',
@@ -164,31 +171,38 @@ export default class TestListView extends Component {
     
 
     resetPassword(){
-        // fetch(getApiUrl()+'/users/forgot-password', {
-        // method: 'POST',
-        // headers: {      
-        //     Accept: 'application/json',
-        //     'Content-Type': 'application/json',
-        //     Authorization: 'Bearer '+this.props.token,
-        // },
-        // body: JSON.stringify({
-        //     phoneNumber: this.props.account?this.props.account.accountPhoneNumber:'',
-        // }),
-        // })
-        // .then(res => res.json())
-        // .then(
-        //     (result) => {
-        //         console.log('result:'+JSON.stringify(result))
-        //         let success = false
-        //         result ? result.message?  success=true : null : null;
-        //         if (success)
-        //             this.props.changeShowView('AccountListView')
-        //         }
-        //     },
-        //     (error) => {
-        //         console.log('error:'+error)    
-        //     }
-        // );
+        console.log(this.props.account.accountId),
+        console.log(this.props.userInfo.id),
+        fetch(getApiUrl()+'/users/reset-password/'+this.props.account.accountId, {
+        method: 'POST',
+        headers: {      
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer '+this.props.token,
+            
+        },
+        body: JSON.stringify({
+            userProcessingID: this.props.userInfo.id
+        }),
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                console.log('result:'+JSON.stringify(result))
+                let success = false
+                result ? result.message?  success=true : null : null;
+                if (success)
+                    this.props.changeShowView('AccountListView')
+                
+            },
+            (error) => {
+                console.log('error:'+error)    
+            }
+        );
+    }
+
+    changePassword(){
+        this.props.changeShowView('AccountChangePasswordView')
     }
 
     updateAccountInformation(){
@@ -229,7 +243,7 @@ export default class TestListView extends Component {
             name: this.state.accountName,
             dob: convertDateToDateTime(this.getDob()),
             address: this.state.accountAddress,
-            active: 1,
+            active: this.state.accountActive,
             email: this.state.accountEmail,
             gender: this.state.accountGender,
             townCode: this.state.townSelected,
@@ -243,7 +257,7 @@ export default class TestListView extends Component {
                 let success = false
                 result ? result.message? null : success=true : null;
                 if (success) {
-                    if (this.props.account.accountId == this.props.userInfo.id) this.props.updateUserInfo(result)
+                    if (this.checkCurrentUser()) this.props.updateUserInfo(result)
                     this.props.changeShowView('AccountListView')
                 }
             },
@@ -251,6 +265,16 @@ export default class TestListView extends Component {
                 console.log('error:'+error)    
             }
         );
+    }
+
+    checkCurrentUser(){
+        if (this.props.account.accountId == this.props.userInfo.id) return true
+        return false
+    }
+
+    checkAdmin(){
+        if (this.props.userInfo.role == 'ADMIN') return true
+        return false
     }
 
     render(){        
@@ -263,7 +287,8 @@ export default class TestListView extends Component {
             <View style={styles.accountCreateArea}>
                 <View style={styles.accountCreateContainer}>
                     <View style={styles.accountCreateRowContainer}>
-                        <Text style={styles.rowText}>Tên nhân viên:</Text>
+                        <Text style={styles.rowText}>Thay đổi mật khẩu:</Text>
+                        {this.checkAdmin()?
                         <TextInput style={styles.rowTextInput}
                             placeholder={'Nhập tên nhân viên'}
                             name={"accountName"}
@@ -271,6 +296,10 @@ export default class TestListView extends Component {
                             value={this.state.accountName}
                             >                
                         </TextInput>
+                        :
+                        <Text style={styles.rowTextLong}>{this.state.accountName}</Text>
+                        }
+                        
                     </View>
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowText}>Số điện thoại:</Text>
@@ -278,6 +307,7 @@ export default class TestListView extends Component {
                     </View>
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowText}>Địa chỉ email:</Text>
+                        {this.checkAdmin()?
                         <TextInput style={styles.rowTextInput}
                             placeholder={'Nhập địa chỉ email của nhân viên'}
                             name="accountEmail"
@@ -285,7 +315,11 @@ export default class TestListView extends Component {
                             value={this.state.accountEmail}
                             >                
                         </TextInput>
+                        :
+                        <Text style={styles.rowTextLong}>{this.state.accountEmail}</Text>
+                        }
                     </View>
+                    {this.checkAdmin()?
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowText}>Ngày sinh: </Text>
                         <Picker
@@ -316,10 +350,16 @@ export default class TestListView extends Component {
                             >
                             {this.createNumberPickerList(1920,2020,false)}
                         </Picker>
-                        
                     </View>
+                    :
+                    <View style={styles.accountCreateRowContainer}>
+                        <Text style={styles.rowText}>Ngày sinh: </Text>
+                        <Text style={styles.rowTextLong}>{this.getDob()}</Text>
+                    </View>
+                    }
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowText}>Giới tính:</Text>
+                        {this.checkAdmin()?
                         <Picker
                             selectedValue={this.state.accountGender}
                             style={styles.accountTypeDropDown}
@@ -330,6 +370,10 @@ export default class TestListView extends Component {
                             <Picker.Item label={'Nam'} value={'1'} />
                             <Picker.Item label={'Nữ'} value={'0'} />
                         </Picker>
+                        :
+                        <Text style={styles.rowTextLong}>{this.state.accountGender=='1'?'Nam':'Nữ'}</Text>
+                        }
+                        
                     </View>                   
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowText}>Quận/huyện:</Text>
@@ -383,13 +427,36 @@ export default class TestListView extends Component {
                         <Text style={styles.rowText}>{getRoleName(this.state.accountRole)}</Text>
                     </View> 
                     <View style={styles.accountCreateRowContainer}>
+                        <Text style={styles.rowText}>Trạng thái:</Text>
+                        {this.checkAdmin()?
+                        <Picker
+                            selectedValue={this.state.accountActive}
+                            style={styles.accountTypeDropDown}
+                            onValueChange={(itemValue, itemIndex) => this.setState({
+                                accountActive:itemValue,
+                            })}                    
+                            >
+                            <Picker.Item label={'Đang hoạt động'} value={'1'} />
+                            <Picker.Item label={'Bị khóa'} value={'0'} />
+                        </Picker>
+                        :
+                        <Text style={styles.rowTextLong}>{this.state.accountActive=='1'?'Đang hoạt động':'Bị khóa'}</Text>
+                        }
+                    </View> 
+                    <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowTextError}>{this.state.error}</Text>                        
                     </View>
                 </View>  
                 <View style={styles.buttonArea}>
+                    {this.checkCurrentUser()?
+                    <TouchableOpacity style={styles.button} onPress={() => this.changePassword()}>
+                        <Text>Thay đổi mật khẩu</Text>
+                    </TouchableOpacity>
+                    :
                     <TouchableOpacity style={styles.button} onPress={() => this.resetPassword()}>
                         <Text>Đặt lại mật khẩu</Text>
                     </TouchableOpacity>
+                    }
                     <TouchableOpacity style={styles.button} onPress={() => this.updateAccountInformation()}>
                         <Text>Lưu thay đổi</Text>
                     </TouchableOpacity>
@@ -462,6 +529,15 @@ const styles = StyleSheet.create({
         fontSize:17,
         paddingTop:3,
         
+    },
+    rowTextLong:{
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width:500,
+        fontSize:17,
+        paddingTop:3,
     },
     rowTextError:{
         alignSelf: 'stretch',

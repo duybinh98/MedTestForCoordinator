@@ -66,6 +66,10 @@ export default class RequestView extends Component  {
         this.props.changeShowView('RequestLostSampleView')
     }
 
+    onUpdateResult(){
+        this.props.changeShowView('RequestUpdateResultView')
+    }
+
     getLeftButtonName(status) {
         switch (status) {
             case 'transporting':
@@ -108,7 +112,7 @@ export default class RequestView extends Component  {
                 this.onTakingSample();
                 break;
             case 'waitingforresult':
-                // this.onUpdateResult();
+                this.onUpdateResult();
                 break;
         }
     }

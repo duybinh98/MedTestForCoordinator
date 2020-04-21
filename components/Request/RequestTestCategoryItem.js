@@ -28,12 +28,12 @@ export default class RequestTestCategoryItem extends Component {
             <View>
             {this.isVisible() ?
             <View>
-                <TouchableOpacity style={styles.testCategoryItem}  >
+                <View style={styles.testCategoryItem}  >
                     <View style={styles.testCategoryNameContainer}>
                         <Text style={{fontSize:17,color:''}} >{this.props.categoryName}</Text>
                     
                     </View>
-                </TouchableOpacity>
+                </View>
                 <FlatList 
                     style ={styles.TestListAreaScrollView}                        
                     showsVerticalScrollIndicator={false}
@@ -60,7 +60,8 @@ export default class RequestTestCategoryItem extends Component {
                                     testName={item.testName}
                                     testPrice={item.price}
                                     testID={item.testID}
-                                    backgroundColor={(parseInt(index)-countHide) % 2 === 0 ? '#EEE': '#FFF'}
+                                    // backgroundColor={(parseInt(index)-countHide) % 2 === 0 ? '#EEE': '#FFF'}
+                                    backgroundColor='white'
                                     countHide={countHide}
                                     index={index}
                                     math={(parseInt(index)-countHide) % 2 }

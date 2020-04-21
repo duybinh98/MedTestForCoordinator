@@ -114,7 +114,8 @@ const styles = StyleSheet.create({
     },
     rowText:{
         fontSize:18,
-        backgroundColor:''
+        backgroundColor:'',
+        textAlign: 'justify'
     },
     articleTypeDropDown:{
         alignSelf: 'stretch',

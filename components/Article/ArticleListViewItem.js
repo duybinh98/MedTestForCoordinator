@@ -55,7 +55,7 @@ export default class ArticleListViewItem extends Component {
                         <Text style={{fontSize:15}}>{convertDateTimeToDate(this.props.articleCreatedTime)+"   "+convertDateTimeToTime(this.props.articleCreatedTime)}</Text>                                   
                         </View>
                         <View style={styles.articleShortContentContainer}>
-                            <Text style={{fontSize:17}}>{this.props.articleShortContent}</Text>        
+                            <Text style={{fontSize:17, textAlign: 'justify'}}>{this.props.articleShortContent}</Text>        
                         </View>
                     </View>
                     <View style={styles.articleTextCreatorNameContainer}>
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     },
     articleTextContentContainer:{
         alignSelf: 'stretch',
-        width: Dimensions.get('window').width-630,
+        width: Dimensions.get('window').width-650,
         flexDirection: 'column',
         alignItems: 'flex-start',
         backgroundColor:''

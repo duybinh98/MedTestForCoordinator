@@ -27,13 +27,8 @@ export default class AppointmentView extends Component  {
     
 
     
-    callApiUpdateAppointmentStatus(_status){
-        let uri = ''
-        console.log(this.props.userInfo.id)
-        if (_status == 'accepted') uri = getApiUrl()+"/appointments/accept/"+this.props.appointment.appointmentId
-        else if (_status == 'canceled') uri = getApiUrl()+"/appointments/cancel/"+this.props.appointment.appointmentId
-        // console.log(this.props.token)
-        fetch(uri, {
+    callApiAcceptAppointment(_status){
+        fetch(getApiUrl()+"/appointments/accept/"+this.props.appointment.appointmentId, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -62,11 +57,11 @@ export default class AppointmentView extends Component  {
     }
 
     onAccept(){
-        this.callApiUpdateAppointmentStatus('accepted')
+        this.callApiAcceptAppointment()
     }
 
     onReject(){
-        this.callApiUpdateAppointmentStatus('canceled')
+        this.props.changeShowView('AppointmentRejectView')
     }
 
 
@@ -76,7 +71,7 @@ export default class AppointmentView extends Component  {
     return (
         <View style={styles.appointmentViewArea}>
             <View style={styles.appointmentTopMenuArea}>
-                <Text style={{fontSize:25}}>Chi tiết đơn yêu cầu xét nghiệm</Text>                
+                <Text style={{fontSize:25}}>Chi tiết đơn khám</Text>                
             </View>
             <View style={styles.appointmentArea}>
                 <View style={styles.appointmentContainer}>      

@@ -6,10 +6,12 @@ import PageHeader from './PageHeader'
 import AccountListView from './AccountManagement/AccountListView'
 import AccountCreateView from './AccountManagement/AccountCreateView'
 import AccountView from './AccountManagement/AccountView'
+import AccountChangePasswordView from './AccountManagement/AccountChangePasswordView'
 
 
 import AppointmentListView from './Appointment/AppointmentListView'
 import AppointmentView from './Appointment/AppointmentView'
+import AppointmentRejectView from './Appointment/AppointmentRejectView'
 
 import ArticleListView from './Article/ArticleListView'
 import ArticleAddView from './Article/ArticleAddView'
@@ -20,6 +22,7 @@ import LoginView from './Authentication/LoginView'
 import RequestListView from './Request/RequestListView'
 import RequestView from './Request/RequestView'
 import RequestLostSampleView from './Request/RequestLostSampleView'
+import RequestUpdateResultView from './Request/RequestUpdateResultView'
 
 import TestUpdateView from './Test/TestUpdateView'
 
@@ -385,22 +388,32 @@ export default class ListScreen extends Component  {
                     <TestUpdateView  testList={this.state.testList} userInfo={this.state.userInfo} token={this.state.token}/>
                     : this.state.showView == 'AccountListView'?
                     <AccountListView userList={this.state.userList}  changeShowView={this.changeShowView} setSelectedAccount={this.setSelectedAccount}/>
+                    // sub screen
+                    //request
                     : this.state.showView == 'RequestView'?
                     <RequestView  request={this.state.selectedRequest} testList={this.state.testList} userInfo={this.state.userInfo} changeShowView={this.changeShowView} token={this.state.token}/>
                     : this.state.showView == 'RequestLostSampleView'?
                     <RequestLostSampleView  request={this.state.selectedRequest} userInfo={this.state.userInfo} changeShowView={this.changeShowView} token={this.state.token}/>
+                    : this.state.showView == 'RequestUpdateResultView'?
+                    <RequestUpdateResultView  request={this.state.selectedRequest} userInfo={this.state.userInfo} changeShowView={this.changeShowView} token={this.state.token}/>
+                    //appointment
                     : this.state.showView == 'AppointmentView'?
                     <AppointmentView  appointment={this.state.selectedAppointment} userInfo={this.state.userInfo} changeShowView={this.changeShowView} token={this.state.token}/>
+                    : this.state.showView == 'AppointmentRejectView'?
+                    <AppointmentRejectView appointment={this.state.selectedAppointment} userInfo={this.state.userInfo} changeShowView={this.changeShowView} token={this.state.token}/>
+                    //article
                     : this.state.showView == 'ArticleAddView'?
                     <ArticleAddView   token={this.state.token}  userInfo={this.state.userInfo} changeShowView={this.changeShowView} />
                     : this.state.showView == 'ArticleView'?
                     <ArticleView  article={this.state.selectedArticle} />
+                    //account
                     : this.state.showView == 'AccountCreateView'?
                     <AccountCreateView  districtList={this.state.districtList} token={this.state.token}/>
                     : this.state.showView == 'AccountView'?
                     <AccountView  districtList={this.state.districtList}  account={this.state.selectedAccount} changeShowView={this.changeShowView} token={this.state.token} userInfo={this.state.userInfo} updateUserInfo={this.updateUserInfo}/>
-                    : null
-                    
+                    : this.state.showView == 'AccountChangePasswordView'?
+                    <AccountChangePasswordView account={this.state.selectedAccount} changeShowView={this.changeShowView} token={this.state.token} userInfo={this.state.userInfo} />
+                    : <View/>
                     
                 }
                 </View>

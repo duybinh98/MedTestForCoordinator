@@ -14,7 +14,7 @@ export default class TestListView extends Component {
             accountDob: '',
             accountGender: '',
             accountPassword: '',
-            AccountRePassword: '',
+            accountRePassword: '',
             districtList: this.props.districtList?this.props.districtList:[],
             townList: this.props.districtList?this.props.districtList[0].listTown:[],
             districtSelected: this.props.districtList?this.props.districtList[0].districtCode:'none',
