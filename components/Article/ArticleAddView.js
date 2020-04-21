@@ -191,7 +191,7 @@ export default class ArticleAddView extends Component  {
                         >
                             <Text>Chọn ảnh</Text>
                         </TouchableOpacity>
-                        <Text style={[styles.rowText,{fontSize:15,width:600,paddingTop:3}]}>{' '+this.state.imageResultUri}</Text>
+                        <Text style={[styles.rowText,{fontSize:15,width:600,paddingTop:3,marginLeft:20}]}>{' '+this.state.imageResultUri}</Text>
                     </View>
                     {this.state.imageResultUri?
                     <View style={styles.articleAddRowContainer}>

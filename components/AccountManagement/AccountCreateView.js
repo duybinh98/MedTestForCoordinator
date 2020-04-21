@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity, TextInput, Picker} from 'react-native';
 import {getRoleName, getApiUrl, convertDateToDateTime} from './../Common/CommonFunction'
-// import DatePicker from 'react-native-date-picker'
+import * as ImagePicker from 'expo-image-picker';
 
 
 export default class TestListView extends Component {
@@ -24,6 +24,7 @@ export default class TestListView extends Component {
             year: new Date().getFullYear(),
             month: new Date().getMonth() + 1,
             day: new Date().getDate(),
+            imageResultUri: '',
             error: '',
             errorList: ['',
                     'Tên chủ tài khoản không được bỏ trống',
@@ -47,6 +48,7 @@ export default class TestListView extends Component {
             townList: this.props.districtList?this.props.districtList[0].listTown:[],
             districtSelected: this.props.districtList?this.props.districtList[0].districtCode:'none',
             townSelected: this.props.districtList?this.props.districtList[0].listTown[0]?this.props.districtList[0].listTown[0].townCode:'none':'none',
+            imageResultUri: '',
             error: '',
         }));
     }
@@ -59,6 +61,7 @@ export default class TestListView extends Component {
                 townList: this.props.districtList?this.props.districtList[0].listTown:[],
                 districtSelected: this.props.districtList?this.props.districtList[0].districtCode:'none',
                 townSelected: this.props.districtList?this.props.districtList[0].listTown[0]?this.props.districtList[0].listTown[0].townCode:'none':'none',
+                imageResultUri: '',
                 error: '',
             }));
         }
@@ -224,6 +227,41 @@ export default class TestListView extends Component {
     }
 
 
+
+    selectPicture = async () =>{
+        const result = await ImagePicker.launchImageLibraryAsync()
+        console.log(result)
+        if (!result.cancelled) {
+            this.callApiUploadImage(result)
+        }
+    }
+
+    
+    callApiUploadImage (_data) {
+        fetch(getApiUrl()+'/uploadImage', {
+        method: 'POST',
+        headers: {      
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer '+this.props.token,
+        },
+        body: JSON.stringify({
+            "file": _data.uri
+        }),
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                // console.log('result:'+JSON.stringify(result))
+                this.setState({ imageResultUri: result.uri });
+            },
+            (error) => {
+                console.log('error:'+error)    
+            }
+        );
+    }
+
+
     render(){        
     return(        
         <View style={styles.accountCreateViewArea}>
@@ -379,8 +417,34 @@ export default class TestListView extends Component {
                             <Picker.Item label={'Điều phối viên'} value={'COORDINATOR'} />
                             <Picker.Item label={'Quản trị hệ thống'} value={'ADMIN'} />
                         </Picker>
-                        
                     </View> 
+                    <View style={styles.accountCreateRowContainer}>
+                        <Text style={styles.rowText}>{'Ảnh đại diện: '}</Text>
+                        <TouchableOpacity 
+                        style={styles.addImageButton}
+                        onPress={() => this.selectPicture()}
+                        >
+                            <Text>Chọn ảnh</Text>
+                        </TouchableOpacity>
+                        
+                    </View>
+                    {this.state.imageResultUri?
+                    <View style={styles.imagePreviewArea}>
+                        <View style={styles.accountCreateRowContainer}>
+                            <Text style={styles.rowText}>{' '}</Text>
+                            <Text style={[styles.rowText,{fontSize:15,width:800,paddingTop:3}]}>{' '+this.state.imageResultUri}</Text>
+                        </View>
+                        <View style={styles.accountCreateRowContainer}>
+                            <Text style={styles.rowText}>{' '}</Text>
+                            <Image 
+                                style={styles.imagePreview}
+                                source={{ uri: this.state.imageResultUri}}
+                                >
+                            </Image>
+                        </View>
+                    </View>
+                    :null
+                    }
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowTextError}>{this.state.error}</Text>                        
                     </View>
@@ -516,6 +580,28 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    imagePreviewArea:{
+        alignSelf: 'stretch',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        margin:0
+    },
+    addImageButton:{
+        width: 200,
+        height:30,
+        borderRadius:10,
+        borderWidth:1,
+        backgroundColor:'#e6e6e6',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    imagePreview:{
+        width:200,
+        height:200,
+        backgroundColor:''
     },
  
 

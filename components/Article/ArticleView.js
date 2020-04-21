@@ -33,7 +33,7 @@ export default class ArticleView extends Component  {
             <View style={styles.articleArea}>
                 <View style={styles.articleContainer}>      
                     <View style={styles.articleRowContainer}>
-                        <Text style={{fontSize:25}}>{this.props.article?this.props.article.articleTitle:''}</Text>                
+                        <Text style={{fontSize:25,fontWeight:'bold'}}>{this.props.article?this.props.article.articleTitle:''}</Text>                
                     </View>
                     <View style={[styles.articleRowContainer,{borderWidth:1,borderRadius:1,borderStyle: 'dashed',width:180}]}>
                         <Text style={[styles.rowText,{flex:1,textAlign: 'center',}]}>{this.props.article?convertDateTimeToDate(this.props.article.articleCreatedTime)+"   "+convertDateTimeToTime(this.props.article.articleCreatedTime):''}</Text>

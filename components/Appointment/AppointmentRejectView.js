@@ -51,9 +51,9 @@ export default class AppointmentLostSampleView extends Component  {
                 Authorization: 'Bearer '+this.props.token,
             },
             body: JSON.stringify({
-                status: _status,
+                status: 'rejected',
                 coordinatorID: this.props.userInfo.id,
-                note: 'ok',
+                note: this.state.reason,
             }),
             })
         .then(res => res.json())
@@ -87,12 +87,12 @@ export default class AppointmentLostSampleView extends Component  {
     return (
         <View style={styles.appointmentViewArea}>
             <View style={styles.appointmentTopMenuArea}>
-                <Text style={{fontSize:25}}>Từ chối đơn đơn hẹn: </Text>                
+                <Text style={{fontSize:25}}>Từ chối đơn hẹn: </Text>                
             </View>
             <View style={styles.appointmentArea}>
                 <View style={styles.appointmentContainer}>   
                     <View style={styles.appointmentRowContainer}>
-                        <Text style={styles.rowText}>Mã đơn đơn đơn hẹn: </Text>        
+                        <Text style={styles.rowText}>Mã đơn hẹn: </Text>        
                         <Text style={styles.rowText}>{this.props.appointment?this.props.appointment.appointmentId:''}</Text>      
                     </View>
                     <View style={styles.appointmentRowContainer}>
@@ -125,9 +125,14 @@ export default class AppointmentLostSampleView extends Component  {
                         <Text style={styles.rowTextError}>{this.state.error}</Text>                        
                     </View>
                 </View>
-                <TouchableOpacity style={styles.appointmentConfirmButton} onPress={() => this.rejectAppointment()}>
-                    <Text>Báo mất mẫu</Text>
-                </TouchableOpacity>
+                <View style={styles.buttonArea}>
+                    <TouchableOpacity style={styles.appointmentConfirmButton} onPress={() => this.props.changeShowView('AppointmentView')}>
+                        <Text>Quay lại</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.appointmentConfirmButton} onPress={() => this.rejectAppointment()}>
+                        <Text>Từ chối đơn hẹn</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     );
@@ -243,5 +248,16 @@ const styles = StyleSheet.create({
         width:300,
         fontSize:13,
         color:'red',        
+    },
+    buttonArea:{
+        alignSelf: 'stretch',
+        width:'100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingTop:10,
+        paddingBottom:50,
+        paddingLeft:200,
+        paddingRight:200,
     },
 });

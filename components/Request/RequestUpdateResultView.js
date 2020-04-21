@@ -34,6 +34,11 @@ export default class RequestUpdateResultView extends Component  {
 
     completeUpdateResult(){
         if(this.checkValid()){
+            let index = this.state.imageUriList.length - 1;
+            while (index >= 0) {
+                this.callApiSetResultImage(this.state.imageUriList[index].image)
+                index-=1
+            }
             this.callApiUpdateRequest()
         }
     }
@@ -114,7 +119,11 @@ export default class RequestUpdateResultView extends Component  {
         .then(
             (result) => {
                 // console.log('result:'+JSON.stringify(result))
-                this.callApiSetResultImage(result.uri)
+                // this.callApiSetResultImage(result.uri)
+                let tempList = this.state.imageUriList
+                tempList.push({'image':result.uri})
+                // console.log(tempList)
+                this.setState({ imageUriList: tempList });   
             },
             (error) => {
                 console.log('error:'+error)    
@@ -164,7 +173,7 @@ export default class RequestUpdateResultView extends Component  {
     return (
         <View style={styles.requestAddViewArea}>
             <View style={styles.requestAddTopMenuArea}>
-                <Text style={{fontSize:25}}>Thêm bài viết: </Text>                
+                <Text style={{fontSize:25}}>Thêm kết quả xét nghiệm: </Text>                
             </View>
             <View style={styles.requestAddArea}>
                 <View style={styles.requestAddContainer}>                    
@@ -195,19 +204,19 @@ export default class RequestUpdateResultView extends Component  {
                     </View>
                     {this.state.imageUriList.length==0?null:
                     this.state.imageUriList.map(imageUri => (                        
-                    <View style={[{ alignSelf: 'stretch',flexDirection: 'column',alignItems: 'flex-start',justifyContent: 'flex-start',margin:0}]}>
-                    <View style={styles.requestRowContainer}>
-                        <Text style={styles.rowText}>{' '}</Text>
-                        <Text style={[styles.rowText,{fontSize:15,width:600,paddingTop:3}]}>{' '+imageUri.image}</Text>
-                    </View>
-                    <View style={styles.requestRowContainer}>
-                        <Text style={styles.rowText}>{' '}</Text>
-                        <Image 
-                            style={styles.imagePreview}
-                            source={{ uri: imageUri.image}}
-                            >
-                        </Image>
-                    </View>
+                    <View style={styles.imagePreviewArea}>
+                        <View style={styles.requestRowContainer}>
+                            <Text style={styles.rowText}>{' '}</Text>
+                            <Text style={[styles.rowText,{fontSize:15,width:600,paddingTop:3}]}>{' '+imageUri.image}</Text>
+                        </View>
+                        <View style={styles.requestRowContainer}>
+                            <Text style={styles.rowText}>{' '}</Text>
+                            <Image 
+                                style={styles.imagePreview}
+                                source={{ uri: imageUri.image}}
+                                >
+                            </Image>
+                        </View>
                     </View>
                     ))
                     }
@@ -281,7 +290,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        width:150,
+        width:170,
         fontSize:18,
     },
     requestTypeDropDown:{
@@ -319,6 +328,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    imagePreviewArea:{
+        alignSelf: 'stretch',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        margin:0
     },
     imagePreview:{
         width:200,

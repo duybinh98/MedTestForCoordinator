@@ -18,8 +18,8 @@ export function convertDateToDateTime(inputDate){
 }
 
 export function getApiUrl(){
-    // return "http://192.168.1.17:8080";
-    return "https://medtest-backend.herokuapp.com";
+    return "http://192.168.1.17:8080";
+    // return "https://medtest-backend.herokuapp.com";
 }
 
 export function getRoleName(role){
@@ -92,8 +92,11 @@ export function getAppointmentStateName(status){
         case 'accepted':
             return 'Đơn đã được chấp nhận';
             break;
-        case 'canceled':
+        case 'rejected':
             return 'Đơn đã bị từ chối';
+            break;
+        case 'canceled':
+            return 'Đơn đã bị hủy';
             break;
         
         } 

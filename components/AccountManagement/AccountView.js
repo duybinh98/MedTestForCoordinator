@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity, TextInput, Picker} from 'react-native';
 import {getRoleName, getApiUrl, convertDateToDateTime} from './../Common/CommonFunction'
-// import DatePicker from 'react-native-date-picker'
+import * as ImagePicker from 'expo-image-picker';
 
 
 export default class TestListView extends Component {
@@ -25,6 +25,7 @@ export default class TestListView extends Component {
             year: new Date().getFullYear(),
             month: new Date().getMonth() + 1,
             day: new Date().getDate(),
+            accountImageUrl: '',
             error: '',
             errorList: ['','Tên chủ tài khoản không được bỏ trống','Địa chỉ email không được bỏ trống', 'Địa chỉ không được bỏ trống'],
 
@@ -57,6 +58,7 @@ export default class TestListView extends Component {
             accountRole: this.props.account?this.props.account.accountRole:'',
             accountAddress: this.props.account?this.props.account.accountAddress:'',
             accountActive: this.props.account?this.props.account.accountActive:'',
+            accountImageUrl: this.props.account?this.props.account.accountImageUrl:'',
             year: this.props.account?this.props.account.accountDob? this.props.account.accountDob.substring(0,4):'2020':'2020',
             month: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(5,7)).toString():'2020':'2020',
             day: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(8,10)).toString():'2020':'2020',
@@ -79,6 +81,7 @@ export default class TestListView extends Component {
             accountRole: this.props.account?this.props.account.accountRole:'',
             accountAddress: this.props.account?this.props.account.accountAddress:'',
             accountActive: this.props.account?this.props.account.accountActive:'',
+            accountImageUrl: this.props.account?this.props.account.accountImageUrl:'',
             year: this.props.account?this.props.account.accountDob? this.props.account.accountDob.substring(0,4):'2020':'2020',
             month: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(5,7)).toString():'2020':'2020',
             day: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(8,10)).toString():'2020':'2020',
@@ -267,6 +270,40 @@ export default class TestListView extends Component {
         );
     }
 
+    
+    selectPicture = async () =>{
+        const result = await ImagePicker.launchImageLibraryAsync()
+        console.log(result)
+        if (!result.cancelled) {
+            this.callApiUploadImage(result)
+        }
+    }
+
+    
+    callApiUploadImage (_data) {
+        fetch(getApiUrl()+'/uploadImage', {
+        method: 'POST',
+        headers: {      
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer '+this.props.token,
+        },
+        body: JSON.stringify({
+            "file": _data.uri
+        }),
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                // console.log('result:'+JSON.stringify(result))
+                this.setState({ accountImageUrl: result.uri });
+            },
+            (error) => {
+                console.log('error:'+error)    
+            }
+        );
+    }
+
     checkCurrentUser(){
         if (this.props.account.accountId == this.props.userInfo.id) return true
         return false
@@ -413,17 +450,6 @@ export default class TestListView extends Component {
                     </View> 
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowText}>Vị trí nhân viên:</Text>
-                        {/* <Picker
-                            selectedValue={this.state.accountRole}
-                            style={styles.accountTypeDropDown}
-                            onValueChange={(itemValue, itemIndex) => this.setState({
-                                accountRole:itemValue,
-                            })}                    
-                            >
-                            <Picker.Item label={'Y tá'} value={'NURSE'} />
-                            <Picker.Item label={'Điều phối viên'} value={'COORDINATOR'} />
-                            <Picker.Item label={'Quản trị hệ thống'} value={'ADMIN'} />
-                        </Picker> */}
                         <Text style={styles.rowText}>{getRoleName(this.state.accountRole)}</Text>
                     </View> 
                     <View style={styles.accountCreateRowContainer}>
@@ -443,6 +469,32 @@ export default class TestListView extends Component {
                         <Text style={styles.rowTextLong}>{this.state.accountActive=='1'?'Đang hoạt động':'Bị khóa'}</Text>
                         }
                     </View> 
+                    <View style={styles.accountCreateRowContainer}>
+                        <Text style={styles.rowText}>{'Ảnh đại diện: '}</Text>
+                        <TouchableOpacity 
+                        style={styles.addImageButton}
+                        onPress={() => this.selectPicture()}
+                        >
+                            <Text>Chọn ảnh</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {this.state.accountImageUrl?
+                    <View style={styles.imagePreviewArea}>
+                        <View style={styles.accountCreateRowContainer}>
+                            <Text style={styles.rowText}>{' '}</Text>
+                            <Text style={[styles.rowText,{fontSize:15,width:800,paddingTop:3}]}>{' '+this.state.accountImageUrl}</Text>
+                        </View>
+                        <View style={styles.accountCreateRowContainer}>
+                            <Text style={styles.rowText}>{' '}</Text>
+                            <Image 
+                                style={styles.imagePreview}
+                                source={{ uri: this.state.accountImageUrl}}
+                                >
+                            </Image>
+                        </View>
+                    </View>
+                    :null
+                    }
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowTextError}>{this.state.error}</Text>                        
                     </View>
@@ -610,6 +662,28 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    imagePreviewArea:{
+        alignSelf: 'stretch',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        margin:0
+    },
+    addImageButton:{
+        width: 200,
+        height:30,
+        borderRadius:10,
+        borderWidth:1,
+        backgroundColor:'#e6e6e6',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    imagePreview:{
+        width:200,
+        height:200,
+        backgroundColor:''
     },
 
  

@@ -125,9 +125,14 @@ export default class RequestLostSampleView extends Component  {
                         <Text style={styles.rowTextError}>{this.state.error}</Text>                        
                     </View>
                 </View>
-                <TouchableOpacity style={styles.requestConfirmButton} onPress={() => this.lostSample()}>
-                    <Text>Báo mất mẫu</Text>
-                </TouchableOpacity>
+                <View style={styles.buttonArea}>
+                    <TouchableOpacity style={styles.requestConfirmButton} onPress={() => this.props.changeShowView('RequestView')}>
+                        <Text>Quay lại</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.requestConfirmButton} onPress={() => this.lostSample()}>
+                        <Text>Báo mất mẫu</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </View>
     );
@@ -243,5 +248,16 @@ const styles = StyleSheet.create({
         width:300,
         fontSize:13,
         color:'red',        
+    },
+    buttonArea:{
+        alignSelf: 'stretch',
+        width:'100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingTop:10,
+        paddingBottom:50,
+        paddingLeft:200,
+        paddingRight:200,
     },
 });

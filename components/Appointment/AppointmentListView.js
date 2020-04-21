@@ -96,7 +96,8 @@ export default class AppointmentListView extends Component  {
                         <Picker.Item label="Tất cả" value="all" />
                         <Picker.Item label="Đơn đang đợi xử lý" value="pending" />
                         <Picker.Item label="Đơn đã được chấp nhận" value="accepted" />
-                        <Picker.Item label="Đơn đã bị từ chối" value="canceled" />
+                        <Picker.Item label="Đơn đã bị từ chối" value="rejected" />
+                        <Picker.Item label="Đơn đã bị hủy" value="canceled" />
                     </Picker>                    
                 </View>
                 <View style={styles.appointmentListTopMenuContainer}>
