@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions} from 'react-native';
 
 import PageHeader from './PageHeader'
+import PageFooter from './PageFooter'
 
 import AccountListView from './AccountManagement/AccountListView'
 import AccountCreateView from './AccountManagement/AccountCreateView'
@@ -45,8 +46,8 @@ export default class ListScreen extends Component  {
             //authentication
             logIn: false,
             userInfo: null,
-            // logIn: false,
-            // userInfo: null,
+            // logIn: true,
+            // userInfo: userList[0],
             token: '',
             
             //request
@@ -63,6 +64,7 @@ export default class ListScreen extends Component  {
 
             //test
             testList: [],
+            testVersion: '',
 
             //account
             userList: null,
@@ -73,6 +75,8 @@ export default class ListScreen extends Component  {
 
         };
         this.loginSuccess = this.loginSuccess.bind(this)
+        this.logOut = this.logOut.bind(this)
+        this.searchRequest = this.searchRequest.bind(this)
         this.menuButtonPress = this.menuButtonPress.bind(this)
         this.changeShowView = this.changeShowView.bind(this)
         this.setSelectedArticle = this.setSelectedArticle.bind(this)
@@ -80,6 +84,7 @@ export default class ListScreen extends Component  {
         this.setSelectedAppointment = this.setSelectedAppointment.bind(this)
         this.setSelectedAccount = this.setSelectedAccount.bind(this)
         this.updateUserInfo = this.updateUserInfo.bind(this)
+        
     }
 
     
@@ -142,6 +147,71 @@ export default class ListScreen extends Component  {
         }))
     }
 
+    searchRequest(requestId){
+        console.log(requestId)
+        let request = null
+        let index = this.state.requestList.length - 1;
+        while (index >= 0) {
+            // console.log(this.state.testListTemp[index].testTypeName+ ", "+this.state.testListTemp[index].testTypeID)
+            if (this.state.requestList[index].requestID == requestId) {
+                request = this.state.requestList[index]
+                console.log(request)
+                if(this.state.testVersion != request.versionOfTest){
+                    fetch(getApiUrl()+"/tests/versions/list-all-test/"+request.versionOfTest,{
+                        method: 'GET',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            Authorization: 'Bearer '+this.state.token,
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(
+                        (result) => {
+                            console.log(result)
+                            let success = false
+                            let list = []
+                            result ? result.message? null : success=true : null;
+                            if (success)
+                            {
+                                this.changeToRequestViewScreen(request,result.lsTests)
+                                return false
+                            }
+                        },            
+                        (error) => {
+                            console.log(error)
+                        }
+                    )  
+                }
+                else this.changeToRequestViewScreen(request,this.state.testList);
+            }
+            index -= 1;
+        }        
+    }
+
+    changeToRequestViewScreen(_request,testList){
+        const request= { 
+            "requestId": _request.requestID,
+            "requestCreatedTime":_request.requestCreatedTime,
+            "customerName":_request.customerName,
+            "customerPhoneNumber":_request.customerPhoneNumber,
+            "customerDOB":_request.customerDOB,
+            "requestAddress":_request.requestAddress,
+            "requestDistrictName":_request.requestDistrictName,
+            "requestTownName": _request.requestTownName,
+            "requestMeetingTime": _request.requestMeetingTime,
+            "nurseName":_request.nurseName,
+            "nurseID":_request.nurseID,
+            "lsSelectedTest":_request.lsSelectedTest,
+            "requestAmount":_request.requestAmount,
+            "requestStatus":_request.requestStatus,
+            "testList":testList,
+            "requestTestVersion":_request.versionOfTest,
+            }
+        this.setSelectedRequest(request)
+        this.changeShowView('RequestView')
+    }
+
     loginSuccess(_userInfo,_token){
         this.setState(previousState => ({ 
             logIn: true,
@@ -156,7 +226,14 @@ export default class ListScreen extends Component  {
             this.callApiAppointmentList()
             this.callApiDistrictList()
         }, 10);
+    }
 
+    logOut(){
+        this.setState(previousState => ({ 
+            logIn: false,
+            userInfo: null,
+            token: null,
+        }))
     }
 
     menuButtonPress(button){
@@ -279,17 +356,25 @@ export default class ListScreen extends Component  {
     }
     
     callApiTestList = async () => {
-        fetch(getApiUrl()+"/test-types/type-test")
-        // fetch(getApiUrl()+"/tests/versions/lastest-version-test/")
+        // fetch(getApiUrl()+"/test-types/type-test")
+        fetch(getApiUrl()+"/tests/versions/lastest-version-test/",{
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.state.token,
+            }
+        })
         .then(res => res.json())
         .then(
             (result) => {
-                // console.log(result)
+                console.log(result)
                 let success = false
                 result ? result.message? null : success=true : null;
                 if (success)
                 this.setState(previousState => ({
-                    testList: result,
+                    testList: result.lsTests,
+                    testVersion: result.versionID
                 }));
             },
             (error) => {
@@ -321,14 +406,14 @@ export default class ListScreen extends Component  {
     const WIDTH = Dimensions.get('window').width
     return (
         <View style={{flex:1}}>
-            <PageHeader userInfo={this.state.userInfo?this.state.userInfo:null} changeShowView={this.state.userInfo?this.changeShowView:null}  setSelectedAccount={this.state.userInfo?this.setSelectedAccount:null}/>
+            <PageHeader userInfo={this.state.userInfo?this.state.userInfo:null} changeShowView={this.state.userInfo?this.changeShowView:null}  setSelectedAccount={this.state.userInfo?this.setSelectedAccount:null} logOut={this.state.userInfo?this.logOut:null} searchRequest={this.searchRequest}/>
             { !this.state.logIn ?
             <LoginView loginSuccess={this.loginSuccess}/>
             :
             <View style={styles.listAreaContainer}>
                 <View style={styles.topMenu}>
                     <TouchableOpacity style={[styles.topMenuButton,{
-                        width: this.state.userInfo.role=='COORDINATOR'? WIDTH/4 : WIDTH/5 ,
+                        width: this.state.userInfo.role=='COORDINATOR'? WIDTH/4 : WIDTH/parseFloat(5) ,
                         borderWidth: this.state.Button1Selected ? 1:0,
                         backgroundColor: this.state.Button1Selected ? '#a8c6fa' : 'white' 
                         }]}
@@ -337,7 +422,7 @@ export default class ListScreen extends Component  {
                         <Text style={styles.topMenuText}>Yêu cầu xét nghiệm</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.topMenuButton,{
-                        width: this.state.userInfo.role=='COORDINATOR'? WIDTH/4 : WIDTH/5 ,
+                        width: this.state.userInfo.role=='COORDINATOR'? WIDTH/4 : WIDTH/parseFloat(5) ,
                         borderWidth: this.state.Button2Selected ? 1:0,
                         backgroundColor: this.state.Button2Selected ? '#a8c6fa' : 'white' 
                         }]}
@@ -346,7 +431,7 @@ export default class ListScreen extends Component  {
                         <Text style={styles.topMenuText}>Cuộc Hẹn</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.topMenuButton,{
-                        width: this.state.userInfo.role=='COORDINATOR'? WIDTH/4 : WIDTH/5 ,
+                        width: this.state.userInfo.role=='COORDINATOR'? WIDTH/4 : WIDTH/parseFloat(5) ,
                         borderWidth: this.state.Button3Selected ? 1:0,
                         backgroundColor: this.state.Button3Selected ? '#a8c6fa' : 'white' 
                         }]}
@@ -355,7 +440,7 @@ export default class ListScreen extends Component  {
                         <Text style={styles.topMenuText}>Bài đăng</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.topMenuButton,{
-                        width: this.state.userInfo.role=='COORDINATOR'? WIDTH/4 : WIDTH/5 ,
+                        width: this.state.userInfo.role=='COORDINATOR'? WIDTH/4 : WIDTH/parseFloat(5) ,
                         borderWidth: this.state.Button4Selected ? 1:0,
                         backgroundColor: this.state.Button4Selected ? '#a8c6fa' : 'white' 
                         }]}
@@ -365,7 +450,7 @@ export default class ListScreen extends Component  {
                     </TouchableOpacity>
                     {this.state.userInfo.role=='COORDINATOR'? null :
                     <TouchableOpacity style={[styles.topMenuButton,{
-                        width: this.state.userInfo.role=='COORDINATOR'? 0 : WIDTH/5 ,
+                        width: this.state.userInfo.role=='COORDINATOR'? 0 : WIDTH/parseFloat(5) ,
                         borderWidth: this.state.Button5Selected ? 1:0,
                         backgroundColor: this.state.Button5Selected ? '#a8c6fa' : 'white' 
                         }]}
@@ -378,7 +463,7 @@ export default class ListScreen extends Component  {
                 <View style={{width:'100%',flex:1,backgroundColor:''}}>
                 {
                     this.state.showView == 'RequestListView'? 
-                    <RequestListView requestList={this.state.requestList} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} districtList={this.state.districtList} />                    
+                    <RequestListView requestList={this.state.requestList} testVersion={this.state.testVersion} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} districtList={this.state.districtList} token={this.state.token}/>                    
                     // <ArticleAddView  />
                     : this.state.showView == 'AppointmentListView'? 
                     <AppointmentListView appointmentList={this.state.appointmentList} changeShowView={this.changeShowView} setSelectedAppointment={this.setSelectedAppointment} districtList={this.state.districtList}/>
@@ -417,6 +502,7 @@ export default class ListScreen extends Component  {
                     
                 }
                 </View>
+                <PageFooter/>
             </View>
             }
         </View>
@@ -429,6 +515,7 @@ const menuHeight= 50
 const styles = StyleSheet.create({
     listAreaContainer: {
         flex: 1,
+        width: Dimensions.get('window').width,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
@@ -436,14 +523,14 @@ const styles = StyleSheet.create({
     },
     topMenu:{
         height: menuHeight,
-        width:'100%',
+        width: Dimensions.get('window').width,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
         backgroundColor:'white'
     },
     topMenuButton:{
-        width: Dimensions.get('window').width/3,
+        width: Dimensions.get('window').width/parseFloat(5),
         height: menuHeight,
         flexDirection: 'column',
         alignItems: 'center',

@@ -180,7 +180,7 @@ export default class RequestView extends Component  {
                                 style={styles.rowFlatList}
                                 showsVerticalScrollIndicator={false}
                                 scrollEnabled={false}
-                                data={this.props.testList?this.props.testList:[]}
+                                data={this.props.request?this.props.request.testList:[]}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => {
                                     return (

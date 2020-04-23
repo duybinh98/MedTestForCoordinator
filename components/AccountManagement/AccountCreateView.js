@@ -24,7 +24,7 @@ export default class TestListView extends Component {
             year: new Date().getFullYear(),
             month: new Date().getMonth() + 1,
             day: new Date().getDate(),
-            imageResultUri: '',
+            accountImage: '',
             error: '',
             errorList: ['',
                     'Tên chủ tài khoản không được bỏ trống',
@@ -48,7 +48,7 @@ export default class TestListView extends Component {
             townList: this.props.districtList?this.props.districtList[0].listTown:[],
             districtSelected: this.props.districtList?this.props.districtList[0].districtCode:'none',
             townSelected: this.props.districtList?this.props.districtList[0].listTown[0]?this.props.districtList[0].listTown[0].townCode:'none':'none',
-            imageResultUri: '',
+            accountImage: '',
             error: '',
         }));
     }
@@ -61,7 +61,7 @@ export default class TestListView extends Component {
                 townList: this.props.districtList?this.props.districtList[0].listTown:[],
                 districtSelected: this.props.districtList?this.props.districtList[0].districtCode:'none',
                 townSelected: this.props.districtList?this.props.districtList[0].listTown[0]?this.props.districtList[0].listTown[0].townCode:'none':'none',
-                imageResultUri: '',
+                accountImage: '',
                 error: '',
             }));
         }
@@ -209,6 +209,7 @@ export default class TestListView extends Component {
             townCode: this.state.townSelected,
             address: this.state.accountAddress,
             role: this.state.accountRole,
+            image: this.state.accountImage
         }),
         })
         .then(res => res.json())
@@ -252,8 +253,8 @@ export default class TestListView extends Component {
         .then(res => res.json())
         .then(
             (result) => {
-                // console.log('result:'+JSON.stringify(result))
-                this.setState({ imageResultUri: result.uri });
+                console.log('result:'+JSON.stringify(result))
+                this.setState({ accountImage: result.uri });
             },
             (error) => {
                 console.log('error:'+error)    
@@ -428,17 +429,17 @@ export default class TestListView extends Component {
                         </TouchableOpacity>
                         
                     </View>
-                    {this.state.imageResultUri?
+                    {this.state.accountImage?
                     <View style={styles.imagePreviewArea}>
                         <View style={styles.accountCreateRowContainer}>
                             <Text style={styles.rowText}>{' '}</Text>
-                            <Text style={[styles.rowText,{fontSize:15,width:800,paddingTop:3}]}>{' '+this.state.imageResultUri}</Text>
+                            <Text style={[styles.rowText,{fontSize:15,width:800,paddingTop:3}]}>{' '+this.state.accountImage}</Text>
                         </View>
                         <View style={styles.accountCreateRowContainer}>
                             <Text style={styles.rowText}>{' '}</Text>
                             <Image 
                                 style={styles.imagePreview}
-                                source={{ uri: this.state.imageResultUri}}
+                                source={{ uri: this.state.accountImage}}
                                 >
                             </Image>
                         </View>
@@ -451,7 +452,7 @@ export default class TestListView extends Component {
                 </View>    
             </View>
             <TouchableOpacity style={styles.accountCreateConfirmButton} onPress={()=>this.createAccount()}>
-                    <Text>Tạo bài bài viết</Text>
+                    <Text>Tạo tài khoản nhân viên</Text>
                 </TouchableOpacity>
         </View>
     );

@@ -34,12 +34,8 @@ export default class RequestUpdateResultView extends Component  {
 
     completeUpdateResult(){
         if(this.checkValid()){
-            let index = this.state.imageUriList.length - 1;
-            while (index >= 0) {
-                this.callApiSetResultImage(this.state.imageUriList[index].image)
-                index-=1
-            }
-            this.callApiUpdateRequest()
+            this.callApiSetResultImage()
+            // this.callApiUpdateRequest()
         }
     }
 
@@ -74,7 +70,7 @@ export default class RequestUpdateResultView extends Component  {
             (result) => {
                 console.log('result:'+JSON.stringify(result))
                 let success = false
-                result ? result.message? null: success=result.success : null;
+                result ? result.message? null: success=true : null;
                 if (success) 
                 this.props.changeShowView('RequestListView')
             },
@@ -131,7 +127,14 @@ export default class RequestUpdateResultView extends Component  {
         );
     }
 
-    callApiSetResultImage(imageUri){
+    callApiSetResultImage(){
+        let imageList = []
+        let index = this.state.imageUriList.length - 1;
+        while (index >= 0) {
+            imageList.push(this.state.imageUriList[index].image)
+            index-=1
+        }
+        console.log(imageList)
         fetch(getApiUrl()+'/requests/detail/results/add', {
         method: 'POST',
         headers: {      
@@ -140,7 +143,7 @@ export default class RequestUpdateResultView extends Component  {
             Authorization: 'Bearer '+this.props.token,
         },
         body: JSON.stringify({
-            image: imageUri,
+            listImage: imageList,
             userID: this.props.userInfo.id,
             requestID: this.props.request.requestId
         }),
@@ -152,14 +155,8 @@ export default class RequestUpdateResultView extends Component  {
                 let success = false
                 result ? result.message? null: success=true : null;   
                 if(success){
-                    let tempList = this.state.imageUriList
-                    tempList.push({'image':result.image})
-                    console.log(tempList)
-                    this.setState({ imageUriList: tempList });   
+                    this.callApiUpdateRequest()
                 }  
-                setTimeout(() => {
-                    console.log(this.state.imageUriList)
-                }, 2000);
                         
             },
             (error) => {

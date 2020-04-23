@@ -77,7 +77,7 @@ export default class AppointmentView extends Component  {
                 <View style={styles.appointmentContainer}>      
                     <View style={styles.appointmentRowContainer}>
                         <View style={styles.rowFirstContainer}>
-                            <Text style={styles.rowText}>Mã đơn xét nghiệm: </Text>                
+                            <Text style={styles.rowText}>Mã đơn xét khám: </Text>                
                         </View>
                         <View style={styles.rowSecondContainer}>
                             <Text style={styles.rowText}>{this.props.appointment?this.props.appointment.appointmentId:''}</Text>                

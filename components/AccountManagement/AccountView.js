@@ -25,7 +25,7 @@ export default class TestListView extends Component {
             year: new Date().getFullYear(),
             month: new Date().getMonth() + 1,
             day: new Date().getDate(),
-            accountImageUrl: '',
+            accountImage: '',
             error: '',
             errorList: ['','Tên chủ tài khoản không được bỏ trống','Địa chỉ email không được bỏ trống', 'Địa chỉ không được bỏ trống'],
 
@@ -58,7 +58,7 @@ export default class TestListView extends Component {
             accountRole: this.props.account?this.props.account.accountRole:'',
             accountAddress: this.props.account?this.props.account.accountAddress:'',
             accountActive: this.props.account?this.props.account.accountActive:'',
-            accountImageUrl: this.props.account?this.props.account.accountImageUrl:'',
+            accountImage: this.props.account?this.props.account.accountImageUrl:'',
             year: this.props.account?this.props.account.accountDob? this.props.account.accountDob.substring(0,4):'2020':'2020',
             month: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(5,7)).toString():'2020':'2020',
             day: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(8,10)).toString():'2020':'2020',
@@ -81,7 +81,7 @@ export default class TestListView extends Component {
             accountRole: this.props.account?this.props.account.accountRole:'',
             accountAddress: this.props.account?this.props.account.accountAddress:'',
             accountActive: this.props.account?this.props.account.accountActive:'',
-            accountImageUrl: this.props.account?this.props.account.accountImageUrl:'',
+            accountImage: this.props.account?this.props.account.accountImageUrl:'',
             year: this.props.account?this.props.account.accountDob? this.props.account.accountDob.substring(0,4):'2020':'2020',
             month: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(5,7)).toString():'2020':'2020',
             day: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(8,10)).toString():'2020':'2020',
@@ -250,7 +250,8 @@ export default class TestListView extends Component {
             email: this.state.accountEmail,
             gender: this.state.accountGender,
             townCode: this.state.townSelected,
-            districtCode: this.state.districtSelected
+            districtCode: this.state.districtSelected,
+            image: this.state.accountImage
         }),
         })
         .then(res => res.json())
@@ -296,7 +297,7 @@ export default class TestListView extends Component {
         .then(
             (result) => {
                 // console.log('result:'+JSON.stringify(result))
-                this.setState({ accountImageUrl: result.uri });
+                this.setState({ accountImage: result.uri });
             },
             (error) => {
                 console.log('error:'+error)    
@@ -478,17 +479,17 @@ export default class TestListView extends Component {
                             <Text>Chọn ảnh</Text>
                         </TouchableOpacity>
                     </View>
-                    {this.state.accountImageUrl?
+                    {this.state.accountImage?
                     <View style={styles.imagePreviewArea}>
                         <View style={styles.accountCreateRowContainer}>
                             <Text style={styles.rowText}>{' '}</Text>
-                            <Text style={[styles.rowText,{fontSize:15,width:800,paddingTop:3}]}>{' '+this.state.accountImageUrl}</Text>
+                            <Text style={[styles.rowText,{fontSize:15,width:800,paddingTop:3}]}>{' '+this.state.accountImage}</Text>
                         </View>
                         <View style={styles.accountCreateRowContainer}>
                             <Text style={styles.rowText}>{' '}</Text>
                             <Image 
                                 style={styles.imagePreview}
-                                source={{ uri: this.state.accountImageUrl}}
+                                source={{ uri: this.state.accountImage}}
                                 >
                             </Image>
                         </View>

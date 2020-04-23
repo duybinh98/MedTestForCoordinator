@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity} from 'react-native';
-import {convertDateTimeToDate, convertDateTimeToTime, getStateName, getStateColor} from './../Common/CommonFunction'
+import {getApiUrl, convertDateTimeToDate, convertDateTimeToTime, getStateName, getStateColor} from './../Common/CommonFunction'
 
 export default class RequestListPendingItem extends Component {
     constructor(props) {
@@ -15,7 +15,7 @@ export default class RequestListPendingItem extends Component {
     componentDidMount(){
     }
 
-    onRequestPress(){
+    changeToRequestViewScreen(testList){
         const request= { 
             "requestId": this.props.requestId,
             "requestCreatedTime":this.props.requestCreatedTime,
@@ -31,10 +31,50 @@ export default class RequestListPendingItem extends Component {
             "lsSelectedTest":this.props.lsSelectedTest,
             "requestAmount":this.props.requestAmount,
             "requestStatus":this.props.requestStatus,
+            "testList":testList,
+            "requestTestVersion":this.props.requestTestVersion,
             }
         this.props.setSelectedRequest?this.props.setSelectedRequest(request):null
         this.props.changeShowView?this.props.changeShowView('RequestView'):null
     }
+
+    onRequestPress(){        
+        if (this.checkVersion()) this.changeToRequestViewScreen(this.props.testList)
+    }
+
+    checkVersion(){
+        if(this.props.testVersion != this.props.requestTestVersion){
+            fetch(getApiUrl()+"/tests/versions/list-all-test/"+this.props.requestTestVersion,{
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                }
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                    let success = false
+                    let list = []
+                    result ? result.message? null : success=true : null;
+                    if (success)
+                    {
+                        this.changeToRequestViewScreen(result.lsTests)
+                        return false
+                    }
+                },            
+                (error) => {
+                    console.log(error)
+                }
+            )  
+        }
+        else return true;
+        
+    }
+
+
 
 
     render(){        

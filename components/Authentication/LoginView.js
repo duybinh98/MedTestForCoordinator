@@ -2,6 +2,8 @@ import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity,TextInput, Dimensions} from 'react-native';
 import {getApiUrl} from './../Common/CommonFunction'
 
+import PageFooter from './../PageFooter'
+
 export default class Login extends Component  {
     constructor(props) {
         super(props)
@@ -102,6 +104,7 @@ export default class Login extends Component  {
                         onChange={this.handleChange}
                         value={this.state.password}
                         secureTextEntry={true}
+                        onSubmitEditing={() => this.login()}
                         >                
                     </TextInput>     
                 </View>
@@ -112,6 +115,7 @@ export default class Login extends Component  {
                     <Text>Đăng nhập</Text>
                 </TouchableOpacity>
             </View>
+            <PageFooter/>
         </View>
     );
     }

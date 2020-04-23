@@ -279,6 +279,7 @@ const styles = StyleSheet.create({
     articleListFlatListTitleContainer:{
         alignSelf: 'stretch',
         width: Dimensions.get('window').width-400,
+        // width: 750,
         backgroundColor: 'white',
         flexDirection: 'row',
         alignItems: 'center',
@@ -311,7 +312,7 @@ const styles = StyleSheet.create({
         flex:1,
         flexDirection: 'column',
         backgroundColor: '',
-        paddingBottom:20,
+        paddingBottom:40,
     },
 
 });
