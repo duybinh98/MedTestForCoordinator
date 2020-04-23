@@ -1,21 +1,23 @@
 {
   "files": {
-    "app.js": "/MedTestForCoordinator/static/js/app.e2bba165.chunk.js",
-    "app.js.map": "/MedTestForCoordinator/static/js/app.e2bba165.chunk.js.map",
+    "app.js": "/MedTestForCoordinator/static/js/app.76572e64.chunk.js",
+    "app.js.map": "/MedTestForCoordinator/static/js/app.76572e64.chunk.js.map",
     "runtime~app.js": "/MedTestForCoordinator/static/js/runtime~app.90dec588.js",
     "runtime~app.js.map": "/MedTestForCoordinator/static/js/runtime~app.90dec588.js.map",
-    "static/js/2.ed48ec10.chunk.js": "/MedTestForCoordinator/static/js/2.ed48ec10.chunk.js",
-    "static/js/2.ed48ec10.chunk.js.map": "/MedTestForCoordinator/static/js/2.ed48ec10.chunk.js.map",
+    "static/js/2.f50cb137.chunk.js": "/MedTestForCoordinator/static/js/2.f50cb137.chunk.js",
+    "static/js/2.f50cb137.chunk.js.map": "/MedTestForCoordinator/static/js/2.f50cb137.chunk.js.map",
     "favicon-16.png": "/MedTestForCoordinator/favicon-16.png",
     "favicon-32.png": "/MedTestForCoordinator/favicon-32.png",
     "favicon.ico": "/MedTestForCoordinator/favicon.ico",
     "index.html": "/MedTestForCoordinator/index.html",
     "manifest.json": "/MedTestForCoordinator/manifest.json",
-    "serve.json": "/MedTestForCoordinator/serve.json"
+    "serve.json": "/MedTestForCoordinator/serve.json",
+    "static/media/ABClinic.jpg": "/MedTestForCoordinator/static/media/ABClinic.013acc21.jpg",
+    "static/media/Group 1.png": "/MedTestForCoordinator/static/media/Group 1.656244df.png"
   },
   "entrypoints": [
     "static/js/runtime~app.90dec588.js",
-    "static/js/2.ed48ec10.chunk.js",
-    "static/js/app.e2bba165.chunk.js"
+    "static/js/2.f50cb137.chunk.js",
+    "static/js/app.76572e64.chunk.js"
   ]
 }

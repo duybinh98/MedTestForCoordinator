@@ -1,15 +1,23 @@
 self.__precacheManifest = [
   {
-    "revision": "f471c0fa5ac737e6b155",
-    "url": "/MedTestForCoordinator/static/js/app.e2bba165.chunk.js"
+    "revision": "23a8a0437ce0a4b32e37",
+    "url": "/MedTestForCoordinator/static/js/app.76572e64.chunk.js"
   },
   {
     "revision": "15eee14489800ef29d40",
     "url": "/MedTestForCoordinator/static/js/runtime~app.90dec588.js"
   },
   {
-    "revision": "130ce1545e0ea6d54018",
-    "url": "/MedTestForCoordinator/static/js/2.ed48ec10.chunk.js"
+    "revision": "bffee1ff9fd2b09721ec",
+    "url": "/MedTestForCoordinator/static/js/2.f50cb137.chunk.js"
+  },
+  {
+    "revision": "656244dfef7b11410a45e248e4fe3b1f",
+    "url": "/MedTestForCoordinator/static/media/Group 1.656244df.png"
+  },
+  {
+    "revision": "013acc2136e6ce3685ba84f1acf741b1",
+    "url": "/MedTestForCoordinator/static/media/ABClinic.013acc21.jpg"
   },
   {
     "revision": "d0c694b562b2208635f250762cd7fc79",
@@ -32,7 +40,7 @@ self.__precacheManifest = [
     "url": "/MedTestForCoordinator/favicon.ico"
   },
   {
-    "revision": "8197cba58653d827bbc82f34d2be67f4",
+    "revision": "b554e3e210d79d858a6701d9b7cfabca",
     "url": "/MedTestForCoordinator/index.html"
   },
   {
