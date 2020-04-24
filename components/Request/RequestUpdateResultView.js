@@ -176,19 +176,19 @@ export default class RequestUpdateResultView extends Component  {
                 <View style={styles.requestAddContainer}>                    
                     <View style={styles.requestRowContainer}>
                         <Text style={styles.rowText}>Mã đơn xét nghiệm: </Text>        
-                        <Text style={styles.rowText}>{this.props.request?this.props.request.requestId:''}</Text>      
+                        <Text style={styles.rowTextLong}>{this.props.request?this.props.request.requestId:''}</Text>      
                     </View>
                     <View style={styles.requestRowContainer}>
                             <Text style={styles.rowText}>Giờ tạo:</Text>      
-                            <Text style={styles.rowText}>{this.props.request?convertDateTimeToDate(this.props.request.requestCreatedTime)+"   "+convertDateTimeToTime(this.props.request.requestCreatedTime):''}</Text>
+                            <Text style={styles.rowTextLong}>{this.props.request?convertDateTimeToDate(this.props.request.requestCreatedTime)+"   "+convertDateTimeToTime(this.props.request.requestCreatedTime):''}</Text>
                     </View>
                     <View style={styles.requestRowContainer}>
                             <Text style={styles.rowText}>Người tạo:</Text> 
-                            <Text style={[styles.rowText,{width:300}]}>{this.props.request?this.props.request.customerName:''}</Text>
+                            <Text style={styles.rowTextLong}>{this.props.request?this.props.request.customerName:''}</Text>
                     </View>
                     <View style={styles.requestRowContainer}>
                             <Text style={styles.rowText}>Số điện thoại:</Text>      
-                            <Text style={styles.rowText}>{this.props.request?this.props.request.customerPhoneNumber:''}</Text> 
+                            <Text style={styles.rowTextLong}>{this.props.request?this.props.request.customerPhoneNumber:''}</Text> 
                     </View>
                     <View style={styles.requestRowContainer}>
                         <Text style={styles.rowText}>{'Ảnh kết quả: '}</Text>
@@ -202,10 +202,10 @@ export default class RequestUpdateResultView extends Component  {
                     {this.state.imageUriList.length==0?null:
                     this.state.imageUriList.map(imageUri => (                        
                     <View style={styles.imagePreviewArea}>
-                        <View style={styles.requestRowContainer}>
+                        {/* <View style={styles.requestRowContainer}>
                             <Text style={styles.rowText}>{' '}</Text>
-                            <Text style={[styles.rowText,{fontSize:15,width:600,paddingTop:3}]}>{' '+imageUri.image}</Text>
-                        </View>
+                            <Text style={[styles.rowTextLong,{fontSize:15,width:600,paddingTop:3}]}>{' '+imageUri.image}</Text>
+                        </View> */}
                         <View style={styles.requestRowContainer}>
                             <Text style={styles.rowText}>{' '}</Text>
                             <Image 
@@ -287,7 +287,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        width:170,
+        width:200,
+        fontSize:18,
+        fontWeight:'bold'
+    },
+    rowTextLong:{
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width:500,
         fontSize:18,
     },
     requestTypeDropDown:{

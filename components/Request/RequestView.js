@@ -128,52 +128,37 @@ export default class RequestView extends Component  {
             <View style={styles.requestArea}>
                 <View style={styles.requestContainer}>      
                     <View style={styles.requestRowContainer}>
-                        <View style={styles.rowFirstContainer}>
-                            <Text style={styles.rowText}>Mã đơn xét nghiệm: </Text>                
-                        </View>
-                        <View style={styles.rowSecondContainer}>
-                            <Text style={styles.rowText}>{this.props.request?this.props.request.requestId:''}</Text>                
-                        </View>
+                            <Text style={styles.rowText}>Mã đơn xét nghiệm: </Text>      
+                            <Text style={styles.rowTextLong}>{this.props.request?this.props.request.requestId:''}</Text> 
                     </View>
                     <View style={styles.requestRowContainer}>
-                        <View style={styles.rowFirstContainer}>
-                            <Text style={styles.rowText}>Giờ tạo:</Text>                
-                        </View>
-                        <View style={styles.rowSecondContainer}>
-                            <Text style={styles.rowText}>{this.props.request?convertDateTimeToDate(this.props.request.requestCreatedTime)+"   "+convertDateTimeToTime(this.props.request.requestCreatedTime):''}</Text>            
-                        </View>
+                            <Text style={styles.rowText}>Giờ tạo:</Text>   
+                            <Text style={styles.rowTextLong}>{this.props.request?convertDateTimeToDate(this.props.request.requestCreatedTime)+"   "+convertDateTimeToTime(this.props.request.requestCreatedTime):''}</Text>
+                        
                     </View>
                     <View style={styles.requestRowContainer}>
-                        <View style={styles.rowFirstContainer}>
-                            <Text style={styles.rowText}>Người tạo:</Text>                
-                        </View>
-                        <View style={styles.rowSecondContainer}>
-                            <Text style={styles.rowText}>{this.props.request?this.props.request.customerName:''}</Text>            
-                        </View>
+                            <Text style={styles.rowText}>Người tạo:</Text>   
+                            <Text style={styles.rowTextLong}>{this.props.request?this.props.request.customerName:''}</Text>    
                     </View>
                     <View style={styles.requestRowContainer}>
-                        <View style={styles.rowFirstContainer}>
-                            <Text style={styles.rowText}>Số điện thoại:</Text>                
-                        </View>
-                        <View style={styles.rowSecondContainer}>
-                            <Text style={styles.rowText}>{this.props.request?this.props.request.customerPhoneNumber:''}</Text>            
-                        </View>
+                            <Text style={styles.rowText}>Số điện thoại:</Text>    
+                            <Text style={styles.rowTextLong}>{this.props.request?this.props.request.customerPhoneNumber:''}</Text> 
                     </View>
                     <View style={styles.requestRowContainer}>
-                        <View style={styles.rowFirstContainer}>
-                            <Text style={styles.rowText}>Địa chỉ nhận đơn: </Text>                
-                        </View>
-                        <View style={styles.rowSecondContainer}>
-                            <Text style={styles.rowText}>{this.props.request?this.props.request.requestAddress+', '+this.props.request.requestTownName+', '+this.props.request.requestDistrictName:''}</Text>            
-                        </View>
+                            <Text style={styles.rowText}>Địa chỉ nhận đơn: </Text>    
+                            <Text style={styles.rowTextLong}>{this.props.request?this.props.request.requestAddress+', '+this.props.request.requestTownName+', '+this.props.request.requestDistrictName:''}</Text>
                     </View>
                     <View style={styles.requestRowContainer}>
-                        <View style={styles.rowFirstContainer}>
-                            <Text style={styles.rowText}>Trạng thái: </Text>                
-                        </View>
-                        <View style={styles.rowSecondContainer}>
-                            <Text style={styles.rowText}>{this.props.request?getStateName(this.props.request.requestStatus):''}</Text>            
-                        </View>
+                            <Text style={styles.rowText}>Y tá nhận đơn: </Text>    
+                            <Text style={styles.rowTextLong}>{this.props.request?this.props.request.nurseName:''}</Text>
+                    </View>
+                    <View style={styles.requestRowContainer}>
+                            <Text style={styles.rowText}>Điều phối viên: </Text>    
+                            <Text style={styles.rowTextLong}>{this.props.request?this.props.request.coordinatorName:''}</Text>
+                    </View>
+                    <View style={styles.requestRowContainer}>
+                            <Text style={styles.rowText}>Trạng thái: </Text>
+                            <Text style={styles.rowTextLong}>{this.props.request?getStateName(this.props.request.requestStatus):''}</Text>
                     </View>
                     <View style={styles.requestRowContainer}>
                         <FlatList
@@ -207,13 +192,13 @@ export default class RequestView extends Component  {
                 <View style={styles.buttonArea}>
                     {!this.getLeftButtonName(this.props.request?this.props.request.requestStatus:'') ==''?
                     <TouchableOpacity style={styles.button} onPress={() => this.onLeftButtonPress(this.props.request?this.props.request.requestStatus:'')}>
-                        <Text>{this.getLeftButtonName(this.props.request?this.props.request.requestStatus:'')}</Text>
+                        <Text style={{color:'white'}}>{this.getLeftButtonName(this.props.request?this.props.request.requestStatus:'')}</Text>
                     </TouchableOpacity> 
                     :<View/>
                     }
                     {!this.getRightButtonName(this.props.request?this.props.request.requestStatus:'')==''?
                     <TouchableOpacity style={styles.button} onPress={() => this.onRightButtonPress(this.props.request?this.props.request.requestStatus:'')}>
-                        <Text>{this.getRightButtonName(this.props.request?this.props.request.requestStatus:'')}</Text>
+                        <Text style={{color:'white'}}>{this.getRightButtonName(this.props.request?this.props.request.requestStatus:'')}</Text>
                     </TouchableOpacity>  
                     :<View/>
                     }
@@ -278,15 +263,23 @@ const styles = StyleSheet.create({
         width:'100%',
         marginBottom:30,
     },
-    rowFirstContainer:{
-        width:200,
-    },
-    rowSecondContainer:{
-        width:'100%',
-    },
     rowText:{
-        fontSize:18,
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width:200,
+        fontSize:17,
+        fontWeight:'bold',
         backgroundColor:''
+    },
+    rowTextLong:{
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width:500,
+        fontSize:17,
     },
     rowFlatList: {
         width: '100%',
@@ -316,7 +309,7 @@ const styles = StyleSheet.create({
     button:{
         height:50,
         width:200,
-        backgroundColor:'#e6e6e6',
+        backgroundColor:'#25345D',
         borderRadius:5,
         borderWidth:1,
         flexDirection: 'row',

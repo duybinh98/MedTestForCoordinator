@@ -76,63 +76,39 @@ export default class AppointmentView extends Component  {
             <View style={styles.appointmentArea}>
                 <View style={styles.appointmentContainer}>      
                     <View style={styles.appointmentRowContainer}>
-                        <View style={styles.rowFirstContainer}>
-                            <Text style={styles.rowText}>Mã đơn xét khám: </Text>                
-                        </View>
-                        <View style={styles.rowSecondContainer}>
-                            <Text style={styles.rowText}>{this.props.appointment?this.props.appointment.appointmentId:''}</Text>                
-                        </View>
+                            <Text style={styles.rowText}>Mã đơn xét khám: </Text> 
+                            <Text style={styles.rowTextLong}>{this.props.appointment?this.props.appointment.appointmentId:''}</Text> 
                     </View>
                     <View style={styles.appointmentRowContainer}>
-                        <View style={styles.rowFirstContainer}>
-                            <Text style={styles.rowText}>Giờ tạo:</Text>                
-                        </View>
-                        <View style={styles.rowSecondContainer}>
-                            <Text style={styles.rowText}>{this.props.appointment?convertDateTimeToDate(this.props.appointment.appointmentCreatedTime)+"   "+convertDateTimeToTime(this.props.appointment.appointmentCreatedTime):''}</Text>            
-                        </View>
+                            <Text style={styles.rowText}>Giờ tạo:</Text>   
+                            <Text style={styles.rowTextLong}>{this.props.appointment?convertDateTimeToDate(this.props.appointment.appointmentCreatedTime)+"   "+convertDateTimeToTime(this.props.appointment.appointmentCreatedTime):''}</Text> 
                     </View>
                     <View style={styles.appointmentRowContainer}>
-                        <View style={styles.rowFirstContainer}>
-                            <Text style={styles.rowText}>Giờ hẹn:</Text>                
-                        </View>
-                        <View style={styles.rowSecondContainer}>
-                            <Text style={styles.rowText}>{this.props.appointment?convertDateTimeToDate(this.props.appointment.appointmentMeetingTime)+"   "+convertDateTimeToTime(this.props.appointment.appointmentMeetingTime):''}</Text>            
-                        </View>
+                            <Text style={styles.rowText}>Giờ hẹn:</Text>
+                            <Text style={styles.rowTextLong}>{this.props.appointment?convertDateTimeToDate(this.props.appointment.appointmentMeetingTime)+"   "+convertDateTimeToTime(this.props.appointment.appointmentMeetingTime):''}</Text>
                     </View>  
                     <View style={styles.appointmentRowContainer}>
-                        <View style={styles.rowFirstContainer}>
-                            <Text style={styles.rowText}>Người tạo:</Text>                
-                        </View>
-                        <View style={styles.rowSecondContainer}>
-                            <Text style={styles.rowText}>{this.props.appointment?this.props.appointment.customerName:''}</Text>            
-                        </View>
+                            <Text style={styles.rowText}>Người tạo:</Text>
+                            <Text style={styles.rowTextLong}>{this.props.appointment?this.props.appointment.customerName:''}</Text>
                     </View>
                     <View style={styles.appointmentRowContainer}>
-                        <View style={styles.rowFirstContainer}>
-                            <Text style={styles.rowText}>Số điện thoại:</Text>                
-                        </View>
-                        <View style={styles.rowSecondContainer}>
-                            <Text style={styles.rowText}>{this.props.appointment?this.props.appointment.customerPhoneNumber:''}</Text>            
-                        </View>
+                            <Text style={styles.rowText}>Số điện thoại:</Text>
+                            <Text style={styles.rowTextLong}>{this.props.appointment?this.props.appointment.customerPhoneNumber:''}</Text>
                     </View>                  
                     <View style={styles.appointmentRowContainer}>
-                        <View style={styles.rowFirstContainer}>
-                            <Text style={styles.rowText}>Trạng thái: </Text>                
-                        </View>
-                        <View style={styles.rowSecondContainer}>
-                            <Text style={styles.rowText}>{this.props.appointment?getAppointmentStateName(this.props.appointment.appointmentStatus):''}</Text>            
-                        </View>
+                            <Text style={styles.rowText}>Trạng thái: </Text>
+                            <Text style={styles.rowTextLong}>{this.props.appointment?getAppointmentStateName(this.props.appointment.appointmentStatus):''}</Text>
                     </View>
                 </View>
                 <View style={styles.buttonArea}>
                     {this.props.appointment.appointmentStatus =='pending'?
                     <TouchableOpacity style={styles.button} onPress={() => this.onReject()}>
-                        <Text>Từ chối</Text>
+                        <Text style={{color:'white'}}>Từ chối</Text>
                     </TouchableOpacity> 
                     :<View/>}
                     {this.props.appointment.appointmentStatus =='pending'?
                     <TouchableOpacity style={styles.button} onPress={() => this.onAccept()}>
-                        <Text>Xác nhận</Text>
+                        <Text style={{color:'white'}}>Xác nhận</Text>
                     </TouchableOpacity> 
                     :<View/>}
                 </View>
@@ -203,7 +179,23 @@ const styles = StyleSheet.create({
         width:'100%',
     },
     rowText:{
-        fontSize:18,
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width:200,
+        fontSize:17,
+        fontWeight:'bold',
+        backgroundColor:''
+    },
+    
+    rowTextLong:{
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width:500,
+        fontSize:17,
         backgroundColor:''
     },
     buttonArea:{
@@ -220,7 +212,7 @@ const styles = StyleSheet.create({
     button:{
         height:50,
         width:200,
-        backgroundColor:'#e6e6e6',
+        backgroundColor:'#25345D',
         borderRadius:5,
         borderWidth:1,
         flexDirection: 'row',

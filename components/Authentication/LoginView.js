@@ -112,7 +112,7 @@ export default class Login extends Component  {
                     <Text style={styles.rowTextError}>{this.state.error}</Text>                         
                 </View>
                 <TouchableOpacity style={styles.loginButton} onPress={() => this.login()}>
-                    <Text>Đăng nhập</Text>
+                    <Text style={{color:'white'}}>Đăng nhập</Text>
                 </TouchableOpacity>
             </View>
             <PageFooter/>
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     loginButton:{
         height:50,
         width:200,
-        backgroundColor:'white',
+        backgroundColor:'#25345D',
         borderRadius:5,
         borderWidth:1,
         marginTop:20,

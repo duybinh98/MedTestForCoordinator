@@ -341,7 +341,7 @@ export default class TestListView extends Component {
                     </View>
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowText}>Số điện thoại:</Text>
-                        <Text style={styles.rowText}>{this.state.accountPhoneNumber}</Text>
+                        <Text style={styles.rowTextLong}>{this.state.accountPhoneNumber}</Text>
                     </View>
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowText}>Địa chỉ email:</Text>
@@ -451,7 +451,7 @@ export default class TestListView extends Component {
                     </View> 
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowText}>Vị trí nhân viên:</Text>
-                        <Text style={styles.rowText}>{getRoleName(this.state.accountRole)}</Text>
+                        <Text style={styles.rowTextLong}>{getRoleName(this.state.accountRole)}</Text>
                     </View> 
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowText}>Trạng thái:</Text>
@@ -476,15 +476,15 @@ export default class TestListView extends Component {
                         style={styles.addImageButton}
                         onPress={() => this.selectPicture()}
                         >
-                            <Text>Chọn ảnh</Text>
+                            <Text style={{color:'white'}}>Chọn ảnh</Text>
                         </TouchableOpacity>
                     </View>
                     {this.state.accountImage?
                     <View style={styles.imagePreviewArea}>
-                        <View style={styles.accountCreateRowContainer}>
+                        {/* <View style={styles.accountCreateRowContainer}>
                             <Text style={styles.rowText}>{' '}</Text>
-                            <Text style={[styles.rowText,{fontSize:15,width:800,paddingTop:3}]}>{' '+this.state.accountImage}</Text>
-                        </View>
+                            <Text style={[styles.rowTextLong,{fontSize:15,width:800,paddingTop:3}]}>{' '+this.state.accountImage}</Text>
+                        </View> */}
                         <View style={styles.accountCreateRowContainer}>
                             <Text style={styles.rowText}>{' '}</Text>
                             <Image 
@@ -503,15 +503,15 @@ export default class TestListView extends Component {
                 <View style={styles.buttonArea}>
                     {this.checkCurrentUser()?
                     <TouchableOpacity style={styles.button} onPress={() => this.changePassword()}>
-                        <Text>Thay đổi mật khẩu</Text>
+                        <Text style={{color:'white'}}>Thay đổi mật khẩu</Text>
                     </TouchableOpacity>
                     :
                     <TouchableOpacity style={styles.button} onPress={() => this.resetPassword()}>
-                        <Text>Đặt lại mật khẩu</Text>
+                        <Text style={{color:'white'}}>Đặt lại mật khẩu</Text>
                     </TouchableOpacity>
                     }
                     <TouchableOpacity style={styles.button} onPress={() => this.updateAccountInformation()}>
-                        <Text>Lưu thay đổi</Text>
+                        <Text style={{color:'white'}}>Lưu thay đổi</Text>
                     </TouchableOpacity>
                 </View>  
             </View>
@@ -581,6 +581,7 @@ const styles = StyleSheet.create({
         width:170,
         fontSize:17,
         paddingTop:3,
+        fontWeight:'bold'
         
     },
     rowTextLong:{
@@ -657,7 +658,7 @@ const styles = StyleSheet.create({
     button:{
         height:50,
         width:200,
-        backgroundColor:'#e6e6e6',
+        backgroundColor:'#25345D',
         borderRadius:5,
         borderWidth:1,
         flexDirection: 'row',
@@ -676,7 +677,7 @@ const styles = StyleSheet.create({
         height:30,
         borderRadius:10,
         borderWidth:1,
-        backgroundColor:'#e6e6e6',
+        backgroundColor:'#25345D',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',

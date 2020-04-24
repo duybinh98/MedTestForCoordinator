@@ -84,7 +84,7 @@ export default class AppointmentListView extends Component  {
         <View style={styles.appointmentListArea}>
             <View style={styles.appointmentListTopMenuArea}>
                 <View style={styles.appointmentListTopMenuContainer}>
-                    <Text>Trạng thái: </Text>
+                    <Text style={{fontWeight:'bold'}}>Trạng thái: </Text>
                     <Picker
                         selectedValue={this.state.statusSelected}
                         style={styles.appointmentTypeDropdown}

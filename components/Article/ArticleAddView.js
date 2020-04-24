@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput, Image} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput, Image, Alert} from 'react-native';
 import {getApiUrl} from './../Common/CommonFunction'
 import appointmentList from './../../Data/appointmentList'
 import districtList from './../../Data/districtList'
@@ -189,9 +189,9 @@ export default class ArticleAddView extends Component  {
                         style={styles.addImageButton}
                         onPress={() => this.selectPicture()}
                         >
-                            <Text>Chọn ảnh</Text>
+                            <Text style={{color:'white'}}>Chọn ảnh</Text>
                         </TouchableOpacity>
-                        <Text style={[styles.rowText,{fontSize:15,width:600,paddingTop:3,marginLeft:20}]}>{' '+this.state.imageResultUri}</Text>
+                        {/* <Text style={[styles.rowText,{fontSize:15,width:600,paddingTop:3,marginLeft:20}]}>{' '+this.state.imageResultUri}</Text> */}
                     </View>
                     {this.state.imageResultUri?
                     <View style={styles.articleAddRowContainer}>
@@ -209,7 +209,7 @@ export default class ArticleAddView extends Component  {
                     </View>
                 </View>
                 <TouchableOpacity style={styles.articleAddConfirmButton} onPress={() => this.createArticle()}>
-                    <Text>Tạo bài bài viết</Text>
+                    <Text style={{color:'white'}}>Tạo bài bài viết</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     articleAddConfirmButton:{
         height:50,
         width:200,
-        backgroundColor:'white',
+        backgroundColor:'#25345D',
         borderRadius:5,
         borderWidth:1,
         marginBottom:50,
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
         height:30,
         borderRadius:10,
         borderWidth:1,
-        backgroundColor:'#e6e6e6',
+        backgroundColor:'#25345D',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',

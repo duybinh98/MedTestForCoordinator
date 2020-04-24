@@ -17,6 +17,7 @@ export default class TestUpdateView extends Component  {
             testTypeSelectedForCreate: 'none',
             dataChanged: true,
             testList: [],
+            testListApi: true,
             testListTemp: [],
             versionList: null,
             testName: '',
@@ -216,41 +217,49 @@ export default class TestUpdateView extends Component  {
     }
 
     callApiGetTestList(version){
-        let url = ''
-        if (version) url =  getApiUrl()+"/tests/versions/list-all-test/"+version
-        else url =  getApiUrl()+"/tests/versions/lastest-version-test/"
-        fetch(url,{
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer '+this.props.token,
-            }
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log(result)
-                let success = false
-                let list = []
-                result ? result.message? null : success=true : null;
-                if (success)
-                {
-                    this.setState(previousState => ({
-                        testList: result.lsTests ,
-                        testListTemp: result.lsTests ,
-                    }));
+        
+        if(this.state.testListApi){
+            this.setState(previousState => ({
+                testListApi: false,
+            }));
+            let url = ''
+            if (version) url =  getApiUrl()+"/tests/versions/list-all-test/"+version
+            else url =  getApiUrl()+"/tests/versions/lastest-version-test/"
+            fetch(url,{
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
                 }
-                else 
-                this.setState(previousState => ({
-                        testList: [],
-                        testListTemp: [],
-                    }));
-            },            
-            (error) => {
-                console.log(error)
-            }
-        )  
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                    let success = false
+                    let list = []
+                    result ? result.message? null : success=true : null;
+                    if (success)
+                    {
+                        this.setState(previousState => ({
+                            testList: result.lsTests ,
+                            testListTemp: result.lsTests ,
+                            testListApi: true,
+                        }));
+                    }
+                    else 
+                    this.setState(previousState => ({
+                            testList: [],
+                            testListTemp: [],
+                            testListApi: true,
+                        }));
+                },            
+                (error) => {
+                    console.log(error)
+                }
+            )  
+        }
 
     }
 
@@ -306,17 +315,24 @@ export default class TestUpdateView extends Component  {
                         <Picker.Item label={version.versionID} value={version.versionID} key={version.versionID}/>
                     )):null}
                 </Picker> 
-                <Text style={[styles.rowText,{width:250}]}>{"Cập nhật: "+(this.state.versionCreatedTime?convertDateTimeToDate(this.state.versionCreatedTime)+"   "+convertDateTimeToTime(this.state.versionCreatedTime):'')}</Text>   
-                <Text style={[styles.rowText,{width:300}]}>{"Người cập nhật: "+(this.state.versionCreatorName?this.state.versionCreatorName:'')}</Text>  
+                <View style={{flexDirection: 'row',}}>
+                    <Text style={[styles.rowText,{width:79,fontWeight:'bold'}]}>{"Cập nhật: "}</Text>
+                    <Text style={[styles.rowText,{width:173}]}>{(this.state.versionCreatedTime?convertDateTimeToDate(this.state.versionCreatedTime)+"   "+convertDateTimeToTime(this.state.versionCreatedTime):'')}</Text>   
+                </View>
+                <View style={{flexDirection: 'row',}}>
+                    <Text style={[styles.rowText,{width:133,fontWeight:'bold'}]}>{"Người cập nhật: "}</Text>  
+                    <Text style={[styles.rowText,{width:200}]}>{(this.state.versionCreatorName?this.state.versionCreatorName:'')}</Text> 
+                </View>
+                 
                 <TouchableOpacity style={styles.testUpdateConfirmButton} onPress={() => this.callApiUpdateVersion()}>
-                    <Text>Cập nhật</Text>
+                    <Text style={{color:'white'}}>Cập nhật</Text>
                 </TouchableOpacity>  
             </View>
             
             <View style={styles.testUpdateArea}>
                 <View style={styles.testUpdateContainer}>
                     <View style={styles.testUpdateRowContainer}>
-                        <Text style={styles.rowText}>Loại test: </Text>
+                        <Text style={[styles.rowText,{fontWeight:'bold'}]}>Loại test: </Text>
                         <Picker
                             selectedValue={this.state.testTypeSelectedForCreate}
                             style={styles.testTypeDropDown}
@@ -330,11 +346,11 @@ export default class TestUpdateView extends Component  {
                             )):null}
                         </Picker>
                         <TouchableOpacity style={styles.createTestButton} onPress={() => this.createTest()}>
-                            <Text>Tạo bài test</Text>
+                            <Text style={{color:'white'}}>Tạo bài test</Text>
                         </TouchableOpacity>   
                     </View>
                     <View style={styles.testUpdateRowContainer}>
-                        <Text style={styles.rowText}>Tên test:</Text>
+                        <Text style={[styles.rowText,{fontWeight:'bold'}]}>Tên test:</Text>
                         <TextInput style={styles.rowTextInput}
                             placeholder={'Nhập tên bài test'}
                             name={"testName"}
@@ -344,7 +360,7 @@ export default class TestUpdateView extends Component  {
                         </TextInput>
                     </View>
                     <View style={styles.testUpdateRowContainer}>
-                        <Text style={styles.rowText}>Giá tiền:</Text>
+                        <Text style={[styles.rowText,{fontWeight:'bold'}]}>Giá tiền:</Text>
                         <TextInput style={styles.rowTextInput}
                             placeholder={'Nhập giá tiền (VNĐ)'}
                             name="testPrice"
@@ -377,7 +393,7 @@ export default class TestUpdateView extends Component  {
                 <Text style={[styles.rowText,{width:500}]}>Số lượng: {this.getTestList()?this.getTestList().length:'0'}</Text>
                 
             </View>
-
+            {this.state.testListApi?
             <View style={styles.testListFlatListArea}>        
                 <FlatList style={styles.testListFlatList}
                     contentContainerStyle={{
@@ -405,6 +421,9 @@ export default class TestUpdateView extends Component  {
                     >                   
                 </FlatList>        
             </View>
+            :<View style={{height:300,flexDirection: 'row',alignItems: 'center',justifyContent: 'center',}}>
+                <Text>Hệ thống đang chạy, vui lòng đợi ...</Text>
+            </View>}
         </View>
     );
     }
@@ -507,7 +526,7 @@ const styles = StyleSheet.create({
     testUpdateConfirmButton:{
         height:30,
         width:200,
-        backgroundColor:'#e6e6e6',
+        backgroundColor:'#25345D',
         borderRadius:5,
         borderWidth:1,
         flexDirection: 'row',
@@ -518,7 +537,7 @@ const styles = StyleSheet.create({
     createTestButton:{
         height:30,
         width:200,
-        backgroundColor:'#e6e6e6',
+        backgroundColor:'#25345D',
         borderRadius:5,
         borderWidth:1,
         flexDirection: 'row',

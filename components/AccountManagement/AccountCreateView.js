@@ -425,16 +425,16 @@ export default class TestListView extends Component {
                         style={styles.addImageButton}
                         onPress={() => this.selectPicture()}
                         >
-                            <Text>Chọn ảnh</Text>
+                            <Text style={{color:'white'}}>Chọn ảnh</Text>
                         </TouchableOpacity>
                         
                     </View>
                     {this.state.accountImage?
                     <View style={styles.imagePreviewArea}>
-                        <View style={styles.accountCreateRowContainer}>
+                        {/* <View style={styles.accountCreateRowContainer}>
                             <Text style={styles.rowText}>{' '}</Text>
                             <Text style={[styles.rowText,{fontSize:15,width:800,paddingTop:3}]}>{' '+this.state.accountImage}</Text>
-                        </View>
+                        </View> */}
                         <View style={styles.accountCreateRowContainer}>
                             <Text style={styles.rowText}>{' '}</Text>
                             <Image 
@@ -452,7 +452,7 @@ export default class TestListView extends Component {
                 </View>    
             </View>
             <TouchableOpacity style={styles.accountCreateConfirmButton} onPress={()=>this.createAccount()}>
-                    <Text>Tạo tài khoản nhân viên</Text>
+                    <Text style={{color:'white'}}>Tạo tài khoản nhân viên</Text>
                 </TouchableOpacity>
         </View>
     );
@@ -518,6 +518,7 @@ const styles = StyleSheet.create({
         width:170,
         fontSize:17,
         paddingTop:3,
+        fontWeight:'bold'
         
     },
     rowTextError:{
@@ -573,7 +574,7 @@ const styles = StyleSheet.create({
     accountCreateConfirmButton:{
         height:50,
         width:200,
-        backgroundColor:'white',
+        backgroundColor:'#25345D',
         borderRadius:5,
         borderWidth:1,
         marginTop:30,
@@ -594,10 +595,11 @@ const styles = StyleSheet.create({
         height:30,
         borderRadius:10,
         borderWidth:1,
-        backgroundColor:'#e6e6e6',
+        backgroundColor:'#25345D',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        
     },
     imagePreview:{
         width:200,

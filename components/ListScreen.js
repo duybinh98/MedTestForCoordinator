@@ -28,6 +28,7 @@ import RequestUpdateResultView from './Request/RequestUpdateResultView'
 import TestUpdateView from './Test/TestUpdateView'
 
 import {getApiUrl} from './Common/CommonFunction'
+import LoadingView from './Common/LoadingView'
 import userList  from './../Data/userList'
 
 export default class ListScreen extends Component  {
@@ -52,22 +53,27 @@ export default class ListScreen extends Component  {
             
             //request
             requestList: null,
+            requestListApi: true,
             selectedRequest: null,
 
             //appointment
             appointmentList: null,
+            appointmentListApi: true,
             selectedAppointment: null,
 
             //article
-            articlesList: null,
+            articleList: null,
+            articleListApi: true,
             selectedArticle : null,
 
             //test
             testList: [],
+            testListApi: true,
             testVersion: '',
 
             //account
             userList: null,
+            userListApi: true,
             selectedAccount: null,
 
             //other data
@@ -84,6 +90,7 @@ export default class ListScreen extends Component  {
         this.setSelectedAppointment = this.setSelectedAppointment.bind(this)
         this.setSelectedAccount = this.setSelectedAccount.bind(this)
         this.updateUserInfo = this.updateUserInfo.bind(this)
+        this.searchUser = this.searchUser.bind(this)
         
     }
 
@@ -202,6 +209,8 @@ export default class ListScreen extends Component  {
             "requestMeetingTime": _request.requestMeetingTime,
             "nurseName":_request.nurseName,
             "nurseID":_request.nurseID,
+            "coordinatorName":_request.coordinatorName,
+            "coordinatorId":_request.coordinatorID,
             "lsSelectedTest":_request.lsSelectedTest,
             "requestAmount":_request.requestAmount,
             "requestStatus":_request.requestStatus,
@@ -210,6 +219,42 @@ export default class ListScreen extends Component  {
             }
         this.setSelectedRequest(request)
         this.changeShowView('RequestView')
+    }
+
+    searchUser(userPhoneNumber){
+        console.log(userPhoneNumber)
+        let account = null
+        let index = this.state.userList.length - 1;
+        while (index >= 0) {
+            // console.log(this.state.testListTemp[index].testTypeName+ ", "+this.state.testListTemp[index].testTypeID)
+            if (this.state.userList[index].phoneNumber == userPhoneNumber) {
+                account = this.state.userList[index]
+                console.log(account)
+                this.changeToAccountViewScreen(account);
+            }
+            index -= 1;
+        }   
+    }
+
+    changeToAccountViewScreen(_account){
+        const account= { 
+            'accountId':_account.id, 
+            'accountPhoneNumber':_account.phoneNumber,                      
+            'accountName':_account.name,
+            'accountDob':_account.dob,
+            'accountAddress':_account.address,
+            'accountPassword':_account.password,
+            'accountActive':_account.active,
+            'accountEmail':_account.email,
+            'accountRole':_account.role,
+            'accountGender':_account.gender,
+            'accountImageUrl':_account.image,
+            'accountTownCode':_account.townCode,
+            'accountDistrictCode':_account.districtCode,
+            }
+        this.setSelectedAccount(account)
+        this.changeShowView('AccountView')
+
     }
 
     loginSuccess(_userInfo,_token){
@@ -259,128 +304,160 @@ export default class ListScreen extends Component  {
 
 
     callApiRequestList= async () => {
-        fetch(getApiUrl()+"/requests/list-all-request",{
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer '+this.state.token,
-            }
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log(result)
-                let success = false
-                result ? result.message? null : success=true : null;
-                if (success)
-                this.setState(previousState => ({
-                    requestList: result,
-                }));
-            },            
-            (error) => {
-                console.log(error)
-            }
-        )
+        if(this.state.requestListApi){
+            this.setState(previousState => ({
+                requestListApi: false,
+            }));
+            fetch(getApiUrl()+"/requests/list-all-request",{
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.state.token,
+                }
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                    let success = false
+                    result ? result.message? null : success=true : null;
+                    if (success)
+                    this.setState(previousState => ({
+                        requestList: result,
+                        requestListApi: true,
+                    }));
+                },            
+                (error) => {
+                    console.log(error)
+                }
+            )
+        }
     }
 
     callApiAppointmentList= async () =>  {
-        fetch(getApiUrl()+"/appointments/list",{
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer '+this.state.token,
-            }
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log(result)
-                let success = false
-                result ? result.message? null : success=true : null;
-                if (success)
-                this.setState(previousState => ({
-                    appointmentList: result,
-                }));
-            },            
-            (error) => {
-                console.log(error)
-            }
-        )
+        if(this.state.appointmentListApi){
+            this.setState(previousState => ({
+                appointmentListApi: false,
+            }));
+            fetch(getApiUrl()+"/appointments/list",{
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.state.token,
+                }
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                    let success = false
+                    result ? result.message? null : success=true : null;
+                    if (success)
+                    this.setState(previousState => ({
+                        appointmentList: result,
+                        appointmentListApi: true,
+                    }));
+                },            
+                (error) => {
+                    console.log(error)
+                }
+            )
+        }
+        
     }
 
     callApiArticleList= async () =>  {
-        fetch(getApiUrl()+"/articles/list")
-        .then(res => res.json())
-        .then(
-            (result) => {
-                // console.log(result)
-                let success = false
-                result ? result.message? null : success=true : null;
-                if (success)
-                this.setState(previousState => ({
-                    articlesList: result,
-                }));
-            },            
-            (error) => {
-                console.log(error)
-            }
-        )
+        if(this.state.articleListApi){
+            this.setState(previousState => ({
+                articleListApi: true,
+            }));
+            fetch(getApiUrl()+"/articles/list")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    // console.log(result)
+                    let success = false
+                    result ? result.message? null : success=true : null;
+                    if (success)
+                    this.setState(previousState => ({
+                        articleList: result,
+                        articleListApi: true,
+                    }));
+                },            
+                (error) => {
+                    console.log(error)
+                }
+            )
+        }
+        
     }
 
     callApiUserList= async () =>  {
-        fetch(getApiUrl()+"/users/list-all-user",{
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer '+this.state.token,
-            }
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log(result)
-                let success = false
-                result ? result.message? null : success=true : null;
-                if (success)
-                this.setState(previousState => ({
-                    userList: result,
-                }));
-            },            
-            (error) => {
-                console.log(error)
-            }
-        )
+        if(this.state.userListApi){
+            this.setState(previousState => ({
+                userListApi: false,
+            }));
+            fetch(getApiUrl()+"/users/list-all-user",{
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.state.token,
+                }
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                    let success = false
+                    result ? result.message? null : success=true : null;
+                    if (success)
+                    this.setState(previousState => ({
+                        userList: result,
+                        userListApi: true,
+                    }));
+                },            
+                (error) => {
+                    console.log(error)
+                }
+            )
+        }
+        
     }
     
     callApiTestList = async () => {
-        // fetch(getApiUrl()+"/test-types/type-test")
-        fetch(getApiUrl()+"/tests/versions/lastest-version-test/",{
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer '+this.state.token,
-            }
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log(result)
-                let success = false
-                result ? result.message? null : success=true : null;
-                if (success)
-                this.setState(previousState => ({
-                    testList: result.lsTests,
-                    testVersion: result.versionID
-                }));
-            },
-            (error) => {
-                console.log(error)
-            }
-        )  
+        if(this.state.testListApi){
+            this.setState(previousState => ({
+                testListApi: false,
+            }));
+            fetch(getApiUrl()+"/tests/versions/lastest-version-test/",{
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.state.token,
+                }
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                    let success = false
+                    result ? result.message? null : success=true : null;
+                    if (success)
+                    this.setState(previousState => ({
+                        testList: result.lsTests,
+                        testVersion: result.versionID,
+                        testListApi: true,
+                    }));
+                },
+                (error) => {
+                    console.log(error)
+                }
+            )  
+        }
     }
 
     callApiDistrictList = async () => {
@@ -462,17 +539,16 @@ export default class ListScreen extends Component  {
                 </View>                
                 <View style={{width:'100%',flex:1,backgroundColor:''}}>
                 {
-                    this.state.showView == 'RequestListView'? 
-                    <RequestListView requestList={this.state.requestList} testVersion={this.state.testVersion} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} districtList={this.state.districtList} token={this.state.token}/>                    
-                    // <ArticleAddView  />
-                    : this.state.showView == 'AppointmentListView'? 
-                    <AppointmentListView appointmentList={this.state.appointmentList} changeShowView={this.changeShowView} setSelectedAppointment={this.setSelectedAppointment} districtList={this.state.districtList}/>
-                    : this.state.showView == 'ArticleListView'?
-                    <ArticleListView  articleList={this.state.articlesList} changeShowView={this.changeShowView} setSelectedArticle={this.setSelectedArticle}/>
+                    this.state.showView == 'RequestListView'? this.state.requestListApi?
+                    <RequestListView requestList={this.state.requestList} testVersion={this.state.testVersion} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} districtList={this.state.districtList} token={this.state.token}/>: <LoadingView  />
+                    : this.state.showView == 'AppointmentListView'? this.state.appointmentListApi?
+                    <AppointmentListView appointmentList={this.state.appointmentList} changeShowView={this.changeShowView} setSelectedAppointment={this.setSelectedAppointment} districtList={this.state.districtList}/>: <LoadingView  />
+                    : this.state.showView == 'ArticleListView'? this.state.articleListApi?
+                    <ArticleListView  articleList={this.state.articleList} changeShowView={this.changeShowView} setSelectedArticle={this.setSelectedArticle}/>: <LoadingView  />
                     : this.state.showView == 'TestUpdateView'?
                     <TestUpdateView  testList={this.state.testList} userInfo={this.state.userInfo} token={this.state.token}/>
-                    : this.state.showView == 'AccountListView'?
-                    <AccountListView userList={this.state.userList}  changeShowView={this.changeShowView} setSelectedAccount={this.setSelectedAccount}/>
+                    : this.state.showView == 'AccountListView'? this.state.userListApi?
+                    <AccountListView userList={this.state.userList}  changeShowView={this.changeShowView} setSelectedAccount={this.setSelectedAccount} searchUser={this.searchUser}/>: <LoadingView  />
                     // sub screen
                     //request
                     : this.state.showView == 'RequestView'?

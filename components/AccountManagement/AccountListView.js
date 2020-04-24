@@ -17,14 +17,24 @@ export default class AccountListScreen extends Component  {
             Button4Selected: false,
             districtsList: districtList,
             accountSelected: 'all',
+            accountId: '',
             userList: this.props.userList?this.props.userList:[],
             dataChanged: true,
         };
         this.menuButtonPress = this.menuButtonPress.bind(this)
         this.getAccountShowList = this.getAccountShowList.bind(this)
+        this.searchUser = this.searchUser.bind(this)
+        this.handleChange = this.handleChange.bind(this)
     }
 
 
+    // componentDidUpdate  (prevProps, prevState) {        
+    //      if (prevProps !== this.props) {
+    //         this.setState(previousState => ({ 
+    //             userList: this.props.userList,
+    //         }));
+    //     }
+    // }
     
     getAccountShowList(){
         
@@ -71,15 +81,16 @@ export default class AccountListScreen extends Component  {
         }
     }
 
+    handleChange(event) {
+        const name = event.target && event.target.name;
+        const value = event.target && event.target.value;        
+        // console.log('event name'+name+', event value:'+value)
+        this.setState({[name]: value});
+    }
 
-    // componentDidUpdate  (prevProps, prevState) {        
-    //      if (prevProps !== this.props) {
-    //         this.setState(previousState => ({ 
-    //             userList: this.props.userList,
-    //         }));
-    //     }
-    // }
-
+    searchUser(){
+        this.props.searchUser?this.props.searchUser(this.state.accountId):null
+    }
 
     render(){
     const WIDTH = Dimensions.get('window').width
@@ -88,13 +99,18 @@ export default class AccountListScreen extends Component  {
             <View style={styles.accountListTopMenuArea}>
                 <View style={styles.accountListTopMenuContainer}>
                     <TextInput style={styles.topMenuTextInput}
-                    placeholder={'Tìm kiếm tài khoản theo số điện thoại'}>                
+                    placeholder={'Tìm kiếm tài khoản theo số điện thoại'}
+                    name="accountId"
+                    onChange={this.handleChange}
+                    value={this.state.accountId}
+                    onSubmitEditing={() => this.searchUser()}
+                    >                
                     </TextInput>
                     <TouchableOpacity 
                         style={styles.createNewAccountButton} 
                         onPress={() => this.props.changeShowView ? this.props.changeShowView('AccountCreateView'): null}
                         >
-                        <Text>Tạo tài khoản nhân viên</Text>
+                        <Text style={{color:'white'}}>Tạo tài khoản nhân viên</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={[styles.accountListTopMenuContainer,{
@@ -142,7 +158,7 @@ export default class AccountListScreen extends Component  {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.accountListTopMenuContainer}>
-                    <Text>Số lượng: {this.getAccountShowList()?this.getAccountShowList().length:'0'}</Text>
+                    <Text >Số lượng: {this.getAccountShowList()?this.getAccountShowList().length:'0'}</Text>
                 </View>
             </View>
             <View style={styles.articleListFlatListArea}>     
@@ -255,7 +271,7 @@ const styles = StyleSheet.create({
         height:30,
         borderRadius:10,
         borderWidth:1,
-        backgroundColor:'#e6e6e6',
+        backgroundColor:'#25345D',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',

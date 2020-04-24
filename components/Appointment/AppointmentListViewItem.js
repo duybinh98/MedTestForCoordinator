@@ -42,7 +42,7 @@ export default class AppointmentListView extends Component {
                     marginTop:5,
                 }]}>                    
                     <View>
-                    <Text style={{fontSize:17}}>#{this.props.appointmentId}</Text>
+                    <Text style={{fontSize:17,color:'#25345D',fontWeight:'bold'}}>#{this.props.appointmentId}</Text>
                     </View>
                 </View>   
                 <View style={styles.appointmentTextContainer}>

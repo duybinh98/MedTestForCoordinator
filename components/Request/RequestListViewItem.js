@@ -27,7 +27,9 @@ export default class RequestListPendingItem extends Component {
             "requestTownName": this.props.requestTownName,
             "requestMeetingTime": this.props.requestMeetingTime,
             "nurseName":this.props.nurseName,
-            "nurseID":this.props.nurseID,
+            "nurseId":this.props.nurseId,
+            "coordinatorId":this.props.coordinatorId,
+            "coordinatorName":this.props.coordinatorName,
             "lsSelectedTest":this.props.lsSelectedTest,
             "requestAmount":this.props.requestAmount,
             "requestStatus":this.props.requestStatus,
@@ -88,7 +90,7 @@ export default class RequestListPendingItem extends Component {
                     marginTop:5,
                 }]}>                    
                     <View>
-                    <Text style={{fontSize:17}}>#{this.props.requestId}</Text>
+                    <Text style={{fontSize:17,color:'#25345D',fontWeight:'bold'}}>#{this.props.requestId}</Text>
                     </View>
                 </View>   
                 <View style={styles.requestListTextContainer}>

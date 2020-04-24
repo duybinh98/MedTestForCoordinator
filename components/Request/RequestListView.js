@@ -86,10 +86,10 @@ export default class RequestListView extends Component  {
         <View style={styles.requestListArea}>
             <View style={styles.requestListTopMenuArea}>
                 <View style={styles.requestListTopMenuContainer}>
-                    <Text>Trạng thái: </Text>
+                    <Text style={{fontWeight:'bold'}}>Trạng thái: </Text>
                     <Picker
                         selectedValue={this.state.statusSelected}
-                        style={styles.requestTypeDropdown}
+                        style={[styles.requestTypeDropdown,{width:360}]}
                         onValueChange={(itemValue, itemIndex) => this.setState({
                             statusSelected:itemValue,
                             dataChanged: !this.state.dataChanged,
@@ -104,8 +104,11 @@ export default class RequestListView extends Component  {
                         <Picker.Item label="Y tá làm mất mẫu" value="lostsample" />
                         <Picker.Item label="Điều phối viên là mất mẫu" value="coordinatorlostsample" />
                         <Picker.Item label="Đơn đã hủy" value="canceled" />
+                        <Picker.Item label="Đã nhận đơn bị mất do điều phối viên" value="reaccepted" />
+                        <Picker.Item label="Đang vận chuyển đơn bị mất do điều phối viên" value="retransporting" />
+                        <Picker.Item label="Đang đợi lấy lại mẫu do điều phối viên làm mất" value="relostsample" />
                     </Picker>
-                    <Text style={{marginLeft:200}}>Quận/Huyện : </Text>
+                    <Text style={{marginLeft:200,fontWeight:'bold'}}>Quận/Huyện : </Text>
                     <Picker
                         selectedValue={this.state.districtSelected}
                         style={styles.requestTypeDropdown}
@@ -148,7 +151,9 @@ export default class RequestListView extends Component  {
                                     requestTownName={item.requestTownName}
                                     requestMeetingTime={item.requestMeetingTime}
                                     nurseName={item.nurseName}
-                                    nurseID={item.nurseID}
+                                    nurseId={item.nurseID}
+                                    coordinatorId={item.coordinatorID}
+                                    coordinatorName={item.coordinatorName}
                                     lsSelectedTest={item.lsSelectedTest}
                                     requestAmount={item.requestAmount}
                                     requestStatus={item.requestStatus}
@@ -204,6 +209,8 @@ const styles = StyleSheet.create({
         height: 35, 
         width: 300,
         borderRadius:5,
+        backgroundColor: 'white',
+        color:'black'
     },
     requestListFlatListArea:{        
         width:"100%",

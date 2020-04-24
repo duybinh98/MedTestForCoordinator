@@ -39,7 +39,7 @@ export default class TestListView extends Component {
             <View style={styles.testListItem}>  
                 <View style={[styles.testTextContainer,{marginTop:5,}]}>  
                     <View style={styles.testListFirstColumnContainer}>
-                        <Text style={{fontSize:17}}>Loại Test: </Text>
+                        <Text style={{fontSize:17,fontWeight:'bold'}}>Loại Test: </Text>
                     </View>
                     <View style={styles.testListSecondColumnContainer}>
                         <Text style={{fontSize:17}}>{this.props.testTypeName}</Text>
@@ -47,7 +47,7 @@ export default class TestListView extends Component {
                 </View>                               
                 <View style={styles.testTextContainer}>           
                     <View style={styles.testListFirstColumnContainer}>
-                        <Text style={{fontSize:17}}>Tên Test: </Text>
+                        <Text style={{fontSize:17,fontWeight:'bold'}}>Tên Test: </Text>
                     </View>
                     <View style={styles.testListSecondColumnContainer}>
                         <Text style={{fontSize:17}}>{this.props.testName}</Text>
@@ -55,7 +55,7 @@ export default class TestListView extends Component {
                 </View>   
                 <View style={[styles.testTextContainer,{marginBottom:10}]}>
                     <View style={styles.testListFirstColumnContainer}>
-                        <Text style={{fontSize:17}}>Giá tiền: </Text>
+                        <Text style={{fontSize:17,fontWeight:'bold'}}>Giá tiền: </Text>
                     </View>
                     <TextInput style={styles.rowTextInput}
                         placeholder={'nhập giá tiền (VNĐ)'}

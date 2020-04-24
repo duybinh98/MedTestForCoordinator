@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, Alert} from 'react-native';
 import {getApiUrl} from './../Common/CommonFunction'
 import ArticleListViewItem from './ArticleListViewItem'
 
@@ -12,6 +12,7 @@ export default class ArticleListScreen extends Component  {
             articleList: this.props.articleList,
         };
         this.onArticlePress = this.onArticlePress.bind(this)
+        this.onAddArticlePress = this.onAddArticlePress.bind(this)
     }
 
     
@@ -29,17 +30,21 @@ export default class ArticleListScreen extends Component  {
     }
 
 
+    onAddArticlePress(){
+        this.props.changeShowView ? this.props.changeShowView('ArticleAddView'): null
+    }
+
     render(){
     const WIDTH = Dimensions.get('window').width
     return (
         <View style={styles.articleListArea}>
             <View style={styles.articleListTopMenuArea}>
-                <Text style={{fontSize:25}}>Bài viết mới </Text>
+                <Text style={{fontSize:25,fontWeight:'bold'}}>Bài viết mới </Text>
                 <TouchableOpacity 
                     style={styles.createNewArticleButton}
-                    onPress={() => this.props.changeShowView ? this.props.changeShowView('ArticleAddView'): null}
+                    onPress={() => this.onAddArticlePress()}
                     >
-                    <Text>Tạo bài viết mới</Text>
+                    <Text style={{color:'white'}}>Tạo bài viết mới</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.articleListFlatListArea}>        
@@ -102,7 +107,7 @@ const styles = StyleSheet.create({
         height:30,
         borderRadius:10,
         borderWidth:1,
-        backgroundColor:'#e6e6e6',
+        backgroundColor:'#25345D',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',

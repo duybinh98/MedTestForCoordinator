@@ -131,10 +131,11 @@ const styles = StyleSheet.create({
         height:headerHight,
         width:300,
         flexDirection: 'row',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         justifyContent: 'flex-start',    
         backgroundColor:'',
         padding:20,
+        
     },
     imageIcon:{
         width:100,
@@ -146,17 +147,17 @@ const styles = StyleSheet.create({
         width:180,
         flexDirection: 'column',
         alignItems: 'flex-start',
-        justifyContent: 'flex-start',    
+        justifyContent: 'center',    
         backgroundColor:'',
         paddingLeft:20,
 
     },
     titleContainer:{
-        height:50,
         width:100,
         alignItems: 'flex-start',
         justifyContent: 'center',
-        backgroundColor:''
+        backgroundColor:'',
+        marginBottom:10,
     },
     hotlineContainer:{
         height:35,
