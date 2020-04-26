@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     imageIcon:{
         width:100,
         height:100,
-        marginTop:5
+        // marginTop:5
     },
     leftContainer:{
         height:headerHight,

@@ -3,9 +3,6 @@ import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList,
 import {convertDateTimeToDate, convertDateTimeToTime} from './../Common/CommonFunction'
 import {getApiUrl, getStateName} from './../Common/CommonFunction'
 import RequestTestCategoryItem from './RequestTestCategoryItem'
-import appointmentList from './../../Data/appointmentList'
-import districtList from './../../Data/districtList'
-import userList from './../../Data/userList'
 
 export default class RequestView extends Component  {
     constructor(props) {

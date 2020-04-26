@@ -1,9 +1,6 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput, Image} from 'react-native';
 import {getApiUrl, convertDateTimeToDate, convertDateTimeToTime} from './../Common/CommonFunction'
-import appointmentList from './../../Data/appointmentList'
-import districtList from './../../Data/districtList'
-import userList from './../../Data/userList'
 import * as ImagePicker from 'expo-image-picker';
 
 export default class RequestUpdateResultView extends Component  {

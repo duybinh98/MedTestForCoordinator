@@ -43,7 +43,7 @@ export default class AppointmentLostSampleView extends Component  {
     }
 
     callApiRejectAppointment(){
-        fetch(getApiUrl()+"/appointments/cancel/"+this.props.appointment.appointmentId, {
+        fetch(getApiUrl()+"/appointments/reject/"+this.props.appointment.appointmentId, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

@@ -2,9 +2,6 @@ import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput} from 'react-native';
 import TestListItem from './TestListItem'
 import {getApiUrl, convertDateTimeToDate, convertDateTimeToTime} from './../Common/CommonFunction'
-import appointmentList from './../../Data/appointmentList'
-import districtList from './../../Data/districtList'
-import userList from './../../Data/userList'
 
 export default class TestUpdateView extends Component  {
     constructor(props) {
@@ -18,6 +15,7 @@ export default class TestUpdateView extends Component  {
             dataChanged: true,
             testList: [],
             testListApi: true,
+            testVersionApi: true,
             testListTemp: [],
             versionList: null,
             testName: '',
@@ -51,34 +49,41 @@ export default class TestUpdateView extends Component  {
     }
 
     callApiGetVersionList(){
-        fetch(getApiUrl()+"/tests/versions/list",{
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer '+this.props.token,
-            }
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                // console.log(result)
-                let success = false
-                result ? result.message? null : success=true : null;
-                if (success){
-                    this.setState(previousState => ({
-                        versionList: result,
-                        versionSelected: result[0].versionID,
-                        versionCreatedTime: result[0].createdTime,
-                        versionCreatorName: result[0].creatorName,
-                    }));
-                    this.callApiGetTestList()
+        if(this.state.testVersionApi){
+            this.setState(previousState => ({
+                testVersionApi: false,
+            }));
+            fetch(getApiUrl()+"/tests/versions/list",{
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
                 }
-            },            
-            (error) => {
-                console.log(error)
-            }
-        )  
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    // console.log(result)
+                    let success = false
+                    result ? result.message? null : success=true : null;
+                    if (success){
+                        this.setState(previousState => ({
+                            versionList: result,
+                            versionSelected: result[0].versionID,
+                            versionCreatedTime: result[0].createdTime,
+                            versionCreatorName: result[0].creatorName,
+                            testVersionApi: true,
+                        }));
+                        this.callApiGetTestList()
+                    }
+                },            
+                (error) => {
+                    console.log(error)
+                }
+            )  
+        }
+        
     }
 
 
@@ -145,16 +150,16 @@ export default class TestUpdateView extends Component  {
         }        
         console.log(result)
         fetch(getApiUrl()+'/tests/versions/upgrade-version', {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer '+this.props.token,
-        },
-        body: JSON.stringify({
-            creatorID: this.props.userInfo.id,
-            lsInputTest: result,
-        }),
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.props.token,
+            },
+            body: JSON.stringify({
+                creatorID: this.props.userInfo.id,
+                lsInputTest: result,
+            }),
         })
         .then(res => res.json())
         .then(
@@ -217,7 +222,6 @@ export default class TestUpdateView extends Component  {
     }
 
     callApiGetTestList(version){
-        
         if(this.state.testListApi){
             this.setState(previousState => ({
                 testListApi: false,
@@ -304,127 +308,136 @@ export default class TestUpdateView extends Component  {
     render(){
     const WIDTH = Dimensions.get('window').width
     return (
+        
         <View style={styles.testUpdateViewArea}>
-            <View style={styles.testUpdateMenuArea}>
-                <Picker
-                    selectedValue={this.state.versionSelected}
-                    style={styles.versionDropdown}
-                    onValueChange={(itemValue, itemIndex) => this.setSelectedVersion(itemValue)}                    
-                    >
-                    {this.state.versionList?this.state.versionList.map(version => (
-                        <Picker.Item label={version.versionID} value={version.versionID} key={version.versionID}/>
-                    )):null}
-                </Picker> 
-                <View style={{flexDirection: 'row',}}>
-                    <Text style={[styles.rowText,{width:79,fontWeight:'bold'}]}>{"Cập nhật: "}</Text>
-                    <Text style={[styles.rowText,{width:173}]}>{(this.state.versionCreatedTime?convertDateTimeToDate(this.state.versionCreatedTime)+"   "+convertDateTimeToTime(this.state.versionCreatedTime):'')}</Text>   
+            {this.state.testListApi?this.state.testVersionApi?
+            <View>
+                <View style={styles.testUpdateMenuArea}>
+                    <Picker
+                        selectedValue={this.state.versionSelected}
+                        style={styles.versionDropdown}
+                        onValueChange={(itemValue, itemIndex) => this.setSelectedVersion(itemValue)}                    
+                        >
+                        {this.state.versionList?this.state.versionList.map(version => (
+                            <Picker.Item label={version.versionID} value={version.versionID} key={version.versionID}/>
+                        )):null}
+                    </Picker> 
+                    <View style={{flexDirection: 'row',}}>
+                        <Text style={[styles.rowText,{width:79,fontWeight:'bold'}]}>{"Cập nhật: "}</Text>
+                        <Text style={[styles.rowText,{width:173}]}>{(this.state.versionCreatedTime?convertDateTimeToDate(this.state.versionCreatedTime)+"   "+convertDateTimeToTime(this.state.versionCreatedTime):'')}</Text>   
+                    </View>
+                    <View style={{flexDirection: 'row',}}>
+                        <Text style={[styles.rowText,{width:133,fontWeight:'bold'}]}>{"Người cập nhật: "}</Text>  
+                        <Text style={[styles.rowText,{width:200}]}>{(this.state.versionCreatorName?this.state.versionCreatorName:'')}</Text> 
+                    </View>
+                    
+                    <TouchableOpacity style={styles.testUpdateConfirmButton} onPress={() => this.callApiUpdateVersion()}>
+                        <Text style={{color:'white'}}>Cập nhật</Text>
+                    </TouchableOpacity>  
                 </View>
-                <View style={{flexDirection: 'row',}}>
-                    <Text style={[styles.rowText,{width:133,fontWeight:'bold'}]}>{"Người cập nhật: "}</Text>  
-                    <Text style={[styles.rowText,{width:200}]}>{(this.state.versionCreatorName?this.state.versionCreatorName:'')}</Text> 
+                
+                <View style={styles.testUpdateArea}>
+                    <View style={styles.testUpdateContainer}>
+                        <View style={styles.testUpdateRowContainer}>
+                            <Text style={[styles.rowText,{fontWeight:'bold'}]}>Loại test: </Text>
+                            <Picker
+                                selectedValue={this.state.testTypeSelectedForCreate}
+                                style={styles.testTypeDropDown}
+                                onValueChange={(itemValue, itemIndex) => this.setState({
+                                    testTypeSelectedForCreate:itemValue,
+                                })}                    
+                                >
+                                <Picker.Item label="Chọn loại xét nghiệm" value="none" key='none'/>
+                                {this.state.testList?this.state.testList.map(testType => (
+                                    <Picker.Item label={testType.testTypeName} value={testType.testTypeID} key={testType.testTypeID}/>
+                                )):null}
+                            </Picker>
+                            <TouchableOpacity style={styles.createTestButton} onPress={() => this.createTest()}>
+                                <Text style={{color:'white'}}>Tạo bài test</Text>
+                            </TouchableOpacity>   
+                        </View>
+                        <View style={styles.testUpdateRowContainer}>
+                            <Text style={[styles.rowText,{fontWeight:'bold'}]}>Tên test:</Text>
+                            <TextInput style={styles.rowTextInput}
+                                placeholder={'Nhập tên bài test'}
+                                name={"testName"}
+                                onChange={this.handleChange}
+                                value={this.state.testName}
+                                >                
+                            </TextInput>
+                        </View>
+                        <View style={styles.testUpdateRowContainer}>
+                            <Text style={[styles.rowText,{fontWeight:'bold'}]}>Giá tiền:</Text>
+                            <TextInput style={styles.rowTextInput}
+                                placeholder={'Nhập giá tiền (VNĐ)'}
+                                name="testPrice"
+                                onChange={this.handleChange}
+                                value={this.state.testPrice}
+                                >                
+                            </TextInput>
+                        </View>
+                        <View style={styles.testUpdateRowContainer}>
+                            <Text style={styles.rowTextError}>{this.state.error}</Text>                        
+                        </View>
+                    </View>    
                 </View>
-                 
-                <TouchableOpacity style={styles.testUpdateConfirmButton} onPress={() => this.callApiUpdateVersion()}>
-                    <Text style={{color:'white'}}>Cập nhật</Text>
-                </TouchableOpacity>  
-            </View>
-            
-            <View style={styles.testUpdateArea}>
-                <View style={styles.testUpdateContainer}>
-                    <View style={styles.testUpdateRowContainer}>
-                        <Text style={[styles.rowText,{fontWeight:'bold'}]}>Loại test: </Text>
-                        <Picker
-                            selectedValue={this.state.testTypeSelectedForCreate}
-                            style={styles.testTypeDropDown}
-                            onValueChange={(itemValue, itemIndex) => this.setState({
-                                testTypeSelectedForCreate:itemValue,
-                            })}                    
-                            >
-                            <Picker.Item label="Chọn loại xét nghiệm" value="none" key='none'/>
-                            {this.state.testList?this.state.testList.map(testType => (
-                                <Picker.Item label={testType.testTypeName} value={testType.testTypeID} key={testType.testTypeID}/>
-                            )):null}
-                        </Picker>
-                        <TouchableOpacity style={styles.createTestButton} onPress={() => this.createTest()}>
-                            <Text style={{color:'white'}}>Tạo bài test</Text>
-                        </TouchableOpacity>   
-                    </View>
-                    <View style={styles.testUpdateRowContainer}>
-                        <Text style={[styles.rowText,{fontWeight:'bold'}]}>Tên test:</Text>
-                        <TextInput style={styles.rowTextInput}
-                            placeholder={'Nhập tên bài test'}
-                            name={"testName"}
-                            onChange={this.handleChange}
-                            value={this.state.testName}
-                            >                
-                        </TextInput>
-                    </View>
-                    <View style={styles.testUpdateRowContainer}>
-                        <Text style={[styles.rowText,{fontWeight:'bold'}]}>Giá tiền:</Text>
-                        <TextInput style={styles.rowTextInput}
-                            placeholder={'Nhập giá tiền (VNĐ)'}
-                            name="testPrice"
-                            onChange={this.handleChange}
-                            value={this.state.testPrice}
-                            >                
-                        </TextInput>
-                    </View>
-                    <View style={styles.testUpdateRowContainer}>
-                        <Text style={styles.rowTextError}>{this.state.error}</Text>                        
-                    </View>
-                </View>    
-            </View>
-
-            <View style={styles.testUpdateMenuArea}>
-                <Picker
-                    selectedValue={this.state.testTypeSelected}
-                    style={styles.testTypeDropDown}
-                    onValueChange={(itemValue, itemIndex) => this.setState({
-                        testTypeSelected:itemValue,
-                        dataChanged: !this.state.dataChanged,
-                    })}                    
-                    >
-                    <Picker.Item label="Chọn loại xét nghiệm" value="none" key='none'/>
-                    {this.state.testList?this.state.testList.map(testType => (
-                        <Picker.Item label={testType.testTypeName} value={testType.testTypeID} key={testType.testTypeID}/>
-                    )):null}
-                </Picker>
-                
-                <Text style={[styles.rowText,{width:500}]}>Số lượng: {this.getTestList()?this.getTestList().length:'0'}</Text>
-                
-            </View>
-            {this.state.testListApi?
-            <View style={styles.testListFlatListArea}>        
-                <FlatList style={styles.testListFlatList}
-                    contentContainerStyle={{
-                        alignItems: 'center',
-                        justifyContent: 'flex-start',
-                    }}
-                    showsVerticalScrollIndicator={false}
-                    data={this.getTestList()}
-                    extraData={this.state.dataChanged}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({item}) => {
-                            return (
-                                <View>                                
-                                <TestListItem
-                                    testId={item.testID}       
-                                    testName={item.testName}                             
-                                    testPrice={item.price}
-                                    testTypeId={item.testTypeID}  
-                                    testTypeName={item.testTypeName}  
-                                    updatePrice={this.updatePrice}                                                                   
-                                />   
-                                </View>                             
-                            );
+                <View style={styles.testUpdateMenuArea}>
+                    <Picker
+                        selectedValue={this.state.testTypeSelected}
+                        style={styles.testTypeDropDown}
+                        onValueChange={(itemValue, itemIndex) => this.setState({
+                            testTypeSelected:itemValue,
+                            dataChanged: !this.state.dataChanged,
+                        })}                    
+                        >
+                        <Picker.Item label="Chọn loại xét nghiệm" value="none" key='none'/>
+                        {this.state.testList?this.state.testList.map(testType => (
+                            <Picker.Item label={testType.testTypeName} value={testType.testTypeID} key={testType.testTypeID}/>
+                        )):null}
+                    </Picker>
+                    <Text style={[styles.rowText,{width:500}]}>Số lượng: {this.getTestList()?this.getTestList().length:'0'}</Text>
+                </View>
+                <View style={styles.testListFlatListArea}>        
+                    <FlatList style={styles.testListFlatList}
+                        contentContainerStyle={{
+                            alignItems: 'center',
+                            justifyContent: 'flex-start',
                         }}
-                    >                   
-                </FlatList>        
+                        showsVerticalScrollIndicator={false}
+                        data={this.getTestList()}
+                        extraData={this.state.dataChanged}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({item}) => {
+                                return (
+                                    <View>                                
+                                    <TestListItem
+                                        testId={item.testID}       
+                                        testName={item.testName}                             
+                                        testPrice={item.price}
+                                        testTypeId={item.testTypeID}  
+                                        testTypeName={item.testTypeName}  
+                                        updatePrice={this.updatePrice}                                                                   
+                                    />   
+                                    </View>                             
+                                );
+                            }}
+                        >                   
+                    </FlatList>        
+                </View>
+                
             </View>
-            :<View style={{height:300,flexDirection: 'row',alignItems: 'center',justifyContent: 'center',}}>
+            :
+            <View style={{height:300,flexDirection: 'row',alignItems: 'center',justifyContent: 'center',}}>
                 <Text>Hệ thống đang chạy, vui lòng đợi ...</Text>
-            </View>}
+            </View>
+            :
+            <View style={{height:300,flexDirection: 'row',alignItems: 'center',justifyContent: 'center',}}>
+                <Text>Hệ thống đang chạy, vui lòng đợi ...</Text>
+            </View>
+            }
         </View>
+        
+        
     );
     }
 }

@@ -2,8 +2,6 @@ import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList} from 'react-native';
 import RequestListViewItem from './RequestListViewItem'
 import {getApiUrl} from './../Common/CommonFunction'
-import requestList from './../../Data/requestList'
-import districtList from './../../Data/districtList'
 
 export default class RequestListView extends Component  {
     constructor(props) {

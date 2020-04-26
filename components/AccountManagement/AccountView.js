@@ -25,7 +25,7 @@ export default class TestListView extends Component {
             year: new Date().getFullYear(),
             month: new Date().getMonth() + 1,
             day: new Date().getDate(),
-            accountImage: '',
+            accountImage: 'https://www.kindpng.com/picc/m/10-104902_simple-user-icon-user-icon-white-png-transparent.png',
             error: '',
             errorList: ['','Tên chủ tài khoản không được bỏ trống','Địa chỉ email không được bỏ trống', 'Địa chỉ không được bỏ trống'],
 
@@ -58,7 +58,7 @@ export default class TestListView extends Component {
             accountRole: this.props.account?this.props.account.accountRole:'',
             accountAddress: this.props.account?this.props.account.accountAddress:'',
             accountActive: this.props.account?this.props.account.accountActive:'',
-            accountImage: this.props.account?this.props.account.accountImageUrl:'',
+            accountImage: this.props.account?this.props.account.accountImageUrl:'https://www.kindpng.com/picc/m/10-104902_simple-user-icon-user-icon-white-png-transparent.png',
             year: this.props.account?this.props.account.accountDob? this.props.account.accountDob.substring(0,4):'2020':'2020',
             month: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(5,7)).toString():'2020':'2020',
             day: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(8,10)).toString():'2020':'2020',
@@ -81,7 +81,7 @@ export default class TestListView extends Component {
             accountRole: this.props.account?this.props.account.accountRole:'',
             accountAddress: this.props.account?this.props.account.accountAddress:'',
             accountActive: this.props.account?this.props.account.accountActive:'',
-            accountImage: this.props.account?this.props.account.accountImageUrl:'',
+            accountImage: this.props.account?this.props.account.accountImageUrl:'https://www.kindpng.com/picc/m/10-104902_simple-user-icon-user-icon-white-png-transparent.png',
             year: this.props.account?this.props.account.accountDob? this.props.account.accountDob.substring(0,4):'2020':'2020',
             month: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(5,7)).toString():'2020':'2020',
             day: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(8,10)).toString():'2020':'2020',
@@ -324,8 +324,30 @@ export default class TestListView extends Component {
             
             <View style={styles.accountCreateArea}>
                 <View style={styles.accountCreateContainer}>
+                    {/* <View style={styles.accountCreateRowContainer}>
+                        <Text style={styles.rowText}>{'Ảnh đại diện: '}</Text>
+                        <TouchableOpacity 
+                        style={styles.addImageButton}
+                        onPress={() => this.selectPicture()}
+                        >
+                            <Text style={{color:'white'}}>Chọn ảnh</Text>
+                        </TouchableOpacity>
+                    </View> */}
+                    <View style={styles.imagePreviewArea}>
+                        <View style={styles.accountCreateRowContainer}>
+                            <Text style={styles.rowText}>{' '}</Text>
+                            <TouchableOpacity onPress={() => this.selectPicture()}
+                            >
+                                <Image 
+                                    style={styles.imagePreview}
+                                    source={{ uri: this.state.accountImage}}
+                                    >
+                                </Image>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                     <View style={styles.accountCreateRowContainer}>
-                        <Text style={styles.rowText}>Thay đổi mật khẩu:</Text>
+                        <Text style={styles.rowText}>Tên nhân viên:</Text>
                         {this.checkAdmin()?
                         <TextInput style={styles.rowTextInput}
                             placeholder={'Nhập tên nhân viên'}
@@ -470,32 +492,6 @@ export default class TestListView extends Component {
                         <Text style={styles.rowTextLong}>{this.state.accountActive=='1'?'Đang hoạt động':'Bị khóa'}</Text>
                         }
                     </View> 
-                    <View style={styles.accountCreateRowContainer}>
-                        <Text style={styles.rowText}>{'Ảnh đại diện: '}</Text>
-                        <TouchableOpacity 
-                        style={styles.addImageButton}
-                        onPress={() => this.selectPicture()}
-                        >
-                            <Text style={{color:'white'}}>Chọn ảnh</Text>
-                        </TouchableOpacity>
-                    </View>
-                    {this.state.accountImage?
-                    <View style={styles.imagePreviewArea}>
-                        {/* <View style={styles.accountCreateRowContainer}>
-                            <Text style={styles.rowText}>{' '}</Text>
-                            <Text style={[styles.rowTextLong,{fontSize:15,width:800,paddingTop:3}]}>{' '+this.state.accountImage}</Text>
-                        </View> */}
-                        <View style={styles.accountCreateRowContainer}>
-                            <Text style={styles.rowText}>{' '}</Text>
-                            <Image 
-                                style={styles.imagePreview}
-                                source={{ uri: this.state.accountImage}}
-                                >
-                            </Image>
-                        </View>
-                    </View>
-                    :null
-                    }
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowTextError}>{this.state.error}</Text>                        
                     </View>

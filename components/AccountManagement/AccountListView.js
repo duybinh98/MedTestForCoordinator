@@ -2,9 +2,6 @@ import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput} from 'react-native';
 import {getApiUrl} from './../Common/CommonFunction'
 import AccountListViewItem from './AccountListViewItem'
-import appointmentList from './../../Data/appointmentList'
-import districtList from './../../Data/districtList'
-import userList from './../../Data/userList'
 
 export default class AccountListScreen extends Component  {
     constructor(props) {
@@ -15,9 +12,9 @@ export default class AccountListScreen extends Component  {
             Button3Selected: false,
             Button4Selected: false,
             Button4Selected: false,
-            districtsList: districtList,
             accountSelected: 'all',
-            accountId: '',
+            inputPhoneNumber: '',
+            isSearch: false,
             userList: this.props.userList?this.props.userList:[],
             dataChanged: true,
         };
@@ -37,7 +34,17 @@ export default class AccountListScreen extends Component  {
     // }
     
     getAccountShowList(){
-        
+        if (this.state.isSearch){
+            let result = []
+            let index = this.state.userList.length - 1;
+            while (index >= 0) {
+                if (this.state.userList[index].phoneNumber === this.state.inputPhoneNumber) {
+                    result.push(this.state.userList[index]);
+                    }
+                index -= 1;
+            }
+            return result;
+        }
         if (this.state.accountSelected=='all'){
             return this.state.userList
         }
@@ -52,7 +59,6 @@ export default class AccountListScreen extends Component  {
             }        
             return result;
         }
-        
         return this.state.userList
     }
 
@@ -68,6 +74,7 @@ export default class AccountListScreen extends Component  {
             Button5Selected: button=="5"?true:false,
             accountSelected: button=="1"? 'all': button=="2"? 'COORDINATOR': button=="3"? 'NURSE' : button=="4"? 'CUSTOMER': 'ADMIN',
             dataChanged: !this.state.dataChanged,
+            isSearch: false,
         }))
     }
 
@@ -89,7 +96,13 @@ export default class AccountListScreen extends Component  {
     }
 
     searchUser(){
-        this.props.searchUser?this.props.searchUser(this.state.accountId):null
+        // this.props.searchUser?this.props.searchUser(this.state.inputPhoneNumber):null
+        this.setState(previousState => ({ 
+            dataChanged: !this.state.dataChanged,
+            isSearch: true,
+        }))
+
+
     }
 
     render(){
@@ -100,9 +113,9 @@ export default class AccountListScreen extends Component  {
                 <View style={styles.accountListTopMenuContainer}>
                     <TextInput style={styles.topMenuTextInput}
                     placeholder={'Tìm kiếm tài khoản theo số điện thoại'}
-                    name="accountId"
+                    name="inputPhoneNumber"
                     onChange={this.handleChange}
-                    value={this.state.accountId}
+                    value={this.state.inputPhoneNumber}
                     onSubmitEditing={() => this.searchUser()}
                     >                
                     </TextInput>

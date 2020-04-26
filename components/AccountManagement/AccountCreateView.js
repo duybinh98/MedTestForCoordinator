@@ -24,7 +24,7 @@ export default class TestListView extends Component {
             year: new Date().getFullYear(),
             month: new Date().getMonth() + 1,
             day: new Date().getDate(),
-            accountImage: '',
+            accountImage: 'https://www.kindpng.com/picc/m/10-104902_simple-user-icon-user-icon-white-png-transparent.png',
             error: '',
             errorList: ['',
                     'Tên chủ tài khoản không được bỏ trống',
@@ -48,7 +48,7 @@ export default class TestListView extends Component {
             townList: this.props.districtList?this.props.districtList[0].listTown:[],
             districtSelected: this.props.districtList?this.props.districtList[0].districtCode:'none',
             townSelected: this.props.districtList?this.props.districtList[0].listTown[0]?this.props.districtList[0].listTown[0].townCode:'none':'none',
-            accountImage: '',
+            accountImage: 'https://www.kindpng.com/picc/m/10-104902_simple-user-icon-user-icon-white-png-transparent.png',
             error: '',
         }));
     }
@@ -61,7 +61,7 @@ export default class TestListView extends Component {
                 townList: this.props.districtList?this.props.districtList[0].listTown:[],
                 districtSelected: this.props.districtList?this.props.districtList[0].districtCode:'none',
                 townSelected: this.props.districtList?this.props.districtList[0].listTown[0]?this.props.districtList[0].listTown[0].townCode:'none':'none',
-                accountImage: '',
+                accountImage: 'https://www.kindpng.com/picc/m/10-104902_simple-user-icon-user-icon-white-png-transparent.png',
                 error: '',
             }));
         }
@@ -272,6 +272,28 @@ export default class TestListView extends Component {
             
             <View style={styles.accountCreateArea}>
                 <View style={styles.accountCreateContainer}>
+                    {/* <View style={styles.accountCreateRowContainer}>
+                        <Text style={styles.rowText}>{'Ảnh đại diện: '}</Text>
+                        <TouchableOpacity 
+                        style={styles.addImageButton}
+                        onPress={() => this.selectPicture()}
+                        >
+                            <Text style={{color:'white'}}>Chọn ảnh</Text>
+                        </TouchableOpacity>
+                    </View> */}
+                    <View style={styles.imagePreviewArea}>
+                        <View style={styles.accountCreateRowContainer}>
+                            <Text style={styles.rowText}>{' '}</Text>
+                            <TouchableOpacity onPress={() => this.selectPicture()}
+                            >
+                                <Image 
+                                    style={styles.imagePreview}
+                                    source={{ uri: this.state.accountImage}}
+                                    >
+                                </Image>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowText}>Tên nhân viên:</Text>
                         <TextInput style={styles.rowTextInput}
@@ -419,33 +441,6 @@ export default class TestListView extends Component {
                             <Picker.Item label={'Quản trị hệ thống'} value={'ADMIN'} />
                         </Picker>
                     </View> 
-                    <View style={styles.accountCreateRowContainer}>
-                        <Text style={styles.rowText}>{'Ảnh đại diện: '}</Text>
-                        <TouchableOpacity 
-                        style={styles.addImageButton}
-                        onPress={() => this.selectPicture()}
-                        >
-                            <Text style={{color:'white'}}>Chọn ảnh</Text>
-                        </TouchableOpacity>
-                        
-                    </View>
-                    {this.state.accountImage?
-                    <View style={styles.imagePreviewArea}>
-                        {/* <View style={styles.accountCreateRowContainer}>
-                            <Text style={styles.rowText}>{' '}</Text>
-                            <Text style={[styles.rowText,{fontSize:15,width:800,paddingTop:3}]}>{' '+this.state.accountImage}</Text>
-                        </View> */}
-                        <View style={styles.accountCreateRowContainer}>
-                            <Text style={styles.rowText}>{' '}</Text>
-                            <Image 
-                                style={styles.imagePreview}
-                                source={{ uri: this.state.accountImage}}
-                                >
-                            </Image>
-                        </View>
-                    </View>
-                    :null
-                    }
                     <View style={styles.accountCreateRowContainer}>
                         <Text style={styles.rowTextError}>{this.state.error}</Text>                        
                     </View>

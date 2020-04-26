@@ -2,8 +2,6 @@ import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList} from 'react-native';
 import {getApiUrl} from './../Common/CommonFunction'
 import AppointmentListViewItem from './AppointmentListViewItem'
-import appointmentList from './../../Data/appointmentList'
-import districtList from './../../Data/districtList'
 
 export default class AppointmentListView extends Component  {
     constructor(props) {

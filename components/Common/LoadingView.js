@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import { StyleSheet, Text, View, TextInput, Image, ImageBackground, Picker, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Image, ImageBackground, Dimensions } from 'react-native';
 
 export default class ListScreen extends Component  {
     constructor(props) {

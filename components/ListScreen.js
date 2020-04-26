@@ -265,10 +265,10 @@ export default class ListScreen extends Component  {
         }))
         setTimeout(() => {
             this.callApiRequestList()
-            this.callApiTestList()
-            this.callApiArticleList()
-            this.callApiUserList()
-            this.callApiAppointmentList()
+            // this.callApiTestList()
+            // this.callApiArticleList()
+            // this.callApiUserList()
+            // this.callApiAppointmentList()
             this.callApiDistrictList()
         }, 10);
     }
@@ -465,7 +465,7 @@ export default class ListScreen extends Component  {
         .then(res => res.json())
         .then(
             (result) => {
-                // console.log(result)
+                console.log(result)
                 let success = false
                 result ? result.message? null : success=true : null;
                 if (success)
