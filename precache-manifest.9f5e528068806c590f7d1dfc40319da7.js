@@ -1,7 +1,7 @@
 self.__precacheManifest = [
   {
-    "revision": "e7e19acf7846e779d71d",
-    "url": "/MedTestForCoordinator/static/js/app.6d227a65.chunk.js"
+    "revision": "0861033eed011778c085",
+    "url": "/MedTestForCoordinator/static/js/app.73a5c639.chunk.js"
   },
   {
     "revision": "15eee14489800ef29d40",
@@ -40,7 +40,7 @@ self.__precacheManifest = [
     "url": "/MedTestForCoordinator/favicon.ico"
   },
   {
-    "revision": "d049b3100d4631c419e1b62c76d5cc90",
+    "revision": "948a6fb2196394f2a007f78060ee6db5",
     "url": "/MedTestForCoordinator/index.html"
   },
   {
