@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput, Image, Alert} from 'react-native';
-import {getApiUrl} from './../Common/CommonFunction'
+import {getApiUrl, componentWidth} from './../Common/CommonFunction'
 import * as ImagePicker from 'expo-image-picker';
 // import * as DocumentPicker from 'expo-document-picker';
 
@@ -225,24 +225,20 @@ const styles = StyleSheet.create({
     },
     articleAddTopMenuArea: {
         height:70,
-        width:"100%",
+        width: componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '',
-        padding:20,
-        paddingLeft:200,
-        marginTop:0,
-        marginBottom:10,
+        paddingTop:20,
+        paddingBottom:20,
+        marginTop:10,
     },
     articleAddArea:{
-        alignSelf: 'stretch',
-        width:'100%',
+        width:componentWidth,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingLeft:200,
-        paddingRight:200,
     },
     articleAddContainer:{
         alignSelf: 'stretch',
@@ -311,8 +307,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     imagePreview:{
-        width:200,
-        height:200,
+        width:500,
+        height:500,
         backgroundColor:''
     },
     rowTextError:{

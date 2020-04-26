@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput} from 'react-native';
-import {getApiUrl} from './../Common/CommonFunction'
+import {getApiUrl, componentWidth} from './../Common/CommonFunction'
 import AccountListViewItem from './AccountListViewItem'
 
 export default class AccountListScreen extends Component  {
@@ -127,7 +127,6 @@ export default class AccountListScreen extends Component  {
                     </TouchableOpacity>
                 </View>
                 <View style={[styles.accountListTopMenuContainer,{
-                    justifyContent: 'flex-start',
                     }]}>
                     <TouchableOpacity style={[styles.topMenuButton,{
                         borderWidth: this.state.Button1Selected ? 1:0,
@@ -243,8 +242,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f7f6f6',
     },
     accountListTopMenuArea: {
-        alignSelf: 'stretch',
-        width:"100%",
+        width:componentWidth,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
@@ -253,15 +251,13 @@ const styles = StyleSheet.create({
         paddingTop:10,
     },
     accountListTopMenuContainer: {
-        alignSelf: 'stretch',
-        width:"100%",
+        width:componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '',
-        padding:10,
-        paddingLeft:190,
-        paddingRight:200,
+        paddingTop:10,
+        paddingBottom:10,
     },
     topMenuTextInput:{
         height:30,
@@ -273,7 +269,7 @@ const styles = StyleSheet.create({
         marginTop:10,
     },
     topMenuButton:{
-        width: (Dimensions.get('window').width-400)/5,
+        width: componentWidth/5,
         height: roleSelectButtonHeight,
         flexDirection: 'column',
         alignItems: 'center',
@@ -291,7 +287,7 @@ const styles = StyleSheet.create({
         // marginRight:200,
     },
     articleListFlatListArea:{        
-        width:"100%",
+        width:componentWidth,
         flex:1,
         flexDirection: 'column',
         alignItems: 'center',
@@ -300,15 +296,14 @@ const styles = StyleSheet.create({
     },
     articleListFlatListTitleArea:{
         alignSelf: 'stretch',
-        width: "100%",
+        width: componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
     },
     articleListFlatListTitleContainer:{
         alignSelf: 'stretch',
-        width: Dimensions.get('window').width-400,
-        // width: 750,
+        width: componentWidth,
         backgroundColor: 'white',
         flexDirection: 'row',
         alignItems: 'center',
@@ -337,7 +332,7 @@ const styles = StyleSheet.create({
         fontWeight:'bold'
     },
     articleListFlatList:{
-        width:"100%",
+        width: componentWidth,
         flex:1,
         flexDirection: 'column',
         backgroundColor: '',

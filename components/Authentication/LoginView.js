@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity,TextInput, Dimensions} from 'react-native';
-import {getApiUrl} from './../Common/CommonFunction'
+import {getApiUrl,screenWidth} from './../Common/CommonFunction'
 
 import PageFooter from './../PageFooter'
 
@@ -79,9 +79,8 @@ export default class Login extends Component  {
     }
 
     render(){
-    const WIDTH = Dimensions.get('window').width
     return (
-        <View style={{flex:1}}>
+        <View style={{flex:1, width:screenWidth}}>
             <View style={styles.loginViewArea}>
                 <View style={styles.titleContainer}>
                     <Text style={{fontSize:23,fontWeight:'bold'}}>Đăng nhập</Text>

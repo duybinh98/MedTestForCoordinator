@@ -340,8 +340,8 @@ const styles = StyleSheet.create({
         margin:0
     },
     imagePreview:{
-        width:200,
-        height:200,
+        width:600,
+        height:600,
         backgroundColor:''
     },
     rowTextError:{

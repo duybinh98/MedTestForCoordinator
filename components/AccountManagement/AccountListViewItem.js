@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity} from 'react-native';
-import {convertDateTimeToDate, convertDateTimeToTime, getRoleName} from './../Common/CommonFunction'
+import {convertDateTimeToDate, convertDateTimeToTime, getRoleName, componentWidth} from './../Common/CommonFunction'
 
 
 export default class AccountListViewItem extends Component {
@@ -61,10 +61,12 @@ export default class AccountListViewItem extends Component {
         );
     }
 }
+
+
 const styles = StyleSheet.create({
     accountListItem:{
         alignSelf: 'stretch',
-        width: Dimensions.get('window').width-400,
+        width: componentWidth,
         backgroundColor: 'white',
         flexDirection: 'row',
         alignItems: 'center',

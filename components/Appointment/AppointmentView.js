@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput, Image} from 'react-native';
 import {convertDateTimeToDate, convertDateTimeToTime} from './../Common/CommonFunction'
-import {getApiUrl, getAppointmentStateName} from './../Common/CommonFunction'
+import {getApiUrl, getAppointmentStateName, componentWidth} from './../Common/CommonFunction'
 
 export default class AppointmentView extends Component  {
     constructor(props) {
@@ -64,7 +64,6 @@ export default class AppointmentView extends Component  {
 
 
     render(){
-    const WIDTH = Dimensions.get('window').width
     return (
         <View style={styles.appointmentViewArea}>
             <View style={styles.appointmentTopMenuArea}>
@@ -127,24 +126,20 @@ const styles = StyleSheet.create({
     },
     appointmentTopMenuArea: {
         height:70,
-        width:"100%",
+        width: componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '',
-        padding:20,
-        paddingLeft:200,
+        paddingTop:20,
+        paddingBottom:20,
         marginTop:10,
-        marginBottom:-20,
     },
     appointmentArea:{
-        alignSelf: 'stretch',
-        width:'100%',
+        width: componentWidth,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingLeft:200,
-        paddingRight:200,
     },
     appointmentContainer:{
         alignSelf: 'stretch',
@@ -154,7 +149,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         borderRadius:5,
         backgroundColor:'white',
-        marginTop:50,
         marginBottom: 50,
         paddingTop: 40,
         paddingLeft: 50,

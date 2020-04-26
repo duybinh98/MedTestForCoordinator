@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity} from 'react-native';
-import {getApiUrl, convertDateTimeToDate, convertDateTimeToTime, getStateName, getStateColor} from './../Common/CommonFunction'
+import {getApiUrl, convertDateTimeToDate, convertDateTimeToTime, getStateName, getStateColor,componentWidth} from './../Common/CommonFunction'
 
 export default class RequestListPendingItem extends Component {
     constructor(props) {
@@ -124,7 +124,7 @@ export default class RequestListPendingItem extends Component {
 const styles = StyleSheet.create({
     requestListItem:{
         alignSelf: 'stretch',
-        width: Dimensions.get('window').width-400,
+        width: componentWidth,
         backgroundColor: 'white',
         flexDirection: 'column',
         alignItems: 'flex-start',
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     },
     requestListTextContainer:{
         alignSelf: 'stretch',
-        width: Dimensions.get('window').width-400,
+        width: componentWidth,
         flexDirection: 'row',
         alignItems: 'flex-start',
         paddingLeft:10,

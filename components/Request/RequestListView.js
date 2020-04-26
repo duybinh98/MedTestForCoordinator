@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList} from 'react-native';
 import RequestListViewItem from './RequestListViewItem'
-import {getApiUrl} from './../Common/CommonFunction'
+import {getApiUrl,componentWidth} from './../Common/CommonFunction'
 
 export default class RequestListView extends Component  {
     constructor(props) {
@@ -183,8 +183,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f7f6f6',
     },
     requestListTopMenuArea: {
-        alignSelf: 'stretch',
-        width:"100%",
+        width:componentWidth,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
@@ -193,15 +192,13 @@ const styles = StyleSheet.create({
         paddingTop:10,
     },
     requestListTopMenuContainer: {
-        alignSelf: 'stretch',
-        width:"100%",
+        width:componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '',
-        padding:10,
-        paddingLeft:200,
-        paddingRight:200
+        paddingTop:10,
+        paddingBottom:10,
     },
     requestTypeDropdown:{
         height: 35, 
@@ -211,7 +208,7 @@ const styles = StyleSheet.create({
         color:'black'
     },
     requestListFlatListArea:{        
-        width:"100%",
+        width:componentWidth,
         flex:1,
         flexDirection: 'column',
         alignItems: 'center',
@@ -219,11 +216,12 @@ const styles = StyleSheet.create({
         backgroundColor: '',
     },
     requestListFlatList:{
-        width:"100%",
+        width:componentWidth,
         flex:1,
         flexDirection: 'column',
         backgroundColor: '',
-        padding:20,
+        paddingTop:20,
+        paddingBottom:20,
     },
     
 

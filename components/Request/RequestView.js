@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput, Image} from 'react-native';
 import {convertDateTimeToDate, convertDateTimeToTime} from './../Common/CommonFunction'
-import {getApiUrl, getStateName} from './../Common/CommonFunction'
+import {getApiUrl, getStateName, componentWidth} from './../Common/CommonFunction'
 import RequestTestCategoryItem from './RequestTestCategoryItem'
 
 export default class RequestView extends Component  {
@@ -9,6 +9,7 @@ export default class RequestView extends Component  {
         super(props)
         this.state = {        
             testList: this.props.testList,
+            resultList: [],
         };
         this.isSelected = this.isSelected.bind(this)
         this.getLeftButtonName = this.getLeftButtonName.bind(this)
@@ -17,13 +18,43 @@ export default class RequestView extends Component  {
         this.onRightButtonPress = this.onRightButtonPress.bind(this)
     }
 
+    componentDidMount(){
+        if(this.props.request.requestStatus=='closed') this.callApiResultList()
+    }
+
     componentDidUpdate  (prevProps, prevState) {        
-         if (prevProps !== this.props) {
+        if (prevProps !== this.props) {
             this.setState(previousState => ({ 
                 
             }));
+            if(this.props.request.requestStatus=='closed') this.callApiResultList()
         }
     }
+
+    callApiResultList () {
+        fetch(getApiUrl()+"/requests/detail/"+this.props.request.requestId+"/result",{
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.props.token,
+            }
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                console.log(result)
+                result ? result.message? null :
+                this.setState(previousState => ({
+                    resultList: result,
+                })) :null
+            },            
+            (error) => {
+                console.log(error)
+            }
+        )  
+    }
+
     
     isSelected(id) {
         const found = this.props.request?this.props.request.lsSelectedTest.findIndex(test => test == id) : -1;
@@ -177,13 +208,22 @@ export default class RequestView extends Component  {
                             >
                         </FlatList>
                     </View>
-                    {/* <View style={[styles.requestRowContainer,{justifyContent: 'center',}]}>
-                        <Image 
-                            style={styles.rowImage}
-                            source={{ uri: this.props.request?this.props.request.requestImageUrl:'' }}
-                            >
-                        </Image>
-                    </View>         */}
+                    {this.state.resultList.length==0?null:
+                    this.state.resultList.map(result => (                        
+                    <View style={styles.imagePreviewArea}>
+                        {/* <View style={styles.requestRowContainer}>
+                            <Text style={[styles.rowTextLong,{fontSize:15,width:600,paddingTop:3}]}>{' '+result.image}</Text>
+                        </View> */}
+                        <View style={styles.requestRowContainer}>
+                            <Image 
+                                style={styles.imagePreview}
+                                source={{ uri: result.image}}
+                                >
+                            </Image>
+                        </View>
+                    </View>
+                    ))
+                    }
                 </View>
 
                 <View style={styles.buttonArea}>
@@ -218,24 +258,20 @@ const styles = StyleSheet.create({
     },
     requestTopMenuArea: {
         height:70,
-        width:"100%",
+        width: componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '',
-        padding:20,
-        paddingLeft:200,
+        paddingTop:20,
+        paddingBottom:20,
         marginTop:10,
-        marginBottom:-20,
     },
     requestArea:{
-        alignSelf: 'stretch',
-        width:'100%',
+        width: componentWidth,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingLeft:200,
-        paddingRight:200,
     },
     requestContainer:{
         alignSelf: 'stretch',
@@ -245,7 +281,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         borderRadius:5,
         backgroundColor:'white',
-        marginTop:50,
         marginBottom: 50,
         paddingTop: 40,
         paddingLeft: 50,
@@ -312,5 +347,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-    }
+    },
+    imagePreviewArea:{
+        alignSelf: 'stretch',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        margin:0
+    },
+    imagePreview:{
+        height: 800,
+        width: 800,
+        aspectRatio: 10/10,
+        backgroundColor:''
+    },
 });

@@ -22,6 +22,10 @@ export function getApiUrl(){
     return "https://medtest-backend.herokuapp.com";
 }
 
+export const componentWidth = 1100
+
+export const screenWidth = 1536
+
 export function getRoleName(role){
     switch (role) {
         case 'CUSTOMER':

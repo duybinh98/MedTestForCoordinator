@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList} from 'react-native';
-import {getApiUrl} from './../Common/CommonFunction'
+import {getApiUrl, componentWidth} from './../Common/CommonFunction'
 import AppointmentListViewItem from './AppointmentListViewItem'
 
 export default class AppointmentListView extends Component  {
@@ -85,7 +85,7 @@ export default class AppointmentListView extends Component  {
                     <Text style={{fontWeight:'bold'}}>Trạng thái: </Text>
                     <Picker
                         selectedValue={this.state.statusSelected}
-                        style={styles.appointmentTypeDropdown}
+                        style={[styles.appointmentTypeDropdown,{width:360}]}
                         onValueChange={(itemValue, itemIndex) => this.setState({
                             statusSelected:itemValue,
                             dataChanged: !this.state.dataChanged
@@ -147,8 +147,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f7f6f6',
     },
     appointmentListTopMenuArea: {
-        alignSelf: 'stretch',
-        width:"100%",
+        width:componentWidth,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
@@ -157,24 +156,22 @@ const styles = StyleSheet.create({
         paddingTop:10,
     },
     appointmentListTopMenuContainer: {
-        alignSelf: 'stretch',
-        width:"100%",
+        width:componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
         backgroundColor: '',
-        padding:10,
-        paddingLeft:200,
-        paddingRight:200
+        paddingTop:10,
+        paddingBottom:10,
     },
     appointmentTypeDropdown:{
         height: 35, 
         width: 300,
         borderRadius:5,
-        marginLeft:54,
+        marginLeft:27,
     },
     appointmentListFlatListArea:{        
-        width:"100%",
+        width:componentWidth,
         flex:1,
         flexDirection: 'column',
         alignItems: 'center',
@@ -182,11 +179,12 @@ const styles = StyleSheet.create({
         backgroundColor: '',
     },
     appointmentListFlatList:{
-        width:"100%",
+        width:componentWidth,
         flex:1,
         flexDirection: 'column',
         backgroundColor: '',
-        padding:20,
+        paddingTop:20,
+        paddingBottom:20,
     },
 
 });

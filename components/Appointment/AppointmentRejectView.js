@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput, Image} from 'react-native';
-import {getApiUrl, convertDateTimeToDate, convertDateTimeToTime} from './../Common/CommonFunction'
+import {getApiUrl, convertDateTimeToDate, convertDateTimeToTime, componentWidth} from './../Common/CommonFunction'
 
 export default class AppointmentLostSampleView extends Component  {
     constructor(props) {
@@ -83,7 +83,6 @@ export default class AppointmentLostSampleView extends Component  {
     
 
     render(){
-    const WIDTH = Dimensions.get('window').width
     return (
         <View style={styles.appointmentViewArea}>
             <View style={styles.appointmentTopMenuArea}>
@@ -93,19 +92,19 @@ export default class AppointmentLostSampleView extends Component  {
                 <View style={styles.appointmentContainer}>   
                     <View style={styles.appointmentRowContainer}>
                         <Text style={styles.rowText}>Mã đơn hẹn: </Text>        
-                        <Text style={styles.rowText}>{this.props.appointment?this.props.appointment.appointmentId:''}</Text>      
+                        <Text style={styles.rowTextLong}>{this.props.appointment?this.props.appointment.appointmentId:''}</Text>      
                     </View>
                     <View style={styles.appointmentRowContainer}>
                             <Text style={styles.rowText}>Giờ tạo:</Text>      
-                            <Text style={styles.rowText}>{this.props.appointment?convertDateTimeToDate(this.props.appointment.appointmentCreatedTime)+"   "+convertDateTimeToTime(this.props.appointment.appointmentCreatedTime):''}</Text>
+                            <Text style={styles.rowTextLong}>{this.props.appointment?convertDateTimeToDate(this.props.appointment.appointmentCreatedTime)+"   "+convertDateTimeToTime(this.props.appointment.appointmentCreatedTime):''}</Text>
                     </View>
                     <View style={styles.appointmentRowContainer}>
                             <Text style={styles.rowText}>Người tạo:</Text> 
-                            <Text style={[styles.rowText,{width:300}]}>{this.props.appointment?this.props.appointment.customerName:''}</Text>
+                            <Text style={[styles.rowTextLong,{width:300}]}>{this.props.appointment?this.props.appointment.customerName:''}</Text>
                     </View>
                     <View style={styles.appointmentRowContainer}>
                             <Text style={styles.rowText}>Số điện thoại:</Text>      
-                            <Text style={styles.rowText}>{this.props.appointment?this.props.appointment.customerPhoneNumber:''}</Text> 
+                            <Text style={styles.rowTextLong}>{this.props.appointment?this.props.appointment.customerPhoneNumber:''}</Text> 
                     </View>
                     <View style={styles.appointmentRowContainer}>
                         <Text style={styles.rowText}>{'Lý do từ chối: '}</Text>
@@ -127,10 +126,10 @@ export default class AppointmentLostSampleView extends Component  {
                 </View>
                 <View style={styles.buttonArea}>
                     <TouchableOpacity style={styles.appointmentConfirmButton} onPress={() => this.props.changeShowView('AppointmentView')}>
-                        <Text>Quay lại</Text>
+                        <Text style={{color:'white'}}>Quay lại</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.appointmentConfirmButton} onPress={() => this.rejectAppointment()}>
-                        <Text>Từ chối đơn hẹn</Text>
+                        <Text style={{color:'white'}}>Từ chối đơn hẹn</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -150,24 +149,20 @@ const styles = StyleSheet.create({
     },
     appointmentTopMenuArea: {
         height:70,
-        width:"100%",
+        width: componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '',
-        padding:20,
-        paddingLeft:200,
-        marginTop:0,
-        marginBottom:10,
+        paddingTop:20,
+        paddingBottom:20,
+        marginTop:10,
     },
     appointmentArea:{
-        alignSelf: 'stretch',
-        width:'100%',
+        width: componentWidth,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingLeft:200,
-        paddingRight:200,
     },
     appointmentContainer:{
         alignSelf: 'stretch',
@@ -198,6 +193,16 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         width:170,
         fontSize:18,
+        fontWeight:'bold'
+    },
+    rowTextLong:{
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width:500,
+        fontSize:17,
+        backgroundColor:''
     },
     appointmentTypeDropDown:{
         alignSelf: 'stretch',
@@ -217,7 +222,7 @@ const styles = StyleSheet.create({
     appointmentConfirmButton:{
         height:50,
         width:200,
-        backgroundColor:'white',
+        backgroundColor:'#25345D',
         borderRadius:5,
         borderWidth:1,
         marginBottom:50,

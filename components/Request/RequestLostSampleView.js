@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput, Image} from 'react-native';
-import {getApiUrl, convertDateTimeToDate, convertDateTimeToTime} from './../Common/CommonFunction'
+import {getApiUrl, convertDateTimeToDate, convertDateTimeToTime, componentWidth} from './../Common/CommonFunction'
 
 export default class RequestLostSampleView extends Component  {
     constructor(props) {
@@ -9,7 +9,6 @@ export default class RequestLostSampleView extends Component  {
             reason: '',
             error: '',
             errorList: ['','Phải điền lý do làm mất mẫu'],
-
         };
         this.handleChange = this.handleChange.bind(this)
         this.lostSample = this.lostSample.bind(this)
@@ -93,19 +92,19 @@ export default class RequestLostSampleView extends Component  {
                 <View style={styles.requestContainer}>   
                     <View style={styles.requestRowContainer}>
                         <Text style={styles.rowText}>Mã đơn xét nghiệm: </Text>        
-                        <Text style={styles.rowText}>{this.props.request?this.props.request.requestId:''}</Text>      
+                        <Text style={styles.rowTextLong}>{this.props.request?this.props.request.requestId:''}</Text>      
                     </View>
                     <View style={styles.requestRowContainer}>
                             <Text style={styles.rowText}>Giờ tạo:</Text>      
-                            <Text style={styles.rowText}>{this.props.request?convertDateTimeToDate(this.props.request.requestCreatedTime)+"   "+convertDateTimeToTime(this.props.request.requestCreatedTime):''}</Text>
+                            <Text style={styles.rowTextLong}>{this.props.request?convertDateTimeToDate(this.props.request.requestCreatedTime)+"   "+convertDateTimeToTime(this.props.request.requestCreatedTime):''}</Text>
                     </View>
                     <View style={styles.requestRowContainer}>
                             <Text style={styles.rowText}>Người tạo:</Text> 
-                            <Text style={[styles.rowText,{width:300}]}>{this.props.request?this.props.request.customerName:''}</Text>
+                            <Text style={styles.rowTextLong}>{this.props.request?this.props.request.customerName:''}</Text>
                     </View>
                     <View style={styles.requestRowContainer}>
                             <Text style={styles.rowText}>Số điện thoại:</Text>      
-                            <Text style={styles.rowText}>{this.props.request?this.props.request.customerPhoneNumber:''}</Text> 
+                            <Text style={styles.rowTextLong}>{this.props.request?this.props.request.customerPhoneNumber:''}</Text> 
                     </View>
                     <View style={styles.requestRowContainer}>
                         <Text style={styles.rowText}>{'Lý do mất mẫu: '}</Text>
@@ -127,10 +126,10 @@ export default class RequestLostSampleView extends Component  {
                 </View>
                 <View style={styles.buttonArea}>
                     <TouchableOpacity style={styles.requestConfirmButton} onPress={() => this.props.changeShowView('RequestView')}>
-                        <Text>Quay lại</Text>
+                        <Text style={{color:'white'}}>Quay lại</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.requestConfirmButton} onPress={() => this.lostSample()}>
-                        <Text>Báo mất mẫu</Text>
+                        <Text style={{color:'white'}}>Báo mất mẫu</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -150,24 +149,20 @@ const styles = StyleSheet.create({
     },
     requestTopMenuArea: {
         height:70,
-        width:"100%",
+        width: componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '',
-        padding:20,
-        paddingLeft:200,
-        marginTop:0,
-        marginBottom:10,
+        paddingTop:20,
+        paddingBottom:20,
+        marginTop:10,
     },
     requestArea:{
-        alignSelf: 'stretch',
-        width:'100%',
+        width: componentWidth,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingLeft:200,
-        paddingRight:200,
     },
     requestContainer:{
         alignSelf: 'stretch',
@@ -196,8 +191,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        width:170,
+        width:200,
         fontSize:18,
+        fontWeight:'bold',
+    },
+    rowTextLong:{
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width:500,
+        fontSize:17,
     },
     requestTypeDropDown:{
         alignSelf: 'stretch',
@@ -217,7 +221,7 @@ const styles = StyleSheet.create({
     requestConfirmButton:{
         height:50,
         width:200,
-        backgroundColor:'white',
+        backgroundColor:'#25345D',
         borderRadius:5,
         borderWidth:1,
         marginBottom:50,

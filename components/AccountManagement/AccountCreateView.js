@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity, TextInput, Picker} from 'react-native';
-import {getRoleName, getApiUrl, convertDateToDateTime} from './../Common/CommonFunction'
+import {getRoleName, getApiUrl, convertDateToDateTime, componentWidth} from './../Common/CommonFunction'
 import * as ImagePicker from 'expo-image-picker';
 
 
@@ -463,25 +463,21 @@ const styles = StyleSheet.create({
     },
     accountCreateMenuArea: {
         height:70,
-        width:"100%",
+        width:componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '',
-        padding:50,
-        paddingLeft:200,
-        paddingRight:200,
+        paddingTop:50,
+        paddingBottom:50,
         marginTop:0,
         marginBottom:10,
     },    
     accountCreateArea:{
-        alignSelf: 'stretch',
-        width:'100%',
+        width:componentWidth,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingLeft:200,
-        paddingRight:200,
         marginBottom:10,
     },
     accountCreateContainer:{

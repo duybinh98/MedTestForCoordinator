@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity, TextInput} from 'react-native';
-import {convertDateTimeToDate, convertDateTimeToTime, getAppointmentStateName, getStateColor} from './../Common/CommonFunction'
+import {convertDateTimeToDate, convertDateTimeToTime, getAppointmentStateName, getStateColor, componentWidth} from './../Common/CommonFunction'
 
 
 export default class TestListView extends Component {
@@ -69,10 +69,11 @@ export default class TestListView extends Component {
         );
     }
 }
+
 const styles = StyleSheet.create({
     testListItem:{
         alignSelf: 'stretch',
-        width: Dimensions.get('window').width-400,
+        width: componentWidth,
         backgroundColor: 'white',
         flexDirection: 'column',
         alignItems: 'flex-start',
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
     },
     testTextContainer:{
         alignSelf: 'stretch',
-        width: Dimensions.get('window').width-400,
+        width: componentWidth,
         flexDirection: 'row',
         alignItems: 'flex-start',
         paddingLeft:20,

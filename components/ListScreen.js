@@ -27,7 +27,7 @@ import RequestUpdateResultView from './Request/RequestUpdateResultView'
 
 import TestUpdateView from './Test/TestUpdateView'
 
-import {getApiUrl} from './Common/CommonFunction'
+import {getApiUrl, screenWidth} from './Common/CommonFunction'
 import LoadingView from './Common/LoadingView'
 import userList  from './../Data/userList'
 
@@ -480,7 +480,7 @@ export default class ListScreen extends Component  {
     }
 
     render(){
-    const WIDTH = Dimensions.get('window').width
+    const WIDTH = screenWidth
     return (
         <View style={{flex:1}}>
             <PageHeader userInfo={this.state.userInfo?this.state.userInfo:null} changeShowView={this.state.userInfo?this.changeShowView:null}  setSelectedAccount={this.state.userInfo?this.setSelectedAccount:null} logOut={this.state.userInfo?this.logOut:null} searchRequest={this.searchRequest}/>
@@ -591,7 +591,7 @@ const menuHeight= 50
 const styles = StyleSheet.create({
     listAreaContainer: {
         flex: 1,
-        width: Dimensions.get('window').width,
+        width: screenWidth,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
@@ -599,14 +599,14 @@ const styles = StyleSheet.create({
     },
     topMenu:{
         height: menuHeight,
-        width: Dimensions.get('window').width,
+        width: screenWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
         backgroundColor:'white'
     },
     topMenuButton:{
-        width: Dimensions.get('window').width/parseFloat(5),
+        width: screenWidth/parseFloat(5),
         height: menuHeight,
         flexDirection: 'column',
         alignItems: 'center',

@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput, Image} from 'react-native';
-import {convertDateTimeToDate, convertDateTimeToTime} from './../Common/CommonFunction'
+import {convertDateTimeToDate, convertDateTimeToTime, componentWidth} from './../Common/CommonFunction'
 import {getApiUrl} from './../Common/CommonFunction'
 
 export default class ArticleView extends Component  {
@@ -23,7 +23,6 @@ export default class ArticleView extends Component  {
     }
 
     render(){
-    const WIDTH = Dimensions.get('window').width
     return (
         <View style={styles.articleViewArea}>
             
@@ -67,15 +66,14 @@ const styles = StyleSheet.create({
     },
     articleTopMenuArea: {
         height:70,
-        width:"100%",
+        width: componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '',
-        padding:20,
-        paddingLeft:200,
-        marginTop:0,
-        marginBottom:10,
+        paddingTop:20,
+        paddingBottom:20,
+        marginTop:10,
     },
     articleArea:{
         alignSelf: 'stretch',

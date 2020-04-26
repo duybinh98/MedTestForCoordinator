@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity} from 'react-native';
-import {convertDateTimeToDate, convertDateTimeToTime} from './../Common/CommonFunction'
+import {convertDateTimeToDate, convertDateTimeToTime, componentWidth} from './../Common/CommonFunction'
 
 
 export default class ArticleListViewItem extends Component {
@@ -74,7 +74,7 @@ export default class ArticleListViewItem extends Component {
 const styles = StyleSheet.create({
     articleListItem:{
         alignSelf: 'stretch',
-        width: Dimensions.get('window').width-400,
+        width: componentWidth,
         backgroundColor: 'white',
         flexDirection: 'row',
         alignItems: 'flex-start',
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     },
     articleTextContainer:{
         alignSelf: 'stretch',
-        width: Dimensions.get('window').width-620,
+        width: componentWidth-220,
         flexDirection: 'column',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
@@ -106,14 +106,14 @@ const styles = StyleSheet.create({
     },
     articleTextContentContainer:{
         alignSelf: 'stretch',
-        width: Dimensions.get('window').width-650,
+        width: componentWidth-250,
         flexDirection: 'column',
         alignItems: 'flex-start',
         backgroundColor:''
     },
     articleTextCreatorNameContainer:{
         alignSelf: 'stretch',
-        width: Dimensions.get('window').width-630,
+        width: componentWidth-230,
         flexDirection: 'column',
         alignItems: 'flex-end',
         backgroundColor:'',

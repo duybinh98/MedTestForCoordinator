@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity, TextInput, Picker} from 'react-native';
-import {getRoleName, getApiUrl, convertDateToDateTime} from './../Common/CommonFunction'
+import {getRoleName, getApiUrl, convertDateToDateTime, componentWidth} from './../Common/CommonFunction'
 import * as ImagePicker from 'expo-image-picker';
 
 
@@ -317,14 +317,13 @@ export default class TestListView extends Component {
 
     render(){        
     return(        
-        <View style={styles.accountCreateViewArea}>
-            <View style={styles.accountCreateMenuArea}>
+        <View style={styles.accountViewArea}>
+            <View style={styles.accountMenuArea}>
                 <Text style={[styles.rowText,{fontSize:22,fontWeight:'bold',width:'100%'}]}>{"Chỉnh sửa thông tin nhân viên: "}</Text>   
             </View>
-            
-            <View style={styles.accountCreateArea}>
-                <View style={styles.accountCreateContainer}>
-                    {/* <View style={styles.accountCreateRowContainer}>
+            <View style={styles.accountArea}>
+                <View style={styles.accountContainer}>
+                    {/* <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>{'Ảnh đại diện: '}</Text>
                         <TouchableOpacity 
                         style={styles.addImageButton}
@@ -334,7 +333,7 @@ export default class TestListView extends Component {
                         </TouchableOpacity>
                     </View> */}
                     <View style={styles.imagePreviewArea}>
-                        <View style={styles.accountCreateRowContainer}>
+                        <View style={styles.accountRowContainer}>
                             <Text style={styles.rowText}>{' '}</Text>
                             <TouchableOpacity onPress={() => this.selectPicture()}
                             >
@@ -346,7 +345,7 @@ export default class TestListView extends Component {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View style={styles.accountCreateRowContainer}>
+                    <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Tên nhân viên:</Text>
                         {this.checkAdmin()?
                         <TextInput style={styles.rowTextInput}
@@ -361,11 +360,11 @@ export default class TestListView extends Component {
                         }
                         
                     </View>
-                    <View style={styles.accountCreateRowContainer}>
+                    <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Số điện thoại:</Text>
                         <Text style={styles.rowTextLong}>{this.state.accountPhoneNumber}</Text>
                     </View>
-                    <View style={styles.accountCreateRowContainer}>
+                    <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Địa chỉ email:</Text>
                         {this.checkAdmin()?
                         <TextInput style={styles.rowTextInput}
@@ -380,7 +379,7 @@ export default class TestListView extends Component {
                         }
                     </View>
                     {this.checkAdmin()?
-                    <View style={styles.accountCreateRowContainer}>
+                    <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Ngày sinh: </Text>
                         <Picker
                             selectedValue={this.state.day}
@@ -412,12 +411,12 @@ export default class TestListView extends Component {
                         </Picker>
                     </View>
                     :
-                    <View style={styles.accountCreateRowContainer}>
+                    <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Ngày sinh: </Text>
                         <Text style={styles.rowTextLong}>{this.getDob()}</Text>
                     </View>
                     }
-                    <View style={styles.accountCreateRowContainer}>
+                    <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Giới tính:</Text>
                         {this.checkAdmin()?
                         <Picker
@@ -435,7 +434,7 @@ export default class TestListView extends Component {
                         }
                         
                     </View>                   
-                    <View style={styles.accountCreateRowContainer}>
+                    <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Quận/huyện:</Text>
                         <Picker
                             selectedValue={this.state.districtSelected}
@@ -447,7 +446,7 @@ export default class TestListView extends Component {
                             : null }
                         </Picker>
                     </View>
-                    <View style={styles.accountCreateRowContainer}>
+                    <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Phường/xã:</Text>
                         <Picker
                             selectedValue={this.state.townSelected}
@@ -461,7 +460,7 @@ export default class TestListView extends Component {
                             )): null}
                         </Picker>
                     </View>
-                    <View style={styles.accountCreateRowContainer}>
+                    <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Địa chỉ chi tiết:</Text>
                         <TextInput style={styles.rowTextInput}
                             placeholder={'Nhập địa chỉ chi tiết: số nhà, đường, thôn, ..'}
@@ -471,11 +470,11 @@ export default class TestListView extends Component {
                             >                
                         </TextInput>
                     </View> 
-                    <View style={styles.accountCreateRowContainer}>
+                    <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Vị trí nhân viên:</Text>
                         <Text style={styles.rowTextLong}>{getRoleName(this.state.accountRole)}</Text>
                     </View> 
-                    <View style={styles.accountCreateRowContainer}>
+                    <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Trạng thái:</Text>
                         {this.checkAdmin()?
                         <Picker
@@ -492,7 +491,7 @@ export default class TestListView extends Component {
                         <Text style={styles.rowTextLong}>{this.state.accountActive=='1'?'Đang hoạt động':'Bị khóa'}</Text>
                         }
                     </View> 
-                    <View style={styles.accountCreateRowContainer}>
+                    <View style={styles.accountRowContainer}>
                         <Text style={styles.rowTextError}>{this.state.error}</Text>                        
                     </View>
                 </View>  
@@ -517,37 +516,33 @@ export default class TestListView extends Component {
     }
 }
 const styles = StyleSheet.create({
-    accountCreateViewArea: {
+    accountViewArea: {
         flex: 1,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
         backgroundColor: '#f7f6f6',
     },
-    accountCreateMenuArea: {
+    accountMenuArea: {
         height:70,
-        width:"100%",
+        width:componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '',
-        padding:50,
-        paddingLeft:200,
-        paddingRight:200,
+        paddingTop:50,
+        paddingBottom:50,
         marginTop:0,
         marginBottom:10,
     },    
-    accountCreateArea:{
-        alignSelf: 'stretch',
-        width:'100%',
+    accountArea:{
+        width: componentWidth,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingLeft:200,
-        paddingRight:200,
         marginBottom:10,
     },
-    accountCreateContainer:{
+    accountContainer:{
         alignSelf: 'stretch',
         width:'100%',
         flexDirection: 'column',
@@ -561,7 +556,7 @@ const styles = StyleSheet.create({
         paddingRight: 50,
         paddingBottom: 15,
     },
-    accountCreateRowContainer:{
+    accountRowContainer:{
         alignSelf: 'stretch',
         flexDirection: 'row',
         alignItems: 'center',

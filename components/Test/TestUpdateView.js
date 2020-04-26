@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput} from 'react-native';
 import TestListItem from './TestListItem'
-import {getApiUrl, convertDateTimeToDate, convertDateTimeToTime} from './../Common/CommonFunction'
+import {getApiUrl, convertDateTimeToDate, convertDateTimeToTime, componentWidth} from './../Common/CommonFunction'
 
 export default class TestUpdateView extends Component  {
     constructor(props) {
@@ -311,7 +311,7 @@ export default class TestUpdateView extends Component  {
         
         <View style={styles.testUpdateViewArea}>
             {this.state.testListApi?this.state.testVersionApi?
-            <View>
+            <View style={styles.testUpdateViewArea}>
                 <View style={styles.testUpdateMenuArea}>
                     <Picker
                         selectedValue={this.state.versionSelected}
@@ -323,11 +323,11 @@ export default class TestUpdateView extends Component  {
                         )):null}
                     </Picker> 
                     <View style={{flexDirection: 'row',}}>
-                        <Text style={[styles.rowText,{width:79,fontWeight:'bold'}]}>{"Cập nhật: "}</Text>
+                        <Text style={[styles.rowText,{width:89,fontWeight:'bold'}]}>{"Cập nhật: "}</Text>
                         <Text style={[styles.rowText,{width:173}]}>{(this.state.versionCreatedTime?convertDateTimeToDate(this.state.versionCreatedTime)+"   "+convertDateTimeToTime(this.state.versionCreatedTime):'')}</Text>   
                     </View>
                     <View style={{flexDirection: 'row',}}>
-                        <Text style={[styles.rowText,{width:133,fontWeight:'bold'}]}>{"Người cập nhật: "}</Text>  
+                        <Text style={[styles.rowText,{width:143,fontWeight:'bold'}]}>{"Người cập nhật: "}</Text>  
                         <Text style={[styles.rowText,{width:200}]}>{(this.state.versionCreatorName?this.state.versionCreatorName:'')}</Text> 
                     </View>
                     
@@ -336,7 +336,7 @@ export default class TestUpdateView extends Component  {
                     </TouchableOpacity>  
                 </View>
                 
-                <View style={styles.testUpdateArea}>
+                <View style={styles.testAddArea}>
                     <View style={styles.testUpdateContainer}>
                         <View style={styles.testUpdateRowContainer}>
                             <Text style={[styles.rowText,{fontWeight:'bold'}]}>Loại test: </Text>
@@ -442,7 +442,6 @@ export default class TestUpdateView extends Component  {
     }
 }
 
-
 const styles = StyleSheet.create({
     testUpdateViewArea: {
         flex: 1,
@@ -453,32 +452,27 @@ const styles = StyleSheet.create({
     },
     testUpdateMenuArea: {
         height:70,
-        width:"100%",
+        width:componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '',
-        padding:20,
-        paddingLeft:200,
-        paddingRight:200,
+        paddingTop:20,
+        paddingBottom:20,
         marginTop:0,
         marginBottom:10,
     },
     versionDropdown:{
-        alignSelf: 'stretch',
         padding:3,
         width: 200,
         borderRadius:5,
         marginRight:30,
     },
-    testUpdateArea:{
-        alignSelf: 'stretch',
-        width:'100%',
+    testAddArea:{
+        width: componentWidth,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingLeft:200,
-        paddingRight:200,
         marginBottom:10,
     },
     testUpdateContainer:{
@@ -559,7 +553,7 @@ const styles = StyleSheet.create({
         marginLeft:100,
     },
     testListFlatListArea:{        
-        width:"100%",
+        width:componentWidth,
         flex:1,
         flexDirection: 'column',
         alignItems: 'center',
@@ -567,11 +561,12 @@ const styles = StyleSheet.create({
         backgroundColor: '',
     },
     testListFlatList:{
-        width:"100%",
+        width:componentWidth,
         flex:1,
         flexDirection: 'column',
         backgroundColor: '',
-        padding:20,
+        paddingTop:20,
+        paddingBottom:20,
     },
 
 });

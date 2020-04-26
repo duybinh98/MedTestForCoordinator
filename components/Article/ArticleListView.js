@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, Alert} from 'react-native';
-import {getApiUrl} from './../Common/CommonFunction'
+import {getApiUrl,componentWidth} from './../Common/CommonFunction'
 import ArticleListViewItem from './ArticleListViewItem'
 
 export default class ArticleListScreen extends Component  {
@@ -94,13 +94,13 @@ const styles = StyleSheet.create({
     },
     articleListTopMenuArea: {
         height:70,
-        width:"100%",
+        width:componentWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '',
-        padding:20,
-        paddingLeft:200,
+        paddingTop:20,
+        paddingBottom:20,
     },
     createNewArticleButton:{
         width: 200,
@@ -111,10 +111,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight:200,
     },
     articleListFlatListArea:{        
-        width:"100%",
+        width:componentWidth,
         flex:1,
         flexDirection: 'column',
         alignItems: 'center',
@@ -122,11 +121,12 @@ const styles = StyleSheet.create({
         backgroundColor: '',
     },
     articleListFlatList:{
-        width:"100%",
+        width:componentWidth,
         flex:1,
         flexDirection: 'column',
         backgroundColor: '',
-        padding:20,
+        paddingTop:20,
+        paddingBottom:20,
     },
     
 

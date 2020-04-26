@@ -1,5 +1,6 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TextInput, Image, ImageBackground, Picker, TouchableOpacity, Dimensions } from 'react-native';
+import {screenWidth} from './Common/CommonFunction'
 
 export default class ListScreen extends Component  {
     constructor(props) {
@@ -115,12 +116,11 @@ export default class ListScreen extends Component  {
 }
 
 const headerHight=185
-const WIDTH = Dimensions.get('window').width
 
 const styles = StyleSheet.create({
     headerContainer: {
         height:headerHight,
-        width: WIDTH,
+        width: screenWidth,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     middleArea:{
         height:headerHight,
         // flex:1,
-        width: WIDTH-600,
+        width: screenWidth-600,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',    
