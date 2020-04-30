@@ -20,7 +20,8 @@ export default class TestUpdateView extends Component  {
             versionList: null,
             testName: '',
             testPrice: '',
-            newTestId: 1,
+            newTestId: -1,
+            allowToCreateVersion: true,
             error: '',
             errorList: ['','Phải chọn loại xét nghiệm','Phải điền tên xét nghiệm', 'Phải điền giá xét nghiệm'],
         };
@@ -95,7 +96,7 @@ export default class TestUpdateView extends Component  {
                 if (this.state.testListTemp[index].testTypeID == this.state.testTypeSelectedForCreate) {
                     let testList = this.state.testListTemp[index].listTest
                     let newTest = {
-                        'testID':("new"+this.state.newTestId),
+                        'testID':(this.state.newTestId),
                         'testName':this.state.testName,                   
                         'price':this.state.testPrice,
                         'testTypeID': this.state.testTypeSelectedForCreate,
@@ -113,10 +114,24 @@ export default class TestUpdateView extends Component  {
                 }
                 index -= 1;   
             } 
+            let _newTestId = this.state.newTestId-=1
+            this.setState({
+                newTestId: _newTestId,
+                testTypeSelectedForCreate:'none',
+                testName:'',
+                testPrice:'',
+            })
+            // console.log(this.state.testListTemp)
         }    
+        
     }
     
-    checkValid(){        
+    checkValid(){     
+        // console.log("base "+this.state.testPrice)   
+        // console.log("isNaN "+isNaN(this.state.testPrice))   
+        // console.log("prase "+parseInt(this.state.testPrice))   
+        // var numbers = "/^[0-9]+$/";
+        // console.log("match "+this.state.testPrice.match(numbers))   
         if (this.state.testTypeSelectedForCreate == 'none') 
             return this.setState(previousState => ({ 
                 error: this.state.errorList[1]
@@ -125,7 +140,7 @@ export default class TestUpdateView extends Component  {
             return this.setState(previousState => ({ 
                 error: this.state.errorList[2]
             }));
-        if (this.state.testPrice == '') 
+        if (this.state.testPrice == '' || isNaN(this.state.testPrice)) 
             return this.setState(previousState => ({ 
                 error: this.state.errorList[3]
             }));
@@ -137,63 +152,75 @@ export default class TestUpdateView extends Component  {
     }
 
     callApiUpdateVersion  = async () => {
-        let result = []
-        let index = this.state.testListTemp.length - 1;
-        while (index >= 0) {
-            let indexTest = this.state.testListTemp[index].listTest.length -1
-            while(indexTest >= 0){     
-                var test = this.state.testListTemp[index].listTest[indexTest]           
-                result.push(test)
-                indexTest -=1;
-            }
-            index -= 1;
-        }        
-        console.log(result)
-        fetch(getApiUrl()+'/tests/versions/upgrade-version', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer '+this.props.token,
-            },
-            body: JSON.stringify({
-                creatorID: this.props.userInfo.id,
-                lsInputTest: result,
-            }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log('result:'+JSON.stringify(result))
-                this.callApiGetVersionList()
-                // this.callApiGetTestList()
-            },
-            (error) => {
-                console.log('error:'+error)    
-            }
-        );
+        // console.log(this.state.allowToCreateVersion)
+        if(this.state.allowToCreateVersion){
+            let result = []
+            let index = this.state.testListTemp.length - 1;
+            while (index >= 0) {
+                let indexTest = this.state.testListTemp[index].listTest.length -1
+                while(indexTest >= 0){     
+                    var test = this.state.testListTemp[index].listTest[indexTest]           
+                    result.push(test)
+                    indexTest -=1;
+                }
+                index -= 1;
+            }        
+            console.log(result)
+            fetch(getApiUrl()+'/tests/versions/upgrade-version', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                },
+                body: JSON.stringify({
+                    creatorID: this.props.userInfo.id,
+                    lsInputTest: result,
+                }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log('result:'+JSON.stringify(result))
+                    this.callApiGetVersionList()
+                    // this.callApiGetTestList()
+                },
+                (error) => {
+                    console.log('error:'+error)    
+                }
+            );
+        }
+        
     }
 
     updatePrice(testId,newPrice){
+        if (newPrice == '' || isNaN(newPrice)) {
+            this.setState({allowToCreateVersion: false});            
+        }
+        else this.setState({allowToCreateVersion: true});
+
         let result = []
         let index = this.state.testListTemp.length - 1;
         while (index >= 0) {
             var testType = this.state.testListTemp[index]
             let testList = []
-            let indexTest = this.state.testListTemp[index].listTest.length -1
-            while(indexTest >= 0){
+            let indexTest = 0
+            while(indexTest <= this.state.testListTemp[index].listTest.length -1){
                 var test = this.state.testListTemp[index].listTest[indexTest]
                 if (test.testID == testId){
                     test.price = newPrice
+                    // console.log(test) 
                 } 
-                testList.push(test)               
-                indexTest -=1;
+                testList.push(test)  
+                indexTest +=1;
             }
             testType['listTest'] = testList;
             result.push(testType)
-            index -= 1;            
-        }      
+            index -= 1;      
+            
+        }
         // console.log(this.state.testListTemp)
+        
     }
 
     handleChange(event) {

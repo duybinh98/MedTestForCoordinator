@@ -11,6 +11,7 @@ export default class ArticleView extends Component  {
             imageType: '',
             imageResultUri: '',
         };
+        this.onDelete = this.onDelete.bind(this)
         
     }
 
@@ -20,6 +21,37 @@ export default class ArticleView extends Component  {
                 
             }));
         }
+    }
+
+    onDelete(){
+        this.callApiDeleteArticle()
+    }
+
+    callApiDeleteArticle(){
+        this.setState(previousState => ({
+                requestListApi: false,
+            }));
+            fetch(getApiUrl()+"/articles/delete/"+this.props.article.articleId,{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                }
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                    let success = false
+                    result ? result.message? result.message== "Xoá bài viết thành công!"? success=true: null : null : null;
+                    if (success)
+                    this.props.changeShowView('ArticleListView')
+                },            
+                (error) => {
+                    console.log(error)
+                }
+            )
     }
 
     render(){
@@ -48,6 +80,11 @@ export default class ArticleView extends Component  {
                         <Text style={styles.rowText}>{this.props.article?this.props.article.creatorName:''}</Text>
                     </View>   
                                      
+                </View>
+                <View style={styles.buttonArea}>
+                    <TouchableOpacity style={styles.button} onPress={() => this.onDelete()}>
+                        <Text style={{color:'white'}}>Xóa bài viết</Text>
+                    </TouchableOpacity> 
                 </View>
             </View>
         </View>
@@ -122,5 +159,26 @@ const styles = StyleSheet.create({
         width:400,
         height:400,
         backgroundColor:''
+    },
+    buttonArea:{
+        alignSelf: 'stretch',
+        width:'100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop:10,
+        paddingBottom:50,
+        paddingLeft:200,
+        paddingRight:200,
+    },
+    button:{
+        height:50,
+        width:200,
+        backgroundColor:'#25345D',
+        borderRadius:5,
+        borderWidth:1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 });

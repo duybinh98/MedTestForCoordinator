@@ -40,6 +40,8 @@ export default class TestListView extends Component {
         this.checkAdmin = this.checkAdmin.bind(this)
         this.changePassword = this.changePassword.bind(this)
         this.getDob = this.getDob.bind(this)
+        this.getDistrictName = this.getDistrictName.bind(this)
+        this.getTownName = this.getTownName.bind(this)
 
     }
 
@@ -48,8 +50,8 @@ export default class TestListView extends Component {
         this.setState(previousState => ({ 
             districtList: this.props.districtList?this.props.districtList:[],
             townList: this.props.districtList?this.props.districtList[0].listTown:[],
-            districtSelected: this.props.districtList?this.props.districtList[0].districtCode:'none',
-            townSelected: this.props.districtList?this.props.districtList[0].listTown[0]?this.props.districtList[0].listTown[0].townCode:'none':'none',
+            districtSelected: this.props.account?this.props.account.accountDistrictCode:this.props.districtList?this.props.districtList[0].districtCode:'none',
+            townSelected: this.props.account?this.props.account.accountTownCode:this.props.districtList?this.props.districtList[0].listTown[0]?this.props.districtList[0].listTown[0].townCode:'none':'none',
             accountName: this.props.account?this.props.account.accountName:'',
             accountPhoneNumber: this.props.account?this.props.account.accountPhoneNumber:'',
             accountEmail: this.props.account?this.props.account.accountEmail:'',
@@ -71,8 +73,8 @@ export default class TestListView extends Component {
             this.setState(previousState => ({ 
             districtList: this.props.districtList?this.props.districtList:[],
             townList: this.props.districtList?this.props.districtList[0].listTown:[],
-            districtSelected: this.props.districtList?this.props.districtList[0].districtCode:'none',
-            townSelected: this.props.districtList?this.props.districtList[0].listTown[0]?this.props.districtList[0].listTown[0].townCode:'none':'none',
+            districtSelected: this.props.account?this.props.account.accountDistrictCode:this.props.districtList?this.props.districtList[0].districtCode:'none',
+            townSelected: this.props.account?this.props.account.accountTownCode:this.props.districtList?this.props.districtList[0].listTown[0]?this.props.districtList[0].listTown[0].townCode:'none':'none',
             accountName: this.props.account?this.props.account.accountName:'',
             accountPhoneNumber: this.props.account?this.props.account.accountPhoneNumber:'',
             accountEmail: this.props.account?this.props.account.accountEmail:'',
@@ -160,7 +162,6 @@ export default class TestListView extends Component {
         return result
     }
 
-
     getDob(){
         let result = ''
         if(parseInt(this.state.month)<10)
@@ -171,7 +172,6 @@ export default class TestListView extends Component {
             else result = ''+this.state.day+'/'+this.state.month+'/'+this.state.year
         return result
     }
-    
 
     resetPassword(){
         console.log(this.props.account.accountId),
@@ -196,7 +196,6 @@ export default class TestListView extends Component {
                 result ? result.message?  success=true : null : null;
                 if (success)
                     this.props.changeShowView('AccountListView')
-                
             },
             (error) => {
                 console.log('error:'+error)    
@@ -214,7 +213,6 @@ export default class TestListView extends Component {
         }
     }
 
-    
     checkValid(){        
         if (this.state.accountName == '') 
             return this.setState(previousState => ({ 
@@ -262,7 +260,10 @@ export default class TestListView extends Component {
                 result ? result.message? null : success=true : null;
                 if (success) {
                     if (this.checkCurrentUser()) this.props.updateUserInfo(result)
-                    this.props.changeShowView('AccountListView')
+                    // this.props.changeShowView('AccountListView')
+                }
+                else{
+                    this.setState({error:result.message})
                 }
             },
             (error) => {
@@ -271,7 +272,6 @@ export default class TestListView extends Component {
         );
     }
 
-    
     selectPicture = async () =>{
         const result = await ImagePicker.launchImageLibraryAsync()
         console.log(result)
@@ -279,7 +279,6 @@ export default class TestListView extends Component {
             this.callApiUploadImage(result)
         }
     }
-
     
     callApiUploadImage (_data) {
         fetch(getApiUrl()+'/uploadImage', {
@@ -315,6 +314,32 @@ export default class TestListView extends Component {
         return false
     }
 
+    getDistrictName(){
+        let index = this.state.districtList.length - 1;
+        while (index >= 0) {
+            if (this.state.districtList[index].districtCode == this.state.districtSelected){
+                return this.state.districtList[index].districtName
+            }
+            index -= 1;
+        }  
+        return ''
+    }
+
+    getTownName(){
+        let index = this.state.districtList.length - 1;
+        while (index >= 0) {
+            let indexTown = this.state.districtList[index].listTown.length - 1;
+            while(indexTown >=0 ){
+                if (this.state.districtList[index].listTown[indexTown].townCode == this.state.townSelected){
+                    return this.state.districtList[index].listTown[indexTown].townName
+                }
+                indexTown-=1;
+            }
+            index -= 1;
+        }  
+        return ''
+    }
+
     render(){        
     return(        
         <View style={styles.accountViewArea}>
@@ -335,7 +360,7 @@ export default class TestListView extends Component {
                     <View style={styles.imagePreviewArea}>
                         <View style={styles.accountRowContainer}>
                             <Text style={styles.rowText}>{' '}</Text>
-                            <TouchableOpacity onPress={() => this.selectPicture()}
+                            <TouchableOpacity onPress={() => this.checkAdmin()?this.selectPicture():null}
                             >
                                 <Image 
                                     style={styles.imagePreview}
@@ -436,6 +461,7 @@ export default class TestListView extends Component {
                     </View>                   
                     <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Quận/huyện:</Text>
+                        {this.checkAdmin()?
                         <Picker
                             selectedValue={this.state.districtSelected}
                             style={styles.accountTypeDropDown}
@@ -445,9 +471,13 @@ export default class TestListView extends Component {
                             <Picker.Item label={district.districtName} value={district.districtCode} />))
                             : null }
                         </Picker>
+                        :
+                        <Text style={styles.rowTextLong}>{this.getDistrictName()}</Text>
+                        }
                     </View>
                     <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Phường/xã:</Text>
+                        {this.checkAdmin()?
                         <Picker
                             selectedValue={this.state.townSelected}
                             style={styles.accountTypeDropDown}
@@ -459,9 +489,13 @@ export default class TestListView extends Component {
                             <Picker.Item label={town.townName} value={town.townCode} />
                             )): null}
                         </Picker>
+                        :
+                        <Text style={styles.rowTextLong}>{this.getTownName()}</Text>
+                        }
                     </View>
                     <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Địa chỉ chi tiết:</Text>
+                        {this.checkAdmin()?
                         <TextInput style={styles.rowTextInput}
                             placeholder={'Nhập địa chỉ chi tiết: số nhà, đường, thôn, ..'}
                             name="accountAddress"
@@ -469,6 +503,9 @@ export default class TestListView extends Component {
                             value={this.state.accountAddress}
                             >                
                         </TextInput>
+                        :
+                        <Text style={styles.rowTextLong}>{this.state.accountAddress}</Text>
+                        }
                     </View> 
                     <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Vị trí nhân viên:</Text>
@@ -505,9 +542,13 @@ export default class TestListView extends Component {
                         <Text style={{color:'white'}}>Đặt lại mật khẩu</Text>
                     </TouchableOpacity>
                     }
+                    {this.checkAdmin()?
                     <TouchableOpacity style={styles.button} onPress={() => this.updateAccountInformation()}>
                         <Text style={{color:'white'}}>Lưu thay đổi</Text>
                     </TouchableOpacity>
+                    :
+                    <View/>
+                    }
                 </View>  
             </View>
             

@@ -20,7 +20,7 @@ export default class TestListView extends Component {
             districtSelected: this.props.districtList?this.props.districtList[0].districtCode:'none',
             townSelected: this.props.districtList?this.props.districtList[0].listTown[0]?this.props.districtList[0].listTown[0].townCode:'none':'none',
             accountAddress: '',
-            accountRole: '',
+            accountRole: 'NURSE',
             year: new Date().getFullYear(),
             month: new Date().getMonth() + 1,
             day: new Date().getDate(),
@@ -218,8 +218,13 @@ export default class TestListView extends Component {
                 console.log('result:'+JSON.stringify(result))
                 let success = false
                 result ? result.message? null : success=true : null;
-                if (success)
-                this.props.changeShowView('AccountListView')
+                if (success){
+                    this.props.changeToAccountViewScreen(result)
+                }
+                else{
+                    this.setState({error:result.message})
+                }
+                
             },
             (error) => {
                 console.log('error:'+error)    
@@ -257,7 +262,7 @@ export default class TestListView extends Component {
                 this.setState({ accountImage: result.uri });
             },
             (error) => {
-                console.log('error:'+error)    
+                console.log('error:'+error)
             }
         );
     }

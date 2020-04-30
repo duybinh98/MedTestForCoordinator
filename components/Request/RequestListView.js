@@ -155,6 +155,7 @@ export default class RequestListView extends Component  {
                                     lsSelectedTest={item.lsSelectedTest}
                                     requestAmount={item.requestAmount}
                                     requestStatus={item.requestStatus}
+                                    requestUpdatedTime={item.requestUpdatedTime}
                                     requestTestVersion={item.versionOfTest}
                                     testVersion={this.props.testVersion}
                                     testList={this.state.testsList} 

@@ -104,8 +104,13 @@ export default class TestListView extends Component {
                 console.log('result:'+JSON.stringify(result))
                 let success = false
                 result ? result.message? result.message == "Thay đổi mật khẩu thành công!"? success=true : null : null : null;
-                if (success)
-                this.props.changeShowView('AccountListView')
+                if (success){
+                    this.props.changeShowView('AccountView')
+                }
+                else{
+                    this.setState({error:result.message})
+                }
+                
             },
             (error) => {
                 console.log('error:'+error)    

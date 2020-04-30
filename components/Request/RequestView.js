@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput, Image} from 'react-native';
-import {convertDateTimeToDate, convertDateTimeToTime} from './../Common/CommonFunction'
-import {getApiUrl, getStateName, componentWidth} from './../Common/CommonFunction'
+import {getApiUrl, getStateName, componentWidth, convertDateTimeToDate, convertDateTimeToTime, convertMoney} from './../Common/CommonFunction'
+import AlertScreen from './../Common/AlertScreen'
 import RequestTestCategoryItem from './RequestTestCategoryItem'
 
 export default class RequestView extends Component  {
@@ -10,16 +10,17 @@ export default class RequestView extends Component  {
         this.state = {        
             testList: this.props.testList,
             resultList: [],
+            error: '',
         };
         this.isSelected = this.isSelected.bind(this)
         this.getLeftButtonName = this.getLeftButtonName.bind(this)
         this.getRightButtonName = this.getRightButtonName.bind(this)
         this.onLeftButtonPress = this.onLeftButtonPress.bind(this)
         this.onRightButtonPress = this.onRightButtonPress.bind(this)
+        this.callApiTakingSample = this.callApiTakingSample.bind(this)
     }
 
     componentDidMount(){
-        if(this.props.request.requestStatus=='closed') this.callApiResultList()
     }
 
     componentDidUpdate  (prevProps, prevState) {        
@@ -27,12 +28,19 @@ export default class RequestView extends Component  {
             this.setState(previousState => ({ 
                 
             }));
-            if(this.props.request.requestStatus=='closed') this.callApiResultList()
         }
     }
 
-    callApiResultList () {
-        fetch(getApiUrl()+"/requests/detail/"+this.props.request.requestId+"/result",{
+    
+    isSelected(id) {
+        const found = this.props.request?this.props.request.lsSelectedTest.findIndex(test => test == id) : -1;
+        let result = false;
+        found === -1 ? '' : result = true;
+        return result;
+    }
+
+    callApiDetail(){
+        fetch(getApiUrl()+"/requests/detail/"+this.props.request.requestId, {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -44,10 +52,13 @@ export default class RequestView extends Component  {
         .then(
             (result) => {
                 console.log(result)
-                result ? result.message? null :
-                this.setState(previousState => ({
-                    resultList: result,
-                })) :null
+                let success = false
+                result ? result.message? null : success=true : null;
+                if (success) {
+                    let request = this.props.request
+                    request.requestStatus = result.requestStatus
+                    this.props.setSelectedRequest(request)
+                }
             },            
             (error) => {
                 console.log(error)
@@ -55,39 +66,47 @@ export default class RequestView extends Component  {
         )  
     }
 
-    
-    isSelected(id) {
-        const found = this.props.request?this.props.request.lsSelectedTest.findIndex(test => test == id) : -1;
-        let result = false;
-        found === -1 ? '' : result = true;
-        return result;
-    }
-
-    
-    onTakingSample(){
+    callApiTakingSample(){
         fetch(getApiUrl()+"/requests/update/"+this.props.request.requestId, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    Authorization: 'Bearer '+this.props.token,
-                },
-                body: JSON.stringify({
-                    status: 'waitingforresult',
-                    userID: this.props.userInfo.id,
-                    note: 'Coordinator have take this request',
-                }),
-                })
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.props.token,
+            },
+            body: JSON.stringify({
+                status: 'waitingforresult',
+                userID: this.props.userInfo.id,
+                note: 'Coordinator have take this request',
+            }),
+        })
         .then(res => res.json())
         .then(
             (result) => {
                 console.log(result)
-                this.props.changeShowView('RequestListView')
+                let success = false
+                result ? result.message? null : success=true : null;
+                if (success) {
+                    let request = this.props.request
+                    request.requestStatus = 'waitingforresult'
+                    this.props.setSelectedRequest(request)
+                    this.props.changeShowView('RequestView')
+                }
+                else{
+                    this.setState({error:result.message})
+                    this.callApiDetail()
+                }
+                
             },            
             (error) => {
                 console.log(error)
             }
         )  
+    }
+    
+    onTakingSample(){
+        this.callApiTakingSample()
+        
     }
 
     onLostSample(){
@@ -98,6 +117,10 @@ export default class RequestView extends Component  {
         this.props.changeShowView('RequestUpdateResultView')
     }
 
+    onViewResult(){
+        this.props.changeShowView('RequestResultView')
+    }
+
     getLeftButtonName(status) {
         switch (status) {
             case 'transporting':
@@ -105,7 +128,10 @@ export default class RequestView extends Component  {
                 break;
             case 'waitingforresult':
                 return 'Làm mất mẫu';
-                break;            
+                break;  
+            case 'closed':
+                return '';
+                break;          
             default: '';
         }
     }
@@ -117,7 +143,10 @@ export default class RequestView extends Component  {
                 break;
             case 'waitingforresult':
                 return 'Cập nhật kết quả';
-                break;            
+                break;          
+            case 'closed':
+                return 'Xem kết quả';
+                break;    
             default: ''
         }
     }
@@ -131,6 +160,9 @@ export default class RequestView extends Component  {
             case 'waitingforresult':
                 this.onLostSample();
                 break;
+            case 'closed':
+            
+                break;
         }
     }
 
@@ -141,6 +173,9 @@ export default class RequestView extends Component  {
                 break;
             case 'waitingforresult':
                 this.onUpdateResult();
+                break;
+            case 'closed':
+                this.onViewResult();
                 break;
         }
     }
@@ -189,6 +224,14 @@ export default class RequestView extends Component  {
                             <Text style={styles.rowTextLong}>{this.props.request?getStateName(this.props.request.requestStatus):''}</Text>
                     </View>
                     <View style={styles.requestRowContainer}>
+                            <Text style={styles.rowText}>Cập nhật gần nhất: </Text>
+                            <Text style={styles.rowTextLong}>{this.props.request?convertDateTimeToDate(this.props.request.requestUpdatedTime)+"   "+convertDateTimeToTime(this.props.request.requestUpdatedTime):''}</Text>
+                    </View>
+                    <View style={styles.requestRowContainer}>
+                            <Text style={styles.rowText}>Tổng tiền: </Text>
+                            <Text style={styles.rowTextLong}>{this.props.request?convertMoney(this.props.request.requestAmount)+'đ':''}</Text>
+                    </View>
+                    <View style={styles.requestRowContainer}>
                         <FlatList
                                 style={styles.rowFlatList}
                                 showsVerticalScrollIndicator={false}
@@ -208,24 +251,10 @@ export default class RequestView extends Component  {
                             >
                         </FlatList>
                     </View>
-                    {this.state.resultList.length==0?null:
-                    this.state.resultList.map(result => (                        
-                    <View style={styles.imagePreviewArea}>
-                        {/* <View style={styles.requestRowContainer}>
-                            <Text style={[styles.rowTextLong,{fontSize:15,width:600,paddingTop:3}]}>{' '+result.image}</Text>
-                        </View> */}
-                        <View style={styles.requestRowContainer}>
-                            <Image 
-                                style={styles.imagePreview}
-                                source={{ uri: result.image}}
-                                >
-                            </Image>
-                        </View>
+                    <View style={[styles.requestRowContainer,{justifyContent:'center'}]}>
+                            <Text style={styles.rowError}>{this.state.error}</Text>
                     </View>
-                    ))
-                    }
                 </View>
-
                 <View style={styles.buttonArea}>
                     {!this.getLeftButtonName(this.props.request?this.props.request.requestStatus:'') ==''?
                     <TouchableOpacity style={styles.button} onPress={() => this.onLeftButtonPress(this.props.request?this.props.request.requestStatus:'')}>
@@ -240,7 +269,6 @@ export default class RequestView extends Component  {
                     :<View/>
                     }
                 </View>
-
             </View>
         </View>
     );
@@ -312,6 +340,14 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         width:500,
         fontSize:17,
+    },
+    rowError:{
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize:15,
+        color:'red'
     },
     rowFlatList: {
         width: '100%',

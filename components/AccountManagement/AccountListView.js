@@ -38,8 +38,9 @@ export default class AccountListScreen extends Component  {
             let result = []
             let index = this.state.userList.length - 1;
             while (index >= 0) {
-                if (this.state.userList[index].phoneNumber === this.state.inputPhoneNumber) {
-                    result.push(this.state.userList[index]);
+                if (this.state.userList[index].phoneNumber === this.state.inputPhoneNumber && 
+                    (this.state.accountSelected=='all' || this.state.userList[index].role === this.state.accountSelected ) ) {
+                        result.push(this.state.userList[index]);
                     }
                 index -= 1;
             }
@@ -75,6 +76,7 @@ export default class AccountListScreen extends Component  {
             accountSelected: button=="1"? 'all': button=="2"? 'COORDINATOR': button=="3"? 'NURSE' : button=="4"? 'CUSTOMER': 'ADMIN',
             dataChanged: !this.state.dataChanged,
             isSearch: false,
+            inputPhoneNumber: '',
         }))
     }
 
@@ -101,8 +103,6 @@ export default class AccountListScreen extends Component  {
             dataChanged: !this.state.dataChanged,
             isSearch: true,
         }))
-
-
     }
 
     render(){
@@ -222,7 +222,9 @@ export default class AccountListScreen extends Component  {
                         }}
                     >                   
                 </FlatList> 
-                       
+                <View style={styles.accountRowContainer}>
+                    <Text style={styles.rowTextError}>{this.getAccountShowList().length==0?'Không có tài khoản nào':''}</Text>                        
+                </View>
             </View>
         </View>
     );
@@ -336,7 +338,24 @@ const styles = StyleSheet.create({
         flex:1,
         flexDirection: 'column',
         backgroundColor: '',
-        paddingBottom:40,
+        paddingBottom:20,
+    },
+    accountRowContainer:{
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width:'100%',
+        marginBottom:40,
+    },
+    rowTextError:{
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width:300,
+        fontSize:13,
+        color:'red',        
     },
 
 });

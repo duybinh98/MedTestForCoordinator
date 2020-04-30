@@ -60,9 +60,17 @@ export default class RequestLostSampleView extends Component  {
             (result) => {
                 console.log('result:'+JSON.stringify(result))
                 let success = false
-                result ? result.message? null: success=result.success : null;
-                if (success) 
-                this.props.changeShowView('RequestListView')
+                result ? result.message? null: success=true : null;
+                if (success) {
+                    let request = this.props.request
+                    request.requestStatus = 'coordinatorlostsample'
+                    this.props.setSelectedRequest(request)
+                    this.props.changeShowView('RequestView')
+                }
+                else{
+                    this.setState({error:result.message})
+                }
+                
             },
             (error) => {
                 console.log('error:'+error)    
@@ -218,17 +226,6 @@ const styles = StyleSheet.create({
         borderRadius:5,
         paddingLeft:10,        
     },
-    requestConfirmButton:{
-        height:50,
-        width:200,
-        backgroundColor:'#25345D',
-        borderRadius:5,
-        borderWidth:1,
-        marginBottom:50,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     addImageButton:{
         width: 200,
         height:30,
@@ -263,5 +260,16 @@ const styles = StyleSheet.create({
         paddingBottom:50,
         paddingLeft:200,
         paddingRight:200,
+    },
+    requestConfirmButton:{
+        height:50,
+        width:200,
+        backgroundColor:'#25345D',
+        borderRadius:5,
+        borderWidth:1,
+        marginBottom:50,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });

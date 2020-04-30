@@ -8,6 +8,7 @@ export default class TestListView extends Component {
         super(props)
         this.state = {            
             testPrice: this.props.testPrice,
+            alert:'',
         };
         this.handleChange = this.handleChange.bind(this)
     }
@@ -28,9 +29,13 @@ export default class TestListView extends Component {
     handleChange(event) {
         const name = event.target && event.target.name;
         const value = event.target && event.target.value;        
-        // console.log('event name'+name+', event value:'+value)
-        this.props.updatePrice?this.props.updatePrice(this.props.testId,value):null
+        // console.log('name: '+name+', value: '+value)
         this.setState({[name]: value});
+        if (value == '' || isNaN(value)) this.setState({alert: 'Giá tiền phải là số'});
+        else this.setState({alert: ''});
+        
+        this.props.updatePrice(this.props.testId,value)
+        
     }
 
 
@@ -64,6 +69,8 @@ export default class TestListView extends Component {
                         value={this.state.testPrice.toString()}
                         >   
                     </TextInput>
+                        <Text style={{fontSize:15,color:'red',marginLeft:10,marginTop:2}}>{this.state.alert}</Text>
+                    
                 </View>                     
             </View>      
         );

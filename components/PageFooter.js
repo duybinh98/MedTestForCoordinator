@@ -63,9 +63,9 @@ export default class ListScreen extends Component  {
                     <View style={styles.textContainer}>
                         <Text style={{fontSize:10,color:'white'}}>Tầng 17, 19, 20, 21 Tòa nhà Center Building - Hapulico Complex, Số 1 Nguyễn Huy Tưởng, Thanh Xuân, Hà Nội.</Text>
                     </View>
-                    {/* <View style={styles.textContainer}>
-                        <Text style={{fontSize:10,color:'white'}}>Giấy phép số 2215/GP-TTĐT do Sở Thông tin và Truyền thông Hà Nội cấp ngày 10 tháng 4 năm 2019</Text>
-                    </View> */}
+                    <View style={styles.textContainer}>
+                        <Text style={{fontSize:10,color:'white'}}>Update: 30/4/2020 18:30</Text>
+                    </View>
                 </View>
                 
             </View>

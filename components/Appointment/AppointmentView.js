@@ -1,30 +1,56 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Dimensions, Picker, FlatList, TextInput, Image} from 'react-native';
-import {convertDateTimeToDate, convertDateTimeToTime} from './../Common/CommonFunction'
-import {getApiUrl, getAppointmentStateName, componentWidth} from './../Common/CommonFunction'
+import {convertDateTimeToDate, convertDateTimeToTime, getApiUrl, getAppointmentStateName, componentWidth} from './../Common/CommonFunction'
+import AlertScreen from './../Common/AlertScreen'
 
 export default class AppointmentView extends Component  {
     constructor(props) {
         super(props)
-        this.state = {        
-            
+        this.state = {     
+            error: 'A',
         };
         this.onAccept = this.onAccept.bind(this)
         this.onReject = this.onReject.bind(this)
+        this.callApiAcceptAppointment = this.callApiAcceptAppointment.bind(this)
         
     }
 
     componentDidUpdate  (prevProps, prevState) {        
          if (prevProps !== this.props) {
             this.setState(previousState => ({ 
-                
+
             }));
         }
     }
     
-
+    callApiDetail(){
+        fetch(getApiUrl()+"/appointments/detail/"+this.props.appointment.appointmentId, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.props.token,
+            }
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                console.log(result)
+                let success = false
+                result ? result.message? null : success=true : null;
+                if (success) {
+                    let appointment = this.props.appointment
+                    appointment.appointmentStatus = result.appointment_status
+                    this.props.setSelectedAppointment(appointment)
+                }
+            },            
+            (error) => {
+                console.log(error)
+            }
+        )  
+    }
     
-    callApiAcceptAppointment(_status){
+    callApiAcceptAppointment(){
         fetch(getApiUrl()+"/appointments/accept/"+this.props.appointment.appointmentId, {
             method: 'POST',
             headers: {
@@ -33,7 +59,7 @@ export default class AppointmentView extends Component  {
                 Authorization: 'Bearer '+this.props.token,
             },
             body: JSON.stringify({
-                status: _status,
+                status: 'accepted',
                 coordinatorID: this.props.userInfo.id,
                 note: 'ok',
             }),
@@ -42,10 +68,17 @@ export default class AppointmentView extends Component  {
         .then(
             (result) => {
                 console.log(result)
-                // let success = false
-                // result ? result.message? null : success=true : null;
-                // if (success) 
-                this.props.changeShowView('AppointmentListView')
+                let success = false
+                result ? result.message? success=true : null : null;
+                if (success) {
+                    let appointment = this.props.appointment
+                    appointment.appointmentStatus = 'accepted'
+                    this.props.setSelectedAppointment(appointment)
+                    // this.props.changeShowView('AppointmentView')
+                }
+                else
+                    this.setState({error:result.message})
+                    this.callApiDetail()
             },            
             (error) => {
                 console.log(error)
@@ -95,6 +128,9 @@ export default class AppointmentView extends Component  {
                             <Text style={styles.rowText}>Trạng thái: </Text>
                             <Text style={styles.rowTextLong}>{this.props.appointment?getAppointmentStateName(this.props.appointment.appointmentStatus):''}</Text>
                     </View>
+                    <View style={[styles.appointmentRowContainer,{justifyContent:'center'}]}>
+                            <Text style={styles.rowError}>{this.state.error}</Text>
+                    </View>
                 </View>
                 <View style={styles.buttonArea}>
                     {this.props.appointment.appointmentStatus =='pending'?
@@ -109,7 +145,6 @@ export default class AppointmentView extends Component  {
                     :<View/>}
                 </View>
             </View>
-            
         </View>
     );
     }
@@ -179,7 +214,6 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
         backgroundColor:''
     },
-    
     rowTextLong:{
         alignSelf: 'stretch',
         flexDirection: 'row',
@@ -188,6 +222,14 @@ const styles = StyleSheet.create({
         width:500,
         fontSize:17,
         backgroundColor:''
+    },
+    rowError:{
+        alignSelf: 'stretch',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize:15,
+        color:'red'
     },
     buttonArea:{
         alignSelf: 'stretch',

@@ -11,7 +11,8 @@ export default class Login extends Component  {
             phoneNumber: '',
             password:'',
             error: ' ',
-            errorList: [' ','Phải điền số điện thoại', 'Phải điền mật khẩu']
+            loginApi: true,
+            errorList: [' ','Phải điền số điện thoại','Số điện thoại phải có 10 số','Phải điền mật khẩu']
         };
         this.callApiLogin = this.callApiLogin.bind(this)
         this.handleChange = this.handleChange.bind(this);
@@ -41,9 +42,13 @@ export default class Login extends Component  {
             return this.setState(previousState => ({ 
                 error: this.state.errorList[1]
             }));
-        if (this.state.password == '') 
+        if (isNaN(this.state.phoneNumber) || this.state.phoneNumber.length!=10) 
             return this.setState(previousState => ({ 
                 error: this.state.errorList[2]
+            }));
+        if (this.state.password == '') 
+            return this.setState(previousState => ({ 
+                error: this.state.errorList[3]
             }));
         this.setState(previousState => ({ 
                 error: this.state.errorList[0]
@@ -53,29 +58,40 @@ export default class Login extends Component  {
     }
 
     callApiLogin(){
-        fetch(getApiUrl()+"/users/login",{
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                phoneNumber: this.state.phoneNumber,
-                password: this.state.password,
-            }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log(result)
-                let success = false
-                result ? result.message? null : success=true : null;
-                if (success) this.props.loginSuccess(result.userInfo,result.token)
-            },            
-            (error) => {
-                console.log(error)
-            }
-        )
+        if(this.state.loginApi){
+            this.setState({loginApi:false})
+            fetch(getApiUrl()+"/users/login",{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    phoneNumber: this.state.phoneNumber,
+                    password: this.state.password,
+                }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result)
+                    let success = false
+                    result ? result.message? null : success=true : null;
+                    if (success) this.props.loginSuccess(result.userInfo,result.token)
+                    else{
+                        this.setState({
+                            loginApi:true,
+                            error: result.message
+                        })
+                    }
+                },            
+                (error) => {
+                    console.log(error)
+                    this.setState({loginApi:true})
+                }
+            )
+        }
+        
     }
 
     render(){
@@ -152,7 +168,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         width:130,
         fontSize:18,
-    },
+    },    
     rowTextInput:{
         alignSelf: 'stretch',
         padding:3,

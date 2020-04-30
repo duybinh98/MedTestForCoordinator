@@ -1,3 +1,4 @@
+import {Dimensions} from 'react-native';
 
 export function convertDateTimeToDate(inputString){
     if (inputString == null ) return ''
@@ -24,7 +25,13 @@ export function getApiUrl(){
 
 export const componentWidth = 1100
 
-export const screenWidth = 1536
+export const screenWidth =  Dimensions.get('window').width<1201?1200:
+                            // Dimensions.get('window').width<1269?1268:
+                            // Dimensions.get('window').width<1350?1349:
+                            // Dimensions.get('window').width<1367?1366:
+                            // Dimensions.get('window').width<1537?1536:
+                            // Dimensions.get('window').width<1921?1920:
+                            Dimensions.get('window').width
 
 export function getRoleName(role){
     switch (role) {

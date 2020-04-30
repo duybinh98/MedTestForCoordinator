@@ -33,6 +33,7 @@ export default class RequestListPendingItem extends Component {
             "lsSelectedTest":this.props.lsSelectedTest,
             "requestAmount":this.props.requestAmount,
             "requestStatus":this.props.requestStatus,
+            "requestUpdatedTime":this.props.requestUpdatedTime,
             "testList":testList,
             "requestTestVersion":this.props.requestTestVersion,
             }

@@ -7,13 +7,12 @@ export default class RequestUpdateResultView extends Component  {
     constructor(props) {
         super(props)
         this.state = {      
-            // imageUriList: [{'image':'https://znews-photo.zadn.vn/w1024/Uploaded/jgtnrz/2020_03_23/Rebel_4.jpeg'}],
             imageUriList: [],
             requestTitle: '',
             requestShortContent: '',
             requestContent: '',
             error: '',
-            errorList: ['','Bài viết chưa có ảnh min họa'],
+            errorList: ['','Chưa có ảnh kết quả nào'],
 
         };
         this.selectPicture = this.selectPicture.bind(this)
@@ -68,8 +67,13 @@ export default class RequestUpdateResultView extends Component  {
                 console.log('result:'+JSON.stringify(result))
                 let success = false
                 result ? result.message? null: success=true : null;
-                if (success) 
-                this.props.changeShowView('RequestListView')
+                if (success) {
+                    let request = this.props.request
+                    request.requestStatus = 'closed'
+                    this.props.setSelectedRequest(request)
+                    this.props.changeShowView('RequestView')
+                }
+                
             },
             (error) => {
                 console.log('error:'+error)    
@@ -154,6 +158,9 @@ export default class RequestUpdateResultView extends Component  {
                 if(success){
                     this.callApiUpdateRequest()
                 }  
+                else{
+                    this.setState({error:result.message})
+                }
                         
             },
             (error) => {
@@ -193,7 +200,7 @@ export default class RequestUpdateResultView extends Component  {
                         style={styles.addImageButton}
                         onPress={() => this.selectPicture()}
                         >
-                            <Text>Chọn ảnh</Text>
+                            <Text style={{color:'white'}}>Chọn ảnh</Text>
                         </TouchableOpacity>
                     </View>
                     {this.state.imageUriList.length==0?null:
@@ -219,7 +226,7 @@ export default class RequestUpdateResultView extends Component  {
                     </View>
                 </View>
                 <TouchableOpacity style={styles.requestAddConfirmButton} onPress={() => this.completeUpdateResult()}>
-                    <Text>Tạo bài bài viết</Text>
+                    <Text style={{color:'white'}}>Cập nhật kết quả</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -314,7 +321,7 @@ const styles = StyleSheet.create({
     requestAddConfirmButton:{
         height:50,
         width:200,
-        backgroundColor:'white',
+        backgroundColor:'#25345D',
         borderRadius:5,
         borderWidth:1,
         marginBottom:50,
@@ -327,7 +334,7 @@ const styles = StyleSheet.create({
         height:30,
         borderRadius:10,
         borderWidth:1,
-        backgroundColor:'#e6e6e6',
+        backgroundColor:'#25345D',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',

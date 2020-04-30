@@ -6,7 +6,8 @@ export default class ListScreen extends Component  {
     constructor(props) {
         super(props)
         this.state = {
-            requestId: ''
+            requestId: '',
+            errorMessage: '',
         }
         this.editProfile = this.editProfile.bind(this)
         this.logOut = this.logOut.bind(this)
@@ -41,7 +42,14 @@ export default class ListScreen extends Component  {
     }
 
     searchRequest(){
-        this.props.userInfo?this.props.searchRequest(this.state.requestId):null
+        let result = this.props.userInfo?this.props.searchRequest(this.state.requestId):''
+        this.setState({
+            errorMessage: result,
+            requestId: ''
+            });
+        setTimeout(() => {
+            this.setState({errorMessage: ''});
+        }, 2500);
     }
 
     
@@ -76,6 +84,7 @@ export default class ListScreen extends Component  {
             </View>
             <View style={styles.middleArea}>
                 {this.props.userInfo?
+                <View>
                 <TextInput style={styles.searchInputContainer}
                 placeholder={'Tìm xét nghiệm'}
                 name="requestId"
@@ -84,6 +93,8 @@ export default class ListScreen extends Component  {
                 onSubmitEditing={() => this.searchRequest()}
                 >                
                 </TextInput>
+                <Text style={{color:'white',padding:7}}>{this.state.errorMessage}</Text>
+                </View>
                 :<View/>
                 }
             </View>
@@ -180,7 +191,7 @@ const styles = StyleSheet.create({
     },
     searchInputContainer:{
         height:30,
-        width:800,
+        width:screenWidth>1500?800:screenWidth-700,
         backgroundColor:'white',
         borderWidth:1,
         borderRadius:20,

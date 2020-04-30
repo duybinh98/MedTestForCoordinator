@@ -60,10 +60,14 @@ export default class AppointmentLostSampleView extends Component  {
         .then(
             (result) => {
                 console.log(result)
-                // let success = false
-                // result ? result.message? null : success=true : null;
-                // if (success) 
-                this.props.changeShowView('AppointmentListView')
+                let success = false
+                result ? result.message? null : success=true : null;
+                if (success) {
+                    let appointment = this.props.appointment
+                    appointment.appointmentStatus = 'rejected'
+                    this.props.setSelectedAppointment(appointment)
+                    this.props.changeShowView('AppointmentView')
+                }
             },            
             (error) => {
                 console.log(error)

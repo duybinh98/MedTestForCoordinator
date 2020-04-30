@@ -22,10 +22,13 @@ import LoginView from './Authentication/LoginView'
 
 import RequestListView from './Request/RequestListView'
 import RequestView from './Request/RequestView'
+import RequestResultView from './Request/RequestResultView'
 import RequestLostSampleView from './Request/RequestLostSampleView'
 import RequestUpdateResultView from './Request/RequestUpdateResultView'
 
 import TestUpdateView from './Test/TestUpdateView'
+
+import AlertScreen from './Common/AlertScreen'
 
 import {getApiUrl, screenWidth} from './Common/CommonFunction'
 import LoadingView from './Common/LoadingView'
@@ -91,11 +94,13 @@ export default class ListScreen extends Component  {
         this.setSelectedAccount = this.setSelectedAccount.bind(this)
         this.updateUserInfo = this.updateUserInfo.bind(this)
         this.searchUser = this.searchUser.bind(this)
+        this.changeToAccountViewScreen = this.changeToAccountViewScreen.bind(this)
         
     }
 
     
     componentDidMount(){
+        console.log(Dimensions.get('window').width)
         // console.log(this.state.userInfo)
         // this.callApiRequestList()
         // this.callApiTestList()
@@ -193,7 +198,8 @@ export default class ListScreen extends Component  {
                 else this.changeToRequestViewScreen(request,this.state.testList);
             }
             index -= 1;
-        }        
+        }   
+        if (request == null) return 'Không có xét nghiệm này'     
     }
 
     changeToRequestViewScreen(_request,testList){
@@ -214,6 +220,7 @@ export default class ListScreen extends Component  {
             "lsSelectedTest":_request.lsSelectedTest,
             "requestAmount":_request.requestAmount,
             "requestStatus":_request.requestStatus,
+            "requestUpdatedTime":_request.requestUpdatedTime,
             "testList":testList,
             "requestTestVersion":_request.versionOfTest,
             }
@@ -270,10 +277,11 @@ export default class ListScreen extends Component  {
             // this.callApiUserList()
             // this.callApiAppointmentList()
             this.callApiDistrictList()
-        }, 10);
+        }, 5);
     }
 
     logOut(){
+        this.changeShowView('RequestListView')
         this.setState(previousState => ({ 
             logIn: false,
             userInfo: null,
@@ -330,6 +338,9 @@ export default class ListScreen extends Component  {
                 },            
                 (error) => {
                     console.log(error)
+                    this.setState(previousState => ({
+                        requestListApi: true,
+                    }));
                 }
             )
         }
@@ -362,6 +373,9 @@ export default class ListScreen extends Component  {
                 },            
                 (error) => {
                     console.log(error)
+                    this.setState(previousState => ({
+                        appointmentListApi: true,
+                    }));
                 }
             )
         }
@@ -371,7 +385,7 @@ export default class ListScreen extends Component  {
     callApiArticleList= async () =>  {
         if(this.state.articleListApi){
             this.setState(previousState => ({
-                articleListApi: true,
+                articleListApi: false,
             }));
             fetch(getApiUrl()+"/articles/list")
             .then(res => res.json())
@@ -388,6 +402,9 @@ export default class ListScreen extends Component  {
                 },            
                 (error) => {
                     console.log(error)
+                    this.setState(previousState => ({
+                        articleListApi: true,
+                    }));
                 }
             )
         }
@@ -421,6 +438,9 @@ export default class ListScreen extends Component  {
                 },            
                 (error) => {
                     console.log(error)
+                    this.setState(previousState => ({
+                        userListApi: true,
+                    }));
                 }
             )
         }
@@ -455,6 +475,9 @@ export default class ListScreen extends Component  {
                 },
                 (error) => {
                     console.log(error)
+                    this.setState(previousState => ({
+                        testListApi: true,
+                    }));
                 }
             )  
         }
@@ -475,22 +498,23 @@ export default class ListScreen extends Component  {
             },            
             (error) => {
                 console.log(error)
+                this.callApiDistrictList()
             }
         )  
     }
 
     render(){
-    const WIDTH = screenWidth
     return (
         <View style={{flex:1}}>
             <PageHeader userInfo={this.state.userInfo?this.state.userInfo:null} changeShowView={this.state.userInfo?this.changeShowView:null}  setSelectedAccount={this.state.userInfo?this.setSelectedAccount:null} logOut={this.state.userInfo?this.logOut:null} searchRequest={this.searchRequest}/>
             { !this.state.logIn ?
             <LoginView loginSuccess={this.loginSuccess}/>
+            // <AlertScreen/>
             :
             <View style={styles.listAreaContainer}>
                 <View style={styles.topMenu}>
                     <TouchableOpacity style={[styles.topMenuButton,{
-                        width: this.state.userInfo.role=='COORDINATOR'? WIDTH/4 : WIDTH/parseFloat(5) ,
+                        width: this.state.userInfo.role=='COORDINATOR'? screenWidth/4 : screenWidth/parseFloat(5) ,
                         borderWidth: this.state.Button1Selected ? 1:0,
                         backgroundColor: this.state.Button1Selected ? '#a8c6fa' : 'white' 
                         }]}
@@ -499,7 +523,7 @@ export default class ListScreen extends Component  {
                         <Text style={styles.topMenuText}>Yêu cầu xét nghiệm</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.topMenuButton,{
-                        width: this.state.userInfo.role=='COORDINATOR'? WIDTH/4 : WIDTH/parseFloat(5) ,
+                        width: this.state.userInfo.role=='COORDINATOR'? screenWidth/4 : screenWidth/parseFloat(5) ,
                         borderWidth: this.state.Button2Selected ? 1:0,
                         backgroundColor: this.state.Button2Selected ? '#a8c6fa' : 'white' 
                         }]}
@@ -508,7 +532,7 @@ export default class ListScreen extends Component  {
                         <Text style={styles.topMenuText}>Cuộc Hẹn</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.topMenuButton,{
-                        width: this.state.userInfo.role=='COORDINATOR'? WIDTH/4 : WIDTH/parseFloat(5) ,
+                        width: this.state.userInfo.role=='COORDINATOR'? screenWidth/4 : screenWidth/parseFloat(5) ,
                         borderWidth: this.state.Button3Selected ? 1:0,
                         backgroundColor: this.state.Button3Selected ? '#a8c6fa' : 'white' 
                         }]}
@@ -517,7 +541,7 @@ export default class ListScreen extends Component  {
                         <Text style={styles.topMenuText}>Bài đăng</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.topMenuButton,{
-                        width: this.state.userInfo.role=='COORDINATOR'? WIDTH/4 : WIDTH/parseFloat(5) ,
+                        width: this.state.userInfo.role=='COORDINATOR'? screenWidth/4 : screenWidth/parseFloat(5) ,
                         borderWidth: this.state.Button4Selected ? 1:0,
                         backgroundColor: this.state.Button4Selected ? '#a8c6fa' : 'white' 
                         }]}
@@ -527,7 +551,7 @@ export default class ListScreen extends Component  {
                     </TouchableOpacity>
                     {this.state.userInfo.role=='COORDINATOR'? null :
                     <TouchableOpacity style={[styles.topMenuButton,{
-                        width: this.state.userInfo.role=='COORDINATOR'? 0 : WIDTH/parseFloat(5) ,
+                        width: this.state.userInfo.role=='COORDINATOR'? 0 : screenWidth/parseFloat(5) ,
                         borderWidth: this.state.Button5Selected ? 1:0,
                         backgroundColor: this.state.Button5Selected ? '#a8c6fa' : 'white' 
                         }]}
@@ -539,42 +563,44 @@ export default class ListScreen extends Component  {
                 </View>                
                 <View style={{width:'100%',flex:1,backgroundColor:''}}>
                 {
-                    this.state.showView == 'RequestListView'? this.state.requestListApi?
-                    <RequestListView requestList={this.state.requestList} testVersion={this.state.testVersion} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} districtList={this.state.districtList} token={this.state.token}/>: <LoadingView  />
-                    : this.state.showView == 'AppointmentListView'? this.state.appointmentListApi?
-                    <AppointmentListView appointmentList={this.state.appointmentList} changeShowView={this.changeShowView} setSelectedAppointment={this.setSelectedAppointment} districtList={this.state.districtList}/>: <LoadingView  />
-                    : this.state.showView == 'ArticleListView'? this.state.articleListApi?
-                    <ArticleListView  articleList={this.state.articleList} changeShowView={this.changeShowView} setSelectedArticle={this.setSelectedArticle}/>: <LoadingView  />
-                    : this.state.showView == 'TestUpdateView'?
-                    <TestUpdateView  testList={this.state.testList} userInfo={this.state.userInfo} token={this.state.token}/>
-                    : this.state.showView == 'AccountListView'? this.state.userListApi?
-                    <AccountListView userList={this.state.userList}  changeShowView={this.changeShowView} setSelectedAccount={this.setSelectedAccount} searchUser={this.searchUser}/>: <LoadingView  />
-                    // sub screen
-                    //request
-                    : this.state.showView == 'RequestView'?
-                    <RequestView  request={this.state.selectedRequest} testList={this.state.testList} userInfo={this.state.userInfo} changeShowView={this.changeShowView} token={this.state.token}/>
-                    : this.state.showView == 'RequestLostSampleView'?
-                    <RequestLostSampleView  request={this.state.selectedRequest} userInfo={this.state.userInfo} changeShowView={this.changeShowView} token={this.state.token}/>
-                    : this.state.showView == 'RequestUpdateResultView'?
-                    <RequestUpdateResultView  request={this.state.selectedRequest} userInfo={this.state.userInfo} changeShowView={this.changeShowView} token={this.state.token}/>
-                    //appointment
-                    : this.state.showView == 'AppointmentView'?
-                    <AppointmentView  appointment={this.state.selectedAppointment} userInfo={this.state.userInfo} changeShowView={this.changeShowView} token={this.state.token}/>
-                    : this.state.showView == 'AppointmentRejectView'?
-                    <AppointmentRejectView appointment={this.state.selectedAppointment} userInfo={this.state.userInfo} changeShowView={this.changeShowView} token={this.state.token}/>
-                    //article
-                    : this.state.showView == 'ArticleAddView'?
-                    <ArticleAddView   token={this.state.token}  userInfo={this.state.userInfo} changeShowView={this.changeShowView} />
-                    : this.state.showView == 'ArticleView'?
-                    <ArticleView  article={this.state.selectedArticle} />
-                    //account
-                    : this.state.showView == 'AccountCreateView'?
-                    <AccountCreateView  districtList={this.state.districtList} token={this.state.token}/>
-                    : this.state.showView == 'AccountView'?
-                    <AccountView  districtList={this.state.districtList}  account={this.state.selectedAccount} changeShowView={this.changeShowView} token={this.state.token} userInfo={this.state.userInfo} updateUserInfo={this.updateUserInfo}/>
-                    : this.state.showView == 'AccountChangePasswordView'?
-                    <AccountChangePasswordView account={this.state.selectedAccount} changeShowView={this.changeShowView} token={this.state.token} userInfo={this.state.userInfo} />
-                    : <View/>
+                //request
+                this.state.showView == 'RequestView'?
+                <RequestView  request={this.state.selectedRequest} testList={this.state.testList} userInfo={this.state.userInfo} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} token={this.state.token} />
+                : this.state.showView == 'RequestResultView'?
+                <RequestResultView  request={this.state.selectedRequest} changeShowView={this.changeShowView} token={this.state.token} />
+                : this.state.showView == 'RequestLostSampleView'?
+                <RequestLostSampleView  request={this.state.selectedRequest} userInfo={this.state.userInfo} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} token={this.state.token}/>
+                : this.state.showView == 'RequestUpdateResultView'?
+                <RequestUpdateResultView  request={this.state.selectedRequest} userInfo={this.state.userInfo} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} token={this.state.token}/>
+                //appointment
+                : this.state.showView == 'AppointmentView'?
+                <AppointmentView  appointment={this.state.selectedAppointment} userInfo={this.state.userInfo} changeShowView={this.changeShowView} token={this.state.token} setSelectedAppointment={this.setSelectedAppointment}/>
+                : this.state.showView == 'AppointmentRejectView'?
+                <AppointmentRejectView appointment={this.state.selectedAppointment} userInfo={this.state.userInfo} changeShowView={this.changeShowView} token={this.state.token} setSelectedAppointment={this.setSelectedAppointment}/>
+                //article
+                : this.state.showView == 'ArticleAddView'?
+                <ArticleAddView   token={this.state.token}  userInfo={this.state.userInfo} changeShowView={this.changeShowView} />
+                : this.state.showView == 'ArticleView'?
+                <ArticleView  article={this.state.selectedArticle} changeShowView={this.changeShowView} token={this.state.token}/>
+                //account
+                : this.state.showView == 'AccountCreateView'?
+                <AccountCreateView  districtList={this.state.districtList} token={this.state.token} changeToAccountViewScreen={this.changeToAccountViewScreen} />
+                : this.state.showView == 'AccountView'?
+                <AccountView  districtList={this.state.districtList}  account={this.state.selectedAccount} changeShowView={this.changeShowView} token={this.state.token} userInfo={this.state.userInfo} updateUserInfo={this.updateUserInfo}/>
+                : this.state.showView == 'AccountChangePasswordView'?
+                <AccountChangePasswordView account={this.state.selectedAccount} changeShowView={this.changeShowView} token={this.state.token} userInfo={this.state.userInfo} />
+                
+                : this.state.showView == 'RequestListView'? this.state.requestListApi?
+                <RequestListView requestList={this.state.requestList} testVersion={this.state.testVersion} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} districtList={this.state.districtList} token={this.state.token}/>: <LoadingView  />
+                : this.state.showView == 'AppointmentListView'? this.state.appointmentListApi?
+                <AppointmentListView appointmentList={this.state.appointmentList} changeShowView={this.changeShowView} setSelectedAppointment={this.setSelectedAppointment} districtList={this.state.districtList}/>: <LoadingView  />
+                : this.state.showView == 'ArticleListView'? this.state.articleListApi?
+                <ArticleListView  articleList={this.state.articleList} changeShowView={this.changeShowView} setSelectedArticle={this.setSelectedArticle}/>: <LoadingView  />
+                : this.state.showView == 'TestUpdateView'?
+                <TestUpdateView  testList={this.state.testList} userInfo={this.state.userInfo} token={this.state.token}/>
+                : this.state.showView == 'AccountListView'? this.state.userListApi?
+                <AccountListView userList={this.state.userList}  changeShowView={this.changeShowView} setSelectedAccount={this.setSelectedAccount} searchUser={this.searchUser}/>: <LoadingView  />                    
+                : <View/>
                     
                 }
                 </View>
