@@ -24,12 +24,12 @@ self.__precacheManifest = [
     "url": "/MedTestForCoordinator/static/media/ABClinic.013acc21.jpg"
   },
   {
-    "revision": "d0c694b562b2208635f250762cd7fc79",
-    "url": "/MedTestForCoordinator/serve.json"
-  },
-  {
     "revision": "48c7ed4e7da9792af288a60d7242d615",
     "url": "/MedTestForCoordinator/expo-service-worker.js"
+  },
+  {
+    "revision": "d0c694b562b2208635f250762cd7fc79",
+    "url": "/MedTestForCoordinator/serve.json"
   },
   {
     "revision": "e10ce0552ee7802193950fa9181bd961",
