@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity, TextInput, Picker} from 'react-native';
+import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity, TextInput, Picker, ImageBackground} from 'react-native';
 import {getRoleName, getApiUrl, convertDateToDateTime, componentWidth} from './../Common/CommonFunction'
 import * as ImagePicker from 'expo-image-picker';
 
@@ -12,7 +12,7 @@ export default class TestListView extends Component {
             accountPhoneNumber:'',
             accountEmail:'',
             accountDob: '',
-            accountGender: '',
+            accountGender: '1',
             accountPassword: '',
             accountRePassword: '',
             districtList: this.props.districtList?this.props.districtList:[],
@@ -30,9 +30,12 @@ export default class TestListView extends Component {
                     'Tên chủ tài khoản không được bỏ trống',
                     'Số điện thoại phải có mười số',
                     'Địa chỉ email không được bỏ trống',
+                    'Địa chỉ email không đúng',
                     'Mật khẩu phải có ít nhất 6 kí tự',
                     'Xác nhận mật khẩu không trùng với mật khẩu ',
                     'Địa chỉ không được bỏ trống'],
+            uploadImageApi: true,
+            createAccountApi: true,
         };
         this.handleChange = this.handleChange.bind(this)
         this.onDistrictChange = this.onDistrictChange.bind(this)
@@ -147,41 +150,44 @@ export default class TestListView extends Component {
             else result = ''+this.state.day+'/'+this.state.month+'/'+this.state.year
         return result
     }
-
     
     createAccount(){
         // console.log(this.state.accountRole)
         if(this.checkValid()){
             this.callApiCreateAccount()
+            console.log(this.state.accountGender)
         }
     }
-
     
-    checkValid(){        
+    checkValid(){
         if (this.state.accountName == '') 
             return this.setState(previousState => ({ 
                 error: this.state.errorList[1]
             }));
-        if (this.state.accountPhoneNumber == '' ||  this.state.accountPhoneNumber.length<10) 
+        if (this.state.accountPhoneNumber == '' ||  this.state.accountPhoneNumber.length!=10) 
             return this.setState(previousState => ({ 
                 error: this.state.errorList[2]
             }));
-        
-        if (this.state.accountEmail == '') 
-            return this.setState(previousState => ({ 
+        if (this.state.accountEmail == '')
+            return this.setState(previousState => ({
                 error: this.state.errorList[3]
+            }));
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (!reg.test(this.state.accountEmail))
+            return this.setState(previousState => ({
+                error: this.state.errorList[4]
             }));
         if (this.state.accountPassword == '' || this.state.accountPassword.length<6) 
             return this.setState(previousState => ({ 
-                error: this.state.errorList[4]
+                error: this.state.errorList[5]
             }));
         if (this.state.accountRePassword != this.state.accountPassword) 
             return this.setState(previousState => ({ 
-                error: this.state.errorList[5]
+                error: this.state.errorList[6]
             }));
         if (this.state.accountAddress == '') 
             return this.setState(previousState => ({ 
-                error: this.state.errorList[6]
+                error: this.state.errorList[7]
             }));
         this.setState(previousState => ({ 
                 error: this.state.errorList[0]
@@ -191,45 +197,51 @@ export default class TestListView extends Component {
 
 
     callApiCreateAccount(){
-        fetch(getApiUrl()+'/users/create-employee', {
-        method: 'POST',
-        headers: {      
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer '+this.props.token,
-        },
-        body: JSON.stringify({
-            name: this.state.accountName,
-            phoneNumber: this.state.accountPhoneNumber,
-            email: this.state.accountEmail,
-            dob: convertDateToDateTime(this.getDob()),
-            gender: this.state.accountGender,
-            password: this.state.accountPassword,
-            districtCode: this.state.districtSelected,
-            townCode: this.state.townSelected,
-            address: this.state.accountAddress,
-            role: this.state.accountRole,
-            image: this.state.accountImage
-        }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log('result:'+JSON.stringify(result))
-                let success = false
-                result ? result.message? null : success=true : null;
-                if (success){
-                    this.props.changeToAccountViewScreen(result)
-                }
-                else{
-                    this.setState({error:result.message})
-                }
-                
+        if(this.state.createAccountApi){
+            this.setState({createAccountApi:false})
+            fetch(getApiUrl()+'/users/create-employee', {
+            method: 'POST',
+            headers: {      
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.props.token,
             },
-            (error) => {
-                console.log('error:'+error)    
-            }
-        );
+            body: JSON.stringify({
+                name: this.state.accountName,
+                phoneNumber: this.state.accountPhoneNumber,
+                email: this.state.accountEmail,
+                dob: convertDateToDateTime(this.getDob()),
+                gender: this.state.accountGender,
+                password: this.state.accountPassword,
+                districtCode: this.state.districtSelected,
+                townCode: this.state.townSelected,
+                address: this.state.accountAddress,
+                role: this.state.accountRole,
+                image: this.state.accountImage
+            }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({createAccountApi:true})
+                    console.log(JSON.stringify(result))
+                    let success = false
+                    result ? result.message? null : success=true : null;
+                    if (success){
+                        this.props.changeToAccountViewScreen(result)
+                    }
+                    else{
+                        this.setState({error:result.message})
+                    }
+                    
+                },
+                (error) => {
+                    this.setState({createAccountApi:true})
+                    console.log('error:'+error)    
+                }
+            );
+        }
+        
     }
 
 
@@ -244,27 +256,33 @@ export default class TestListView extends Component {
 
     
     callApiUploadImage (_data) {
-        fetch(getApiUrl()+'/uploadImage', {
-        method: 'POST',
-        headers: {      
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer '+this.props.token,
-        },
-        body: JSON.stringify({
-            "file": _data.uri
-        }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log('result:'+JSON.stringify(result))
-                this.setState({ accountImage: result.uri });
+        if(this.state.uploadImageApi){
+            this.setState({uploadImageApi:false})
+            fetch(getApiUrl()+'/uploadImage', {
+            method: 'POST',
+            headers: {      
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.props.token,
             },
-            (error) => {
-                console.log('error:'+error)
-            }
-        );
+            body: JSON.stringify({
+                "file": _data.uri
+            }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({uploadImageApi:true})
+                    console.log('result:'+JSON.stringify(result))
+                    this.setState({ accountImage: result.uri });
+                },
+                (error) => {
+                    this.setState({uploadImageApi:true})
+                    console.log('error:'+error)
+                }
+            );
+        }
+        
     }
 
 
@@ -277,25 +295,20 @@ export default class TestListView extends Component {
             
             <View style={styles.accountCreateArea}>
                 <View style={styles.accountCreateContainer}>
-                    {/* <View style={styles.accountCreateRowContainer}>
-                        <Text style={styles.rowText}>{'Ảnh đại diện: '}</Text>
-                        <TouchableOpacity 
-                        style={styles.addImageButton}
-                        onPress={() => this.selectPicture()}
-                        >
-                            <Text style={{color:'white'}}>Chọn ảnh</Text>
-                        </TouchableOpacity>
-                    </View> */}
                     <View style={styles.imagePreviewArea}>
                         <View style={styles.accountCreateRowContainer}>
                             <Text style={styles.rowText}>{' '}</Text>
-                            <TouchableOpacity onPress={() => this.selectPicture()}
+                            <TouchableOpacity onPress={() => this.selectPicture()} disabled={!this.state.uploadImageApi}
                             >
-                                <Image 
+                                <ImageBackground
                                     style={styles.imagePreview}
                                     source={{ uri: this.state.accountImage}}
                                     >
-                                </Image>
+                                    <Image 
+                                        style={{width:50,height:50}}
+                                        source={require('./../../Data/icon-camera-512.png')}>
+                                    </Image>
+                                </ImageBackground>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -451,7 +464,7 @@ export default class TestListView extends Component {
                     </View>
                 </View>    
             </View>
-            <TouchableOpacity style={styles.accountCreateConfirmButton} onPress={()=>this.createAccount()}>
+            <TouchableOpacity style={styles.accountCreateConfirmButton} onPress={()=>this.createAccount()} disabled={!this.state.createAccountApi}>
                     <Text style={{color:'white'}}>Tạo tài khoản nhân viên</Text>
                 </TouchableOpacity>
         </View>
@@ -600,7 +613,10 @@ const styles = StyleSheet.create({
     imagePreview:{
         width:200,
         height:200,
-        backgroundColor:''
+        backgroundColor:'',
+        alignItems: 'flex-end',
+        justifyContent: 'flex-end',
+
     },
  
 

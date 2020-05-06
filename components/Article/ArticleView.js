@@ -10,6 +10,7 @@ export default class ArticleView extends Component  {
             imageUri: '',
             imageType: '',
             imageResultUri: '',
+            deleteArticleApi: true,
         };
         this.onDelete = this.onDelete.bind(this)
         
@@ -28,9 +29,8 @@ export default class ArticleView extends Component  {
     }
 
     callApiDeleteArticle(){
-        this.setState(previousState => ({
-                requestListApi: false,
-            }));
+        if(this.state.deleteArticleApi){
+            this.setState({deleteArticleApi:false})
             fetch(getApiUrl()+"/articles/delete/"+this.props.article.articleId,{
                 method: 'POST',
                 headers: {
@@ -42,6 +42,7 @@ export default class ArticleView extends Component  {
             .then(res => res.json())
             .then(
                 (result) => {
+                    this.setState({deleteArticleApi:true})
                     console.log(result)
                     let success = false
                     result ? result.message? result.message== "Xoá bài viết thành công!"? success=true: null : null : null;
@@ -49,9 +50,12 @@ export default class ArticleView extends Component  {
                     this.props.changeShowView('ArticleListView')
                 },            
                 (error) => {
+                    this.setState({deleteArticleApi:true})
                     console.log(error)
                 }
             )
+        }
+        
     }
 
     render(){
@@ -82,7 +86,7 @@ export default class ArticleView extends Component  {
                                      
                 </View>
                 <View style={styles.buttonArea}>
-                    <TouchableOpacity style={styles.button} onPress={() => this.onDelete()}>
+                    <TouchableOpacity style={styles.button} onPress={() => this.onDelete()} disabled={!this.state.deleteArticleApi}>
                         <Text style={{color:'white'}}>Xóa bài viết</Text>
                     </TouchableOpacity> 
                 </View>

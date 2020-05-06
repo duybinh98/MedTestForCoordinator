@@ -74,20 +74,19 @@ export default class Login extends Component  {
             .then(res => res.json())
             .then(
                 (result) => {
+                    this.setState({loginApi:true})
                     console.log(result)
                     let success = false
                     result ? result.message? null : success=true : null;
                     if (success) this.props.loginSuccess(result.userInfo,result.token)
                     else{
-                        this.setState({
-                            loginApi:true,
-                            error: result.message
-                        })
+                        this.setState({error: result.message})
                     }
                 },            
                 (error) => {
-                    console.log(error)
                     this.setState({loginApi:true})
+                    console.log(error)
+                    
                 }
             )
         }
@@ -126,7 +125,7 @@ export default class Login extends Component  {
                 <View style={styles.rowContainer}>    
                     <Text style={styles.rowTextError}>{this.state.error}</Text>                         
                 </View>
-                <TouchableOpacity style={styles.loginButton} onPress={() => this.login()}>
+                <TouchableOpacity style={styles.loginButton} onPress={() => this.login()} disabled={!this.state.loginApi}>
                     <Text style={{color:'white'}}>Đăng nhập</Text>
                 </TouchableOpacity>
             </View>

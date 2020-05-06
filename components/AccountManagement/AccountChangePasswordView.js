@@ -17,7 +17,8 @@ export default class TestListView extends Component {
             errorList: ['',
                     'Mật khẩu cũ phải có ít nhất 6 kí tự',
                     'Mật khẩu mới phải có ít nhất 6 kí tự',
-                    'Xác nhận mới mật khẩu không trùng với mật khẩu '],
+                    'Xác nhận mới mật khẩu không trùng với mật khẩu'],
+            changePasswordApi:true,
         };
         this.handleChange = this.handleChange.bind(this)
         this.changePassword = this.changePassword.bind(this)
@@ -82,40 +83,46 @@ export default class TestListView extends Component {
 
 
     callApiChangePassword(){
-        console.log(this.props.userInfo.id)
-        let url = ''
-        if (this.checkAdmin()) url = getApiUrl()+'/users/admin/change-password/'+this.props.userInfo.id
-        else url = getApiUrl()+'/users/coordinators/change-password/'+this.props.userInfo.id
-        fetch(url, {
-        method: 'POST',
-        headers: {      
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer '+this.props.token,
-        },
-        body: JSON.stringify({
-            oldPassword: this.state.accountOldPassword,
-            newPassword: this.state.accountPassword,
-        }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log('result:'+JSON.stringify(result))
-                let success = false
-                result ? result.message? result.message == "Thay đổi mật khẩu thành công!"? success=true : null : null : null;
-                if (success){
-                    this.props.changeShowView('AccountView')
-                }
-                else{
-                    this.setState({error:result.message})
-                }
-                
+        if(this.state.changePasswordApi){
+            this.setState({changePasswordApi:false})
+            let url = ''
+            if (this.checkAdmin()) url = getApiUrl()+'/users/admin/change-password/'+this.props.userInfo.id
+            else url = getApiUrl()+'/users/coordinators/change-password/'+this.props.userInfo.id
+            fetch(url, {
+            method: 'POST',
+            headers: {      
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.props.token,
             },
-            (error) => {
-                console.log('error:'+error)    
-            }
-        );
+            body: JSON.stringify({
+                oldPassword: this.state.accountOldPassword,
+                newPassword: this.state.accountPassword,
+            }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({changePasswordApi:true})
+                    console.log('result:'+JSON.stringify(result))
+                    let success = false
+                    result ? result.message? result.message == "Thay đổi mật khẩu thành công!"? success=true : null : null : null;
+                    if (success){
+                        this.props.changeShowView('AccountView')
+                    }
+                    else{
+                        this.setState({error:result.message})
+                    }
+                    
+                },
+                (error) => {
+                    this.setState({changePasswordApi:true})
+                    console.log('error:'+error)    
+                    
+                }
+            );
+        }
+        
     }
 
 
@@ -174,7 +181,7 @@ export default class TestListView extends Component {
                     </View>
                 </View>    
             </View>
-            <TouchableOpacity style={styles.accountCreateConfirmButton} onPress={()=>this.changePassword()}>
+            <TouchableOpacity style={styles.accountCreateConfirmButton} onPress={()=>this.changePassword()} disabled={!this.state.changePasswordApi}>
                     <Text style={{color:'white'}}>Đổi mật khẩu</Text>
                 </TouchableOpacity>
         </View>

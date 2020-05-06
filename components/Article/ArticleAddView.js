@@ -14,7 +14,8 @@ export default class ArticleAddView extends Component  {
             articleContent: '',
             error: '',
             errorList: ['','Phải điền tiêu đề bài viết','Phải điền nội dung ngắn ngọn bài viết', 'Phải điền nội dung bài viết','Bài viết chưa có ảnh min họa'],
-
+            uploadImageApi: true,
+            createArticleApi: true,
         };
         this.selectPicture = this.selectPicture.bind(this)
         this.handleChange = this.handleChange.bind(this)
@@ -61,34 +62,40 @@ export default class ArticleAddView extends Component  {
     }
 
     callApiCreateArticle(){
-        fetch(getApiUrl()+'/articles/create', {
-        method: 'POST',
-        headers: {      
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer '+this.props.token,
-        },
-        body: JSON.stringify({
-            tittle: this.state.articleTitle,
-            shortContent:this.state.articleShortContent,
-            content: this.state.articleContent,
-            image: this.state.imageResultUri,
-            userID: this.props.userInfo.id
-        }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log('result:'+JSON.stringify(result))
-                let success = false
-                result ? result.success? success=result.success : null : null;
-                if (success) 
-                this.props.changeShowView('ArticleListView')
-            },
-            (error) => {
-                console.log('error:'+error)    
-            }
-        );
+        if(this.state.createArticleApi){
+            this.setState({createArticleApi:false})
+            fetch(getApiUrl()+'/articles/create', {
+                method: 'POST',
+                headers: {      
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                },
+                body: JSON.stringify({
+                    tittle: this.state.articleTitle,
+                    shortContent:this.state.articleShortContent,
+                    content: this.state.articleContent,
+                    image: this.state.imageResultUri,
+                    userID: this.props.userInfo.id
+                }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({createArticleApi:true})
+                    console.log('result:'+JSON.stringify(result))
+                    let success = false
+                    result ? result.success? success=result.success : null : null;
+                    if (success) 
+                    this.props.changeShowView('ArticleListView')
+                },
+                (error) => {
+                    this.setState({createArticleApi:true})
+                    console.log('error:'+error)    
+                }
+            );
+        }
+        
     }
 
 
@@ -112,27 +119,33 @@ export default class ArticleAddView extends Component  {
 
     
     callApiUploadImage (_data) {
-        fetch(getApiUrl()+'/uploadImage', {
-        method: 'POST',
-        headers: {      
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer '+this.props.token,
-        },
-        body: JSON.stringify({
-            "file": _data.uri
-        }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                // console.log('result:'+JSON.stringify(result))
-                this.setState({ imageResultUri: result.uri });
-            },
-            (error) => {
-                console.log('error:'+error)    
-            }
-        );
+        if(this.state.uploadImageApi){
+            this.setState({uploadImageApi:false})
+            fetch(getApiUrl()+'/uploadImage', {
+                method: 'POST',
+                headers: {      
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                },
+                body: JSON.stringify({
+                    "file": _data.uri
+                }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({uploadImageApi:true})
+                    // console.log('result:'+JSON.stringify(result))
+                    this.setState({ imageResultUri: result.uri });
+                },
+                (error) => {
+                    this.setState({uploadImageApi:true})
+                    console.log('error:'+error)    
+                }
+            );
+        }
+        
     }
 
     render(){
@@ -185,6 +198,7 @@ export default class ArticleAddView extends Component  {
                         <TouchableOpacity 
                         style={styles.addImageButton}
                         onPress={() => this.selectPicture()}
+                        disabled={!this.state.uploadImageApi}
                         >
                             <Text style={{color:'white'}}>Chọn ảnh</Text>
                         </TouchableOpacity>
@@ -205,7 +219,7 @@ export default class ArticleAddView extends Component  {
                         <Text style={styles.rowTextError}>{this.state.error}</Text>                        
                     </View>
                 </View>
-                <TouchableOpacity style={styles.articleAddConfirmButton} onPress={() => this.createArticle()}>
+                <TouchableOpacity style={styles.articleAddConfirmButton} onPress={() => this.createArticle()} disabled={!this.state.createArticleApi}>
                     <Text style={{color:'white'}}>Tạo bài bài viết</Text>
                 </TouchableOpacity>
             </View>

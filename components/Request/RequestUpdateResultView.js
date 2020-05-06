@@ -13,6 +13,9 @@ export default class RequestUpdateResultView extends Component  {
             requestContent: '',
             error: '',
             errorList: ['','Chưa có ảnh kết quả nào'],
+            uploadImageApi: true,
+            setResultImpageApi: true,
+            updateRequestApi: true,
 
         };
         this.selectPicture = this.selectPicture.bind(this)
@@ -28,10 +31,85 @@ export default class RequestUpdateResultView extends Component  {
         }
     }
 
+    callApiDetail(){
+        fetch(getApiUrl()+"/requests/detail/"+this.props.request.requestId, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.props.token,
+            }
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                console.log(result)
+                let success = false
+                result ? result.message? null : success=true : null;
+                if (success) {
+                    // let request = this.props.request
+                    // request.requestStatus = result.requestStatus
+                    // this.props.setSelectedRequest(request)
+                    this.props.changeToRequestViewScreen(result,this.props.request.testList)
+                }
+            },            
+            (error) => {
+                console.log(error)
+            }
+        )  
+    }
+
+    handleChange(event) {
+        const name = event.target && event.target.name;
+        const value = event.target && event.target.value;        
+        // console.log('event name'+name+', event value:'+value)
+        this.setState({[name]: value});
+    }
+
+    selectPicture = async () =>{
+        // console.log(result)
+        const result = await ImagePicker.launchImageLibraryAsync()
+        console.log(result)
+        if (!result.cancelled) {
+            this.callApiUploadImage(result)
+        }
+    }
+
+    callApiUploadImage (_data) {
+        if(this.state.uploadImageApi){
+            this.setState({uploadImageApi:false})
+            fetch(getApiUrl()+'/uploadImage', {
+                method: 'POST',
+                headers: {      
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                },
+                body: JSON.stringify({
+                    "file": _data.uri
+                }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({uploadImageApi:true})
+                    // console.log('result:'+JSON.stringify(result))
+                    let tempList = this.state.imageUriList
+                    tempList.push({'image':result.uri})
+                    // console.log(tempList)
+                    this.setState({ imageUriList: tempList });   
+                },
+                (error) => {
+                    this.setState({uploadImageApi:true})
+                    console.log('error:'+error)    
+                }
+            );
+        }
+    }
+
     completeUpdateResult(){
         if(this.checkValid()){
             this.callApiSetResultImage()
-            // this.callApiUpdateRequest()
         }
     }
 
@@ -47,127 +125,94 @@ export default class RequestUpdateResultView extends Component  {
         
     }
 
-    callApiUpdateRequest(){
-        fetch(getApiUrl()+'/requests/update/'+this.props.request.requestId, {
-        method: 'POST',
-        headers: {      
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer '+this.props.token,
-        },
-        body: JSON.stringify({
-            status: 'closed',
-            userID: this.props.userInfo.id,
-            note: 'Đã cập nhật kết quả',
-        }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log('result:'+JSON.stringify(result))
-                let success = false
-                result ? result.message? null: success=true : null;
-                if (success) {
-                    let request = this.props.request
-                    request.requestStatus = 'closed'
-                    this.props.setSelectedRequest(request)
-                    this.props.changeShowView('RequestView')
-                }
-                
-            },
-            (error) => {
-                console.log('error:'+error)    
-            }
-        );
-    }
-
-
-    handleChange(event) {
-        const name = event.target && event.target.name;
-        const value = event.target && event.target.value;        
-        // console.log('event name'+name+', event value:'+value)
-        this.setState({[name]: value});
-    }
-
-
-    selectPicture = async () =>{
-        // console.log(result)
-        const result = await ImagePicker.launchImageLibraryAsync()
-        console.log(result)
-        if (!result.cancelled) {
-            this.callApiUploadImage(result)
-        }
-    }
-
-    
-    callApiUploadImage (_data) {
-        fetch(getApiUrl()+'/uploadImage', {
-        method: 'POST',
-        headers: {      
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer '+this.props.token,
-        },
-        body: JSON.stringify({
-            "file": _data.uri
-        }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                // console.log('result:'+JSON.stringify(result))
-                // this.callApiSetResultImage(result.uri)
-                let tempList = this.state.imageUriList
-                tempList.push({'image':result.uri})
-                // console.log(tempList)
-                this.setState({ imageUriList: tempList });   
-            },
-            (error) => {
-                console.log('error:'+error)    
-            }
-        );
-    }
-
     callApiSetResultImage(){
-        let imageList = []
-        let index = this.state.imageUriList.length - 1;
-        while (index >= 0) {
-            imageList.push(this.state.imageUriList[index].image)
-            index-=1
-        }
-        console.log(imageList)
-        fetch(getApiUrl()+'/requests/detail/results/add', {
-        method: 'POST',
-        headers: {      
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer '+this.props.token,
-        },
-        body: JSON.stringify({
-            listImage: imageList,
-            userID: this.props.userInfo.id,
-            requestID: this.props.request.requestId
-        }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log('result:'+JSON.stringify(result))
-                let success = false
-                result ? result.message? null: success=true : null;   
-                if(success){
-                    this.callApiUpdateRequest()
-                }  
-                else{
-                    this.setState({error:result.message})
-                }
-                        
-            },
-            (error) => {
-                console.log('error:'+error)    
+        if(this.state.setResultImpageApi){
+            this.setState({setResultImpageApi:false})
+            let imageList = []
+            let index = this.state.imageUriList.length - 1;
+            while (index >= 0) {
+                imageList.push(this.state.imageUriList[index].image)
+                index-=1
             }
-        );
+            console.log(imageList)
+            fetch(getApiUrl()+'/requests/detail/results/add', {
+            method: 'POST',
+            headers: {      
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.props.token,
+            },
+            body: JSON.stringify({
+                listImage: imageList,
+                userID: this.props.userInfo.id,
+                requestID: this.props.request.requestId
+            }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({setResultImpageApi:true})
+                    console.log('result:'+JSON.stringify(result))
+                    let success = false
+                    result ? result.message? null: success=true : null;   
+                    if(success){
+                        this.callApiUpdateRequest()
+                    }  
+                    else{
+                        this.setState({error:result.message})
+                    }
+                            
+                },
+                (error) => {
+                    this.setState({setResultImpageApi:true})
+                    console.log('error:'+error)    
+                }
+            );
+        }
+        
     }
+
+    callApiUpdateRequest(){
+        if(this.state.updateRequestApi){
+            this.setState({updateRequestApi:false})
+            fetch(getApiUrl()+'/requests/update/'+this.props.request.requestId, {
+                method: 'POST',
+                headers: {      
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                },
+                body: JSON.stringify({
+                    status: 'closed',
+                    userID: this.props.userInfo.id,
+                    note: 'Đã cập nhật kết quả',
+                }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({updateRequestApi:true})
+                    console.log('result:'+JSON.stringify(result))
+                    let success = false
+                    result ? result.message? null: success=true : null;
+                    if (success) {
+                        // let request = this.props.request
+                        // request.requestStatus = 'closed'
+                        // this.props.setSelectedRequest(request)
+                        // this.props.changeShowView('RequestView')
+                        this.callApiDetail()
+                    }
+                    
+                },
+                (error) => {
+                    this.setState({updateRequestApi:true})
+                    console.log('error:'+error)    
+                }
+            );
+        }
+        
+    }
+
 
     render(){
     const WIDTH = Dimensions.get('window').width
@@ -199,6 +244,7 @@ export default class RequestUpdateResultView extends Component  {
                         <TouchableOpacity 
                         style={styles.addImageButton}
                         onPress={() => this.selectPicture()}
+                        disabled={!this.state.uploadImageApi}
                         >
                             <Text style={{color:'white'}}>Chọn ảnh</Text>
                         </TouchableOpacity>
@@ -225,7 +271,7 @@ export default class RequestUpdateResultView extends Component  {
                         <Text style={styles.rowTextError}>{this.state.error}</Text>                        
                     </View>
                 </View>
-                <TouchableOpacity style={styles.requestAddConfirmButton} onPress={() => this.completeUpdateResult()}>
+                <TouchableOpacity style={styles.requestAddConfirmButton} onPress={() => this.completeUpdateResult()} disabled={!this.state.setResultImpageApi && !this.state.updateRequestApi}>
                     <Text style={{color:'white'}}>Cập nhật kết quả</Text>
                 </TouchableOpacity>
             </View>

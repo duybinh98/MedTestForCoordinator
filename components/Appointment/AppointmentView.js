@@ -7,7 +7,8 @@ export default class AppointmentView extends Component  {
     constructor(props) {
         super(props)
         this.state = {     
-            error: 'A',
+            error: '',
+            acceptAppointmentApi: true,
         };
         this.onAccept = this.onAccept.bind(this)
         this.onReject = this.onReject.bind(this)
@@ -51,39 +52,45 @@ export default class AppointmentView extends Component  {
     }
     
     callApiAcceptAppointment(){
-        fetch(getApiUrl()+"/appointments/accept/"+this.props.appointment.appointmentId, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer '+this.props.token,
-            },
-            body: JSON.stringify({
-                status: 'accepted',
-                coordinatorID: this.props.userInfo.id,
-                note: 'ok',
-            }),
-            })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log(result)
-                let success = false
-                result ? result.message? success=true : null : null;
-                if (success) {
-                    let appointment = this.props.appointment
-                    appointment.appointmentStatus = 'accepted'
-                    this.props.setSelectedAppointment(appointment)
-                    // this.props.changeShowView('AppointmentView')
+        if(this.state.acceptAppointmentApi){
+            this.setState({acceptAppointmentApi:false})
+            fetch(getApiUrl()+"/appointments/accept/"+this.props.appointment.appointmentId, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                },
+                body: JSON.stringify({
+                    status: 'accepted',
+                    coordinatorID: this.props.userInfo.id,
+                    note: 'ok',
+                }),
+                })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({acceptAppointmentApi:true})
+                    console.log(result)
+                    let success = false
+                    result ? result.message? result.message=="Xác nhận đặt cuộc hẹn thành công!" ? success=true : null : null :null;
+                    if (success) {
+                        let appointment = this.props.appointment
+                        appointment.appointmentStatus = 'accepted'
+                        this.props.setSelectedAppointment(appointment)
+                        // this.props.changeShowView('AppointmentView')
+                    }
+                    else
+                        this.setState({error: result.message})
+                        this.callApiDetail()
+                },            
+                (error) => {
+                    this.setState({acceptAppointmentApi:true})
+                    console.log(error)
                 }
-                else
-                    this.setState({error:result.message})
-                    this.callApiDetail()
-            },            
-            (error) => {
-                console.log(error)
-            }
-        )  
+            )  
+        }
+        
     }
 
     onAccept(){
@@ -139,7 +146,7 @@ export default class AppointmentView extends Component  {
                     </TouchableOpacity> 
                     :<View/>}
                     {this.props.appointment.appointmentStatus =='pending'?
-                    <TouchableOpacity style={styles.button} onPress={() => this.onAccept()}>
+                    <TouchableOpacity style={styles.button} onPress={() => this.onAccept()} disabled={!this.state.acceptAppointmentApi}>
                         <Text style={{color:'white'}}>Xác nhận</Text>
                     </TouchableOpacity> 
                     :<View/>}

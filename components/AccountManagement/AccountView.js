@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity, TextInput, Picker} from 'react-native';
+import {View, StyleSheet, Image, Text, Dimensions, TouchableOpacity, TextInput, Picker, ImageBackground} from 'react-native';
 import {getRoleName, getApiUrl, convertDateToDateTime, componentWidth} from './../Common/CommonFunction'
 import * as ImagePicker from 'expo-image-picker';
 
@@ -27,8 +27,16 @@ export default class TestListView extends Component {
             day: new Date().getDate(),
             accountImage: 'https://www.kindpng.com/picc/m/10-104902_simple-user-icon-user-icon-white-png-transparent.png',
             error: '',
-            errorList: ['','Tên chủ tài khoản không được bỏ trống','Địa chỉ email không được bỏ trống', 'Địa chỉ không được bỏ trống'],
-
+            errorList: ['',
+                        'Tên chủ tài khoản không được bỏ trống',
+                        'Địa chỉ email không được bỏ trống',
+                        'Địa chỉ email không đúng',
+                        'Địa chỉ không được bỏ trống',
+                        'Thông tin không có sự thay đổi',
+                        ],
+            updateInfoApi: true,
+            uploadImageApi: true,
+            resetPasswordApi: true,
         };
         this.handleChange = this.handleChange.bind(this)
         this.onDistrictChange = this.onDistrictChange.bind(this)
@@ -55,6 +63,7 @@ export default class TestListView extends Component {
             accountName: this.props.account?this.props.account.accountName:'',
             accountPhoneNumber: this.props.account?this.props.account.accountPhoneNumber:'',
             accountEmail: this.props.account?this.props.account.accountEmail:'',
+            //accountDob currently useless
             accountDob: this.props.account?this.props.account.accountDob:'',
             accountGender: this.props.account?this.props.account.accountGender:'',
             accountRole: this.props.account?this.props.account.accountRole:'',
@@ -66,6 +75,7 @@ export default class TestListView extends Component {
             day: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(8,10)).toString():'2020':'2020',
             error: '',
         }));
+        this.onDistrictChange(this.props.account?this.props.account.accountDistrictCode:this.props.districtList?this.props.districtList[0].districtCode:'none')
     }
     
     componentDidUpdate  (prevProps, prevState) {        
@@ -89,6 +99,7 @@ export default class TestListView extends Component {
             day: this.props.account?this.props.account.accountDob? parseInt(this.props.account.accountDob.substring(8,10)).toString():'2020':'2020',
             error: '',
         }));
+        this.onDistrictChange(this.props.account?this.props.account.accountDistrictCode:this.props.districtList?this.props.districtList[0].districtCode:'none')
         }
     }
 
@@ -174,33 +185,40 @@ export default class TestListView extends Component {
     }
 
     resetPassword(){
-        console.log(this.props.account.accountId),
-        console.log(this.props.userInfo.id),
-        fetch(getApiUrl()+'/users/reset-password/'+this.props.account.accountId, {
-        method: 'POST',
-        headers: {      
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer '+this.props.token,
-            
-        },
-        body: JSON.stringify({
-            userProcessingID: this.props.userInfo.id
-        }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log('result:'+JSON.stringify(result))
-                let success = false
-                result ? result.message?  success=true : null : null;
-                if (success)
-                    this.props.changeShowView('AccountListView')
-            },
-            (error) => {
-                console.log('error:'+error)    
-            }
-        );
+        if(this.state.resetPasswordApi){
+            this.setState({resetPasswordApi:false})
+            fetch(getApiUrl()+'/users/reset-password/'+this.props.account.accountId, {
+                method: 'POST',
+                headers: {      
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                    
+                },
+                body: JSON.stringify({
+                    userProcessingID: this.props.userInfo.id
+                }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({resetPasswordApi:true})
+                    console.log('result:'+JSON.stringify(result))
+                    let success = false
+                    result ? result.message?  success=true : null : null;
+                    if (success){
+                        this.setState({error:result.message})
+                        // this.props.changeShowView('AccountListView')
+                    }
+                        
+                },
+                (error) => {
+                    this.setState({resetPasswordApi:true})  
+                    console.log('error:'+error)  
+                }
+            );
+        }
+        
     }
 
     changePassword(){
@@ -222,9 +240,18 @@ export default class TestListView extends Component {
             return this.setState(previousState => ({ 
                 error: this.state.errorList[2]
             }));
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (!reg.test(this.state.accountEmail))
+            return this.setState(previousState => ({
+                error: this.state.errorList[3]
+            }));
         if (this.state.accountAddress == '') 
             return this.setState(previousState => ({ 
-                error: this.state.errorList[3]
+                error: this.state.errorList[4]
+            }));
+        if (!this.checkHavingAnyChange()) 
+            return this.setState(previousState => ({ 
+                error: this.state.errorList[5]
             }));
         this.setState(previousState => ({ 
                 error: this.state.errorList[0]
@@ -232,44 +259,72 @@ export default class TestListView extends Component {
         return true;
     }
 
+    checkHavingAnyChange(){
+        if(this.state.districtSelected != this.props.account.accountDistrictCode) return true
+        if(this.state.townSelected != this.props.account.accountTownCode) return true
+        if(this.state.accountName != this.props.account.accountName) return true
+        if(this.state.accountPhoneNumber != this.props.account.accountPhoneNumber) return true
+        if(this.state.accountEmail != this.props.account.accountEmail) return true
+        // accountDob: this.props.account?this.props.account.accountDob:'',
+        // if(this.state.accountDob != this.props.account.accountDob) return true
+        if(this.state.accountGender != this.props.account.accountGender) return true
+        if(this.state.accountRole != this.props.account.accountRole) return true
+        if(this.state.accountAddress != this.props.account.accountAddress) return true
+        if(this.state.accountActive != this.props.account.accountActive) return true        
+        if(this.state.accountImage != this.props.account.accountImageUrl) return true
+        if(this.state.year != this.props.account.accountDob.substring(0,4)) return true
+        if(this.state.month != parseInt(this.props.account.accountDob.substring(5,7)).toString()) return true
+        if(this.state.day != parseInt(this.props.account.accountDob.substring(8,10)).toString()) return true
+        return false;
+    }
+
     callApiUpdateAccountInfo(){
-        fetch(getApiUrl()+'/users/update-user/'+this.props.account.accountId, {
-        method: 'POST',
-        headers: {      
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer '+this.props.token,
-        },
-        body: JSON.stringify({
-            name: this.state.accountName,
-            dob: convertDateToDateTime(this.getDob()),
-            address: this.state.accountAddress,
-            active: this.state.accountActive,
-            email: this.state.accountEmail,
-            gender: this.state.accountGender,
-            townCode: this.state.townSelected,
-            districtCode: this.state.districtSelected,
-            image: this.state.accountImage
-        }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log('result:'+JSON.stringify(result))
-                let success = false
-                result ? result.message? null : success=true : null;
-                if (success) {
-                    if (this.checkCurrentUser()) this.props.updateUserInfo(result)
-                    // this.props.changeShowView('AccountListView')
+        console.log(this.state.townSelected)
+        if(this.state.updateInfoApi){
+            this.setState({updateInfoApi:false})
+            fetch(getApiUrl()+'/users/update-user/'+this.props.account.accountId, {
+                method: 'POST',
+                headers: {      
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                },
+                body: JSON.stringify({
+                    name: this.state.accountName,
+                    dob: convertDateToDateTime(this.getDob()),
+                    address: this.state.accountAddress,
+                    active: this.state.accountActive,
+                    email: this.state.accountEmail,
+                    gender: this.state.accountGender,
+                    townCode: this.state.townSelected,
+                    districtCode: this.state.districtSelected,
+                    image: this.state.accountImage
+                }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({updateInfoApi:true})
+                    console.log('result:'+JSON.stringify(result))
+                    let success = false
+                    result ? result.message? null : success=true : null;
+                    if (success) {
+                        if (this.checkCurrentUser()) this.props.updateUserInfo(result)
+                        this.props.changeToAccountViewScreen(result)
+                        this.setState({error:'Cập nhật thông tin thành công'})
+                        // this.props.changeShowView('AccountListView')
+                    }
+                    else{
+                        this.setState({error:result.message})
+                    }
+                },
+                (error) => {
+                    this.setState({updateInfoApi:true})
+                    console.log('error:'+error)
                 }
-                else{
-                    this.setState({error:result.message})
-                }
-            },
-            (error) => {
-                console.log('error:'+error)    
-            }
-        );
+            );
+        }
+        
     }
 
     selectPicture = async () =>{
@@ -281,27 +336,35 @@ export default class TestListView extends Component {
     }
     
     callApiUploadImage (_data) {
-        fetch(getApiUrl()+'/uploadImage', {
-        method: 'POST',
-        headers: {      
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer '+this.props.token,
-        },
-        body: JSON.stringify({
-            "file": _data.uri
-        }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                // console.log('result:'+JSON.stringify(result))
-                this.setState({ accountImage: result.uri });
-            },
-            (error) => {
-                console.log('error:'+error)    
-            }
-        );
+        if(this.state.uploadImageApi){
+            this.setState({uploadImageApi:false})
+            fetch(getApiUrl()+'/uploadImage', {
+                method: 'POST',
+                headers: {      
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                },
+                body: JSON.stringify({
+                    "file": _data.uri
+                }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    // console.log('result:'+JSON.stringify(result))
+                    this.setState({ 
+                        accountImage: result.uri,
+                        uploadImageApi:true 
+                    });
+                },
+                (error) => {
+                    console.log(error)    
+                    this.setState({uploadImageApi:true})
+                }
+            );
+        }
+        
     }
 
     checkCurrentUser(){
@@ -344,33 +407,30 @@ export default class TestListView extends Component {
     return(        
         <View style={styles.accountViewArea}>
             <View style={styles.accountMenuArea}>
-                <Text style={[styles.rowText,{fontSize:22,fontWeight:'bold',width:'100%'}]}>{"Chỉnh sửa thông tin nhân viên: "}</Text>   
+                <Text style={[styles.rowText,{fontSize:22,fontWeight:'bold',width:'100%'}]}>{this.state.accountRole=="CUSTOMER"?"Thông tin khách hàng ":"Thông tin nhân viên "}</Text>   
             </View>
             <View style={styles.accountArea}>
                 <View style={styles.accountContainer}>
-                    {/* <View style={styles.accountRowContainer}>
-                        <Text style={styles.rowText}>{'Ảnh đại diện: '}</Text>
-                        <TouchableOpacity 
-                        style={styles.addImageButton}
-                        onPress={() => this.selectPicture()}
-                        >
-                            <Text style={{color:'white'}}>Chọn ảnh</Text>
-                        </TouchableOpacity>
-                    </View> */}
                     <View style={styles.imagePreviewArea}>
-                        <View style={styles.accountRowContainer}>
-                            <Text style={styles.rowText}>{' '}</Text>
-                            <TouchableOpacity onPress={() => this.checkAdmin()?this.selectPicture():null}
+                        <View style={[styles.accountRowContainer,{justifyContent: 'center',}]}>
+                            <TouchableOpacity 
+                                onPress={() => this.checkAdmin()?this.selectPicture():null}
+                                disabled={this.checkAdmin()?!this.state.uploadImageApi:true}
                             >
-                                <Image 
+                                <ImageBackground 
                                     style={styles.imagePreview}
                                     source={{ uri: this.state.accountImage}}
                                     >
-                                </Image>
+                                    <Image 
+                                        style={{width:50,height:50}}
+                                        source={require('./../../Data/icon-camera-512.png')}>
+                                    </Image>
+                                </ImageBackground>
                             </TouchableOpacity>
                         </View>
                     </View>
                     <View style={styles.accountRowContainer}>
+
                         <Text style={styles.rowText}>Tên nhân viên:</Text>
                         {this.checkAdmin()?
                         <TextInput style={styles.rowTextInput}
@@ -383,65 +443,56 @@ export default class TestListView extends Component {
                         :
                         <Text style={styles.rowTextLong}>{this.state.accountName}</Text>
                         }
+
+                        <View style={styles.middleSpace}/>
+                        
+                        <Text style={styles.rowText}>Trạng thái:</Text>
+                        {this.checkAdmin()?
+                        <Picker
+                            selectedValue={this.state.accountActive}
+                            style={styles.accountTypeDropDown}
+                            onValueChange={(itemValue, itemIndex) => this.setState({
+                                accountActive:itemValue,
+                            })}                    
+                            >
+                            <Picker.Item label={'Đang hoạt động'} value={'1'} />
+                            <Picker.Item label={'Bị khóa'} value={'0'} />
+                        </Picker>
+                        :
+                        <Text style={styles.rowTextLong}>{this.state.accountActive=='1'?'Đang hoạt động':'Bị khóa'}</Text>
+                        }
                         
                     </View>
                     <View style={styles.accountRowContainer}>
+
                         <Text style={styles.rowText}>Số điện thoại:</Text>
                         <Text style={styles.rowTextLong}>{this.state.accountPhoneNumber}</Text>
+
+                        <View style={styles.middleSpace}/>
+
+                        <Text style={styles.rowText}>Vị trí:</Text>
+                        <Text style={styles.rowTextLong}>{getRoleName(this.state.accountRole)}</Text>
+
                     </View>
                     <View style={styles.accountRowContainer}>
-                        <Text style={styles.rowText}>Địa chỉ email:</Text>
+
+                        <Text style={styles.rowText}>Quận/huyện:</Text>
                         {this.checkAdmin()?
-                        <TextInput style={styles.rowTextInput}
-                            placeholder={'Nhập địa chỉ email của nhân viên'}
-                            name="accountEmail"
-                            onChange={this.handleChange}
-                            value={this.state.accountEmail}
-                            >                
-                        </TextInput>
+                        <Picker
+                            selectedValue={this.state.districtSelected}
+                            style={styles.accountTypeDropDown}
+                            onValueChange={(itemValue, itemIndex) => this.onDistrictChange(itemValue)}                    
+                            >
+                            {this.state.districtList?this.state.districtList.map(district => (
+                            <Picker.Item label={district.districtName} value={district.districtCode} />))
+                            : null }
+                        </Picker>
                         :
-                        <Text style={styles.rowTextLong}>{this.state.accountEmail}</Text>
+                        <Text style={styles.rowTextLong}>{this.getDistrictName()}</Text>
                         }
-                    </View>
-                    {this.checkAdmin()?
-                    <View style={styles.accountRowContainer}>
-                        <Text style={styles.rowText}>Ngày sinh: </Text>
-                        <Picker
-                            selectedValue={this.state.day}
-                            style={[styles.accountTypeDropDown,{width:50,marginRight:15}]}
-                            onValueChange={(itemValue, itemIndex) => this.setState({
-                                day:itemValue,
-                            })}                    
-                            >
-                            {this.createNumberPickerList(1,this.getNumberOfDayInMonth(this.state.month.toString()),true)}
-                        </Picker>
-                        <Picker
-                            selectedValue={this.state.month}
-                            style={[styles.accountTypeDropDown,{width:50,marginRight:15}]}
-                            onValueChange={(itemValue, itemIndex) => this.setState({
-                                day: this.getNumberOfDayInMonth(itemValue)<this.state.day?'1':this.state.day,
-                                month:itemValue,
-                            })}                    
-                            >
-                            {this.createNumberPickerList(1,12,true)}
-                        </Picker>
-                        <Picker
-                            selectedValue={this.state.year}
-                            style={[styles.accountTypeDropDown,{width:80}]}
-                            onValueChange={(itemValue, itemIndex) => this.setState({
-                                year:itemValue,
-                            })}                    
-                            >
-                            {this.createNumberPickerList(1920,2020,false)}
-                        </Picker>
-                    </View>
-                    :
-                    <View style={styles.accountRowContainer}>
-                        <Text style={styles.rowText}>Ngày sinh: </Text>
-                        <Text style={styles.rowTextLong}>{this.getDob()}</Text>
-                    </View>
-                    }
-                    <View style={styles.accountRowContainer}>
+
+                        <View style={styles.middleSpace}/>
+
                         <Text style={styles.rowText}>Giới tính:</Text>
                         {this.checkAdmin()?
                         <Picker
@@ -457,25 +508,10 @@ export default class TestListView extends Component {
                         :
                         <Text style={styles.rowTextLong}>{this.state.accountGender=='1'?'Nam':'Nữ'}</Text>
                         }
-                        
-                    </View>                   
-                    <View style={styles.accountRowContainer}>
-                        <Text style={styles.rowText}>Quận/huyện:</Text>
-                        {this.checkAdmin()?
-                        <Picker
-                            selectedValue={this.state.districtSelected}
-                            style={styles.accountTypeDropDown}
-                            onValueChange={(itemValue, itemIndex) => this.onDistrictChange(itemValue)}                    
-                            >
-                            {this.state.districtList?this.state.districtList.map(district => (
-                            <Picker.Item label={district.districtName} value={district.districtCode} />))
-                            : null }
-                        </Picker>
-                        :
-                        <Text style={styles.rowTextLong}>{this.getDistrictName()}</Text>
-                        }
+
                     </View>
                     <View style={styles.accountRowContainer}>
+
                         <Text style={styles.rowText}>Phường/xã:</Text>
                         {this.checkAdmin()?
                         <Picker
@@ -492,6 +528,48 @@ export default class TestListView extends Component {
                         :
                         <Text style={styles.rowTextLong}>{this.getTownName()}</Text>
                         }
+
+                        <View style={styles.middleSpace}/>
+
+                        {this.checkAdmin()?
+                        <View style={[styles.accountRowContainer,{width:'',marginBottom:0}]}>
+                            <Text style={styles.rowText}>Ngày sinh: </Text>
+                            <Picker
+                                selectedValue={this.state.day}
+                                style={[styles.accountTypeDropDown,{width:50,marginRight:15}]}
+                                onValueChange={(itemValue, itemIndex) => this.setState({
+                                    day:itemValue,
+                                })}                    
+                                >
+                                {this.createNumberPickerList(1,this.getNumberOfDayInMonth(this.state.month.toString()),true)}
+                            </Picker>
+                            <Picker
+                                selectedValue={this.state.month}
+                                style={[styles.accountTypeDropDown,{width:50,marginRight:15}]}
+                                onValueChange={(itemValue, itemIndex) => this.setState({
+                                    day: this.getNumberOfDayInMonth(itemValue)<this.state.day?'1':this.state.day,
+                                    month:itemValue,
+                                })}                    
+                                >
+                                {this.createNumberPickerList(1,12,true)}
+                            </Picker>
+                            <Picker
+                                selectedValue={this.state.year}
+                                style={[styles.accountTypeDropDown,{width:80}]}
+                                onValueChange={(itemValue, itemIndex) => this.setState({
+                                    year:itemValue,
+                                })}                    
+                                >
+                                {this.createNumberPickerList(1920,2020,false)}
+                            </Picker>
+                        </View>
+                        :
+                        <View style={[styles.accountRowContainer,{width:'',marginBottom:0}]}>
+                            <Text style={styles.rowText}>Ngày sinh: </Text>
+                            <Text style={styles.rowTextLong}>{this.getDob()}</Text>
+                        </View>
+                        }
+
                     </View>
                     <View style={styles.accountRowContainer}>
                         <Text style={styles.rowText}>Địa chỉ chi tiết:</Text>
@@ -506,30 +584,25 @@ export default class TestListView extends Component {
                         :
                         <Text style={styles.rowTextLong}>{this.state.accountAddress}</Text>
                         }
-                    </View> 
-                    <View style={styles.accountRowContainer}>
-                        <Text style={styles.rowText}>Vị trí nhân viên:</Text>
-                        <Text style={styles.rowTextLong}>{getRoleName(this.state.accountRole)}</Text>
-                    </View> 
-                    <View style={styles.accountRowContainer}>
-                        <Text style={styles.rowText}>Trạng thái:</Text>
+
+                        <View style={styles.middleSpace}/>
+
+                        <Text style={styles.rowText}>Địa chỉ email:</Text>
                         {this.checkAdmin()?
-                        <Picker
-                            selectedValue={this.state.accountActive}
-                            style={styles.accountTypeDropDown}
-                            onValueChange={(itemValue, itemIndex) => this.setState({
-                                accountActive:itemValue,
-                            })}                    
-                            >
-                            <Picker.Item label={'Đang hoạt động'} value={'1'} />
-                            <Picker.Item label={'Bị khóa'} value={'0'} />
-                        </Picker>
+                        <TextInput style={styles.rowTextInput}
+                            placeholder={'Nhập địa chỉ email của nhân viên'}
+                            name="accountEmail"
+                            onChange={this.handleChange}
+                            value={this.state.accountEmail}
+                            >                
+                        </TextInput>
                         :
-                        <Text style={styles.rowTextLong}>{this.state.accountActive=='1'?'Đang hoạt động':'Bị khóa'}</Text>
+                        <Text style={styles.rowTextLong}>{this.state.accountEmail}</Text>
                         }
+
                     </View> 
                     <View style={styles.accountRowContainer}>
-                        <Text style={styles.rowTextError}>{this.state.error}</Text>                        
+                        <Text style={[styles.rowTextError,{color:this.state.error=='Cập nhật thông tin thành công'?'green':'red'}]}>{this.state.error}</Text>
                     </View>
                 </View>  
                 <View style={styles.buttonArea}>
@@ -538,12 +611,12 @@ export default class TestListView extends Component {
                         <Text style={{color:'white'}}>Thay đổi mật khẩu</Text>
                     </TouchableOpacity>
                     :
-                    <TouchableOpacity style={styles.button} onPress={() => this.resetPassword()}>
+                    <TouchableOpacity style={styles.button} onPress={() => this.resetPassword()} disabled={!this.state.resetPasswordApi}>
                         <Text style={{color:'white'}}>Đặt lại mật khẩu</Text>
                     </TouchableOpacity>
                     }
                     {this.checkAdmin()?
-                    <TouchableOpacity style={styles.button} onPress={() => this.updateAccountInformation()}>
+                    <TouchableOpacity style={styles.button} onPress={() => this.updateAccountInformation()} disabled={!this.state.updateInfoApi}>
                         <Text style={{color:'white'}}>Lưu thay đổi</Text>
                     </TouchableOpacity>
                     :
@@ -598,7 +671,6 @@ const styles = StyleSheet.create({
         paddingBottom: 15,
     },
     accountRowContainer:{
-        alignSelf: 'stretch',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
@@ -610,7 +682,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        width:170,
+        width:130,
         fontSize:17,
         paddingTop:3,
         fontWeight:'bold'
@@ -621,7 +693,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        width:500,
+        width:350,
         fontSize:17,
         paddingTop:3,
     },
@@ -635,15 +707,13 @@ const styles = StyleSheet.create({
         color:'red',        
     },
     accountTypeDropDown:{
-        alignSelf: 'stretch',
         padding:3,
-        width: 500,
+        width: 350,
         borderRadius:5,
     },
     rowTextInput:{
-        alignSelf: 'stretch',
         padding:3,
-        width: 800,
+        width: 350,
         backgroundColor:'white',
         borderWidth:1,
         borderRadius:5,
@@ -717,9 +787,13 @@ const styles = StyleSheet.create({
     imagePreview:{
         width:200,
         height:200,
-        backgroundColor:''
+        backgroundColor:'',
+        alignItems: 'flex-end',
+        justifyContent: 'flex-end',
     },
-
- 
+    middleSpace:{
+        width:40
+    },
+    
 
 });

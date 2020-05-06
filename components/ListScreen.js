@@ -50,9 +50,11 @@ export default class ListScreen extends Component  {
             //authentication
             logIn: false,
             userInfo: null,
+            token: '',
             // logIn: true,
             // userInfo: userList[0],
-            token: '',
+            // token: "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwOTg3NjU0MzIxIiwiZXhwIjoxNTg5MzY4NzQxfQ.bnmCPDa5uE30AX0WU8Wt1xrLw1HhM5EpP2csK5tNrZBCYo-C7SP6xdiEEBHlap0AwSylQOsnRKb9Dy_2psxqKw",
+            
             
             //request
             requestList: null,
@@ -73,6 +75,7 @@ export default class ListScreen extends Component  {
             testList: [],
             testListApi: true,
             testVersion: '',
+            testListScreenTrigger: true,
 
             //account
             userList: null,
@@ -293,6 +296,7 @@ export default class ListScreen extends Component  {
         if (button=="1") this.callApiRequestList()
         if (button=="2") this.callApiAppointmentList()
         if (button=="3") this.callApiArticleList()
+        if (button=="4") this.setState({testListScreenTrigger:!this.state.testListScreenTrigger})
         if (button=="5") this.callApiUserList()
         this.setState(previousState => ({ 
             Button1Selected: button=="1"?true:false,
@@ -565,13 +569,13 @@ export default class ListScreen extends Component  {
                 {
                 //request
                 this.state.showView == 'RequestView'?
-                <RequestView  request={this.state.selectedRequest} testList={this.state.testList} userInfo={this.state.userInfo} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} token={this.state.token} />
+                <RequestView  request={this.state.selectedRequest} testList={this.state.testList} userInfo={this.state.userInfo} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} token={this.state.token} changeToAccountViewScreen={this.changeToAccountViewScreen} changeToRequestViewScreen={this.changeToRequestViewScreen}/>
                 : this.state.showView == 'RequestResultView'?
                 <RequestResultView  request={this.state.selectedRequest} changeShowView={this.changeShowView} token={this.state.token} />
                 : this.state.showView == 'RequestLostSampleView'?
-                <RequestLostSampleView  request={this.state.selectedRequest} userInfo={this.state.userInfo} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} token={this.state.token}/>
+                <RequestLostSampleView  request={this.state.selectedRequest} userInfo={this.state.userInfo} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} token={this.state.token} changeToRequestViewScreen={this.changeToRequestViewScreen}/>
                 : this.state.showView == 'RequestUpdateResultView'?
-                <RequestUpdateResultView  request={this.state.selectedRequest} userInfo={this.state.userInfo} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} token={this.state.token}/>
+                <RequestUpdateResultView  request={this.state.selectedRequest} userInfo={this.state.userInfo} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} token={this.state.token} changeToRequestViewScreen={this.changeToRequestViewScreen}/>
                 //appointment
                 : this.state.showView == 'AppointmentView'?
                 <AppointmentView  appointment={this.state.selectedAppointment} userInfo={this.state.userInfo} changeShowView={this.changeShowView} token={this.state.token} setSelectedAppointment={this.setSelectedAppointment}/>
@@ -586,7 +590,7 @@ export default class ListScreen extends Component  {
                 : this.state.showView == 'AccountCreateView'?
                 <AccountCreateView  districtList={this.state.districtList} token={this.state.token} changeToAccountViewScreen={this.changeToAccountViewScreen} />
                 : this.state.showView == 'AccountView'?
-                <AccountView  districtList={this.state.districtList}  account={this.state.selectedAccount} changeShowView={this.changeShowView} token={this.state.token} userInfo={this.state.userInfo} updateUserInfo={this.updateUserInfo}/>
+                <AccountView  districtList={this.state.districtList}  account={this.state.selectedAccount} changeShowView={this.changeShowView} token={this.state.token} userInfo={this.state.userInfo} updateUserInfo={this.updateUserInfo} changeToAccountViewScreen={this.changeToAccountViewScreen}/>
                 : this.state.showView == 'AccountChangePasswordView'?
                 <AccountChangePasswordView account={this.state.selectedAccount} changeShowView={this.changeShowView} token={this.state.token} userInfo={this.state.userInfo} />
                 
@@ -597,7 +601,7 @@ export default class ListScreen extends Component  {
                 : this.state.showView == 'ArticleListView'? this.state.articleListApi?
                 <ArticleListView  articleList={this.state.articleList} changeShowView={this.changeShowView} setSelectedArticle={this.setSelectedArticle}/>: <LoadingView  />
                 : this.state.showView == 'TestUpdateView'?
-                <TestUpdateView  testList={this.state.testList} userInfo={this.state.userInfo} token={this.state.token}/>
+                <TestUpdateView  testList={this.state.testList} userInfo={this.state.userInfo} token={this.state.token} testListScreenTrigger={this.state.testListScreenTrigger}/>
                 : this.state.showView == 'AccountListView'? this.state.userListApi?
                 <AccountListView userList={this.state.userList}  changeShowView={this.changeShowView} setSelectedAccount={this.setSelectedAccount} searchUser={this.searchUser}/>: <LoadingView  />                    
                 : <View/>

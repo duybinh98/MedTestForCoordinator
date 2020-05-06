@@ -9,6 +9,7 @@ export default class RequestLostSampleView extends Component  {
             reason: '',
             error: '',
             errorList: ['','Phải điền lý do làm mất mẫu'],
+            lostSampleApi: true,
         };
         this.handleChange = this.handleChange.bind(this)
         this.lostSample = this.lostSample.bind(this)
@@ -22,6 +23,33 @@ export default class RequestLostSampleView extends Component  {
         }
     }
 
+    callApiDetail(){
+        fetch(getApiUrl()+"/requests/detail/"+this.props.request.requestId, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.props.token,
+            }
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                console.log(result)
+                let success = false
+                result ? result.message? null : success=true : null;
+                if (success) {
+                    // let request = this.props.request
+                    // request.requestStatus = result.requestStatus
+                    // this.props.setSelectedRequest(request)
+                    this.props.changeToRequestViewScreen(result,this.props.request.testList)
+                }
+            },            
+            (error) => {
+                console.log(error)
+            }
+        )  
+    }
 
     lostSample(){
         if(this.checkValid()){
@@ -42,40 +70,46 @@ export default class RequestLostSampleView extends Component  {
     }
 
     callApiLostSample(){
-        fetch(getApiUrl()+'/requests/update/'+this.props.request.requestId, {
-        method: 'POST',
-        headers: {      
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer '+this.props.token,
-        },
-        body: JSON.stringify({
-            status: 'coordinatorlostsample',
-            userID: this.props.userInfo.id,
-            note: this.state.reason,
-        }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log('result:'+JSON.stringify(result))
-                let success = false
-                result ? result.message? null: success=true : null;
-                if (success) {
-                    let request = this.props.request
-                    request.requestStatus = 'coordinatorlostsample'
-                    this.props.setSelectedRequest(request)
-                    this.props.changeShowView('RequestView')
+        if(this.state.lostSampleApi){
+            this.setState({lostSampleApi:false})
+            fetch(getApiUrl()+'/requests/update/'+this.props.request.requestId, {
+                method: 'POST',
+                headers: {      
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                },
+                body: JSON.stringify({
+                    status: 'coordinatorlostsample',
+                    userID: this.props.userInfo.id,
+                    note: this.state.reason,
+                }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({lostSampleApi:true})
+                    console.log('result:'+JSON.stringify(result))
+                    let success = false
+                    result ? result.message? null: success=true : null;
+                    if (success) {
+                        // let request = this.props.request
+                        // request.requestStatus = 'coordinatorlostsample'
+                        // this.props.setSelectedRequest(request)
+                        // this.props.changeShowView('RequestView')
+                        this.callApiDetail()
+                    }
+                    else{
+                        this.setState({error:result.message})
+                    }
+                },
+                (error) => {
+                    this.setState({lostSampleApi:true})
+                    console.log('error:'+error)    
                 }
-                else{
-                    this.setState({error:result.message})
-                }
-                
-            },
-            (error) => {
-                console.log('error:'+error)    
-            }
-        );
+            );
+        }
+        
     }
 
 
@@ -136,7 +170,7 @@ export default class RequestLostSampleView extends Component  {
                     <TouchableOpacity style={styles.requestConfirmButton} onPress={() => this.props.changeShowView('RequestView')}>
                         <Text style={{color:'white'}}>Quay lại</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.requestConfirmButton} onPress={() => this.lostSample()}>
+                    <TouchableOpacity style={styles.requestConfirmButton} onPress={() => this.lostSample()} disabled={!this.state.lostSampleApi}>
                         <Text style={{color:'white'}}>Báo mất mẫu</Text>
                     </TouchableOpacity>
                 </View>

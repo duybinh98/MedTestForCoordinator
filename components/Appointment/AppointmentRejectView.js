@@ -9,6 +9,7 @@ export default class AppointmentLostSampleView extends Component  {
             reason: '',
             error: '',
             errorList: ['','Phải điền lý do từ chối'],
+            rejectAppointmentApi: true,
 
         };
         this.handleChange = this.handleChange.bind(this)
@@ -21,6 +22,33 @@ export default class AppointmentLostSampleView extends Component  {
                 
             }));
         }
+    }
+
+    callApiDetail(){
+        fetch(getApiUrl()+"/appointments/detail/"+this.props.appointment.appointmentId, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer '+this.props.token,
+            }
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                console.log(result)
+                let success = false
+                result ? result.message? null : success=true : null;
+                if (success) {
+                    let appointment = this.props.appointment
+                    appointment.appointmentStatus = result.appointment_status
+                    this.props.setSelectedAppointment(appointment)
+                }
+            },            
+            (error) => {
+                console.log(error)
+            }
+        )  
     }
 
 
@@ -43,36 +71,49 @@ export default class AppointmentLostSampleView extends Component  {
     }
 
     callApiRejectAppointment(){
-        fetch(getApiUrl()+"/appointments/reject/"+this.props.appointment.appointmentId, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer '+this.props.token,
-            },
-            body: JSON.stringify({
-                status: 'rejected',
-                coordinatorID: this.props.userInfo.id,
-                note: this.state.reason,
-            }),
-            })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log(result)
-                let success = false
-                result ? result.message? null : success=true : null;
-                if (success) {
-                    let appointment = this.props.appointment
-                    appointment.appointmentStatus = 'rejected'
-                    this.props.setSelectedAppointment(appointment)
-                    this.props.changeShowView('AppointmentView')
+        if(this.state.rejectAppointmentApi){
+            this.setState({rejectAppointmentApi:false})
+            fetch(getApiUrl()+"/appointments/reject/"+this.props.appointment.appointmentId, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                },
+                body: JSON.stringify({
+                    status: 'rejected',
+                    coordinatorID: this.props.userInfo.id,
+                    note: this.state.reason,
+                }),
+                })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({rejectAppointmentApi:true})
+                    console.log(result)
+                    let success = false
+                    result ? result.message? result.message == "Xác nhận điều phối viên huỷ cuộc hẹn thành công!"? success=true : null : null : null;
+                    if (success) {
+                        // let appointment = this.props.appointment
+                        // appointment.appointmentStatus = 'rejected'
+                        // this.props.setSelectedAppointment(appointment)
+                        // this.props.changeShowView('AppointmentView')
+                        this.callApiDetail()
+                    }
+                    else{
+                        this.setState({error:result.message})
+                        setTimeout(() => {
+                            this.callApiDetail()
+                        }, 1500);
+                    }
+                },            
+                (error) => {
+                    this.setState({rejectAppointmentApi:true})
+                    console.log(error)
                 }
-            },            
-            (error) => {
-                console.log(error)
-            }
-        )  
+            )  
+        }
+        
     }
 
 
@@ -132,7 +173,7 @@ export default class AppointmentLostSampleView extends Component  {
                     <TouchableOpacity style={styles.appointmentConfirmButton} onPress={() => this.props.changeShowView('AppointmentView')}>
                         <Text style={{color:'white'}}>Quay lại</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.appointmentConfirmButton} onPress={() => this.rejectAppointment()}>
+                    <TouchableOpacity style={styles.appointmentConfirmButton} onPress={() => this.rejectAppointment()} disabled={!this.state.rejectAppointmentApi}>
                         <Text style={{color:'white'}}>Từ chối đơn hẹn</Text>
                     </TouchableOpacity>
                 </View>

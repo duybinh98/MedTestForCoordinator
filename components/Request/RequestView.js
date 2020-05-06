@@ -11,6 +11,9 @@ export default class RequestView extends Component  {
             testList: this.props.testList,
             resultList: [],
             error: '',
+            takingSampleApi: true,
+            nurseDetailApi: true,
+            coordinatorDetailApi: true,
         };
         this.isSelected = this.isSelected.bind(this)
         this.getLeftButtonName = this.getLeftButtonName.bind(this)
@@ -18,6 +21,8 @@ export default class RequestView extends Component  {
         this.onLeftButtonPress = this.onLeftButtonPress.bind(this)
         this.onRightButtonPress = this.onRightButtonPress.bind(this)
         this.callApiTakingSample = this.callApiTakingSample.bind(this)
+        this.callApiNurseDetail = this.callApiNurseDetail.bind(this)
+        this.callApiCoordinatorDetail = this.callApiCoordinatorDetail.bind(this)
     }
 
     componentDidMount(){
@@ -31,7 +36,66 @@ export default class RequestView extends Component  {
         }
     }
 
-    
+    callApiNurseDetail(){
+        if(this.state.nurseDetailApi || this.props.request.nurseId!="Chưa có y tá nhận!"){
+            this.setState({nurseDetailApi:false})
+            fetch(getApiUrl()+"/users/nurses/detail/"+this.props.request.nurseId, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                }
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({nurseDetailApi:true})
+                    console.log(result)
+                    let success = false
+                    result ? result.message? null : success=true : null;
+                    if (success) {
+                        this.props.changeToAccountViewScreen(result)
+                    }
+                },            
+                (error) => {
+                    this.setState({nurseDetailApi:true})
+                    console.log(error)
+                }
+            )  
+        }
+    }
+
+    callApiCoordinatorDetail(){
+        if(this.state.coordinatorDetailApi || this.props.request.nurseId!="Chưa có điều phối viên xử lý!"){
+            this.setState({coordinatorDetailApi:false})
+            fetch(getApiUrl()+"/users/coordinators/detail/"+this.props.request.coordinatorId, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                }
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({coordinatorDetailApi:true})
+                    console.log(result)
+                    let success = false
+                    result ? result.message? null : success=true : null;
+                    if (success) {
+                        this.props.changeToAccountViewScreen(result)
+                    }
+                },            
+                (error) => {
+                    this.setState({coordinatorDetailApi:true})
+                    console.log(error)
+                }
+            )  
+        }
+    }
+
     isSelected(id) {
         const found = this.props.request?this.props.request.lsSelectedTest.findIndex(test => test == id) : -1;
         let result = false;
@@ -55,9 +119,10 @@ export default class RequestView extends Component  {
                 let success = false
                 result ? result.message? null : success=true : null;
                 if (success) {
-                    let request = this.props.request
-                    request.requestStatus = result.requestStatus
-                    this.props.setSelectedRequest(request)
+                    // let request = this.props.request
+                    // request.requestStatus = result.requestStatus
+                    // this.props.setSelectedRequest(request)
+                    this.props.changeToRequestViewScreen(result,this.props.request.testList)
                 }
             },            
             (error) => {
@@ -67,41 +132,47 @@ export default class RequestView extends Component  {
     }
 
     callApiTakingSample(){
-        fetch(getApiUrl()+"/requests/update/"+this.props.request.requestId, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer '+this.props.token,
-            },
-            body: JSON.stringify({
-                status: 'waitingforresult',
-                userID: this.props.userInfo.id,
-                note: 'Coordinator have take this request',
-            }),
-        })
-        .then(res => res.json())
-        .then(
-            (result) => {
-                console.log(result)
-                let success = false
-                result ? result.message? null : success=true : null;
-                if (success) {
-                    let request = this.props.request
-                    request.requestStatus = 'waitingforresult'
-                    this.props.setSelectedRequest(request)
-                    this.props.changeShowView('RequestView')
+        if(this.state.takingSampleApi){
+            this.setState({takingSampleApi:false})
+            fetch(getApiUrl()+"/requests/update/"+this.props.request.requestId, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer '+this.props.token,
+                },
+                body: JSON.stringify({
+                    status: 'waitingforresult',
+                    userID: this.props.userInfo.id,
+                    note: 'Coordinator have take this request',
+                }),
+            })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({takingSampleApi:true})
+                    console.log(result)
+                    let success = false
+                    result ? result.message? null : success=true : null;
+                    if (success) {
+                        let request = this.props.request
+                        request.requestStatus = 'waitingforresult'
+                        this.props.setSelectedRequest(request)
+                        this.props.changeShowView('RequestView')
+                    }
+                    else{
+                        this.setState({error:result.message})
+                        this.callApiDetail()
+                    }
+                    
+                },            
+                (error) => {
+                    this.setState({takingSampleApi:true})
+                    console.log(error)
                 }
-                else{
-                    this.setState({error:result.message})
-                    this.callApiDetail()
-                }
-                
-            },            
-            (error) => {
-                console.log(error)
-            }
-        )  
+            )  
+        }
+        
     }
     
     onTakingSample(){
@@ -124,6 +195,7 @@ export default class RequestView extends Component  {
     getLeftButtonName(status) {
         switch (status) {
             case 'transporting':
+            case 'retransporting':
                 return '';
                 break;
             case 'waitingforresult':
@@ -139,6 +211,7 @@ export default class RequestView extends Component  {
     getRightButtonName(status) {
         switch (status) {
             case 'transporting':
+            case 'retransporting':
                 return 'Xác nhận lấy mẫu';
                 break;
             case 'waitingforresult':
@@ -151,10 +224,10 @@ export default class RequestView extends Component  {
         }
     }
 
-
     onLeftButtonPress(status) {
         switch (status) {
             case 'transporting':
+            case 'retransporting':
                 
                 break;
             case 'waitingforresult':
@@ -169,6 +242,7 @@ export default class RequestView extends Component  {
     onRightButtonPress(status) {
         switch (status) {
             case 'transporting':
+            case 'retransporting':
                 this.onTakingSample();
                 break;
             case 'waitingforresult':
@@ -212,12 +286,16 @@ export default class RequestView extends Component  {
                             <Text style={styles.rowTextLong}>{this.props.request?this.props.request.requestAddress+', '+this.props.request.requestTownName+', '+this.props.request.requestDistrictName:''}</Text>
                     </View>
                     <View style={styles.requestRowContainer}>
-                            <Text style={styles.rowText}>Y tá nhận đơn: </Text>    
+                            <Text style={styles.rowText}>Y tá nhận đơn: </Text> 
+                            <TouchableOpacity onPress={() => this.callApiNurseDetail()} disabled={!this.state.nurseDetailApi}>   
                             <Text style={styles.rowTextLong}>{this.props.request?this.props.request.nurseName:''}</Text>
+                            </TouchableOpacity>
                     </View>
                     <View style={styles.requestRowContainer}>
                             <Text style={styles.rowText}>Điều phối viên: </Text>    
+                            <TouchableOpacity onPress={() => this.callApiCoordinatorDetail()} disabled={!this.state.coordinatorDetailApi}>   
                             <Text style={styles.rowTextLong}>{this.props.request?this.props.request.coordinatorName:''}</Text>
+                            </TouchableOpacity>
                     </View>
                     <View style={styles.requestRowContainer}>
                             <Text style={styles.rowText}>Trạng thái: </Text>
@@ -263,7 +341,7 @@ export default class RequestView extends Component  {
                     :<View/>
                     }
                     {!this.getRightButtonName(this.props.request?this.props.request.requestStatus:'')==''?
-                    <TouchableOpacity style={styles.button} onPress={() => this.onRightButtonPress(this.props.request?this.props.request.requestStatus:'')}>
+                    <TouchableOpacity style={styles.button} onPress={() => this.onRightButtonPress(this.props.request?this.props.request.requestStatus:'')} disabled={!this.state.takingSampleApi}>
                         <Text style={{color:'white'}}>{this.getRightButtonName(this.props.request?this.props.request.requestStatus:'')}</Text>
                     </TouchableOpacity>  
                     :<View/>
