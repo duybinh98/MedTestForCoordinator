@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/MedTestForCoordinator/precache-manifest.7672ec181744d43ba4fb160d5e61fed7.js"
+  "/MedTestForCoordinator/precache-manifest.f29a642d427f03b7399e36fdd8e469c6.js"
 );
 
 workbox.skipWaiting();
