@@ -58,7 +58,7 @@ export default class RequestListPendingItem extends Component {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     let list = []
                     result ? result.message? null : success=true : null;
@@ -69,7 +69,7 @@ export default class RequestListPendingItem extends Component {
                     }
                 },            
                 (error) => {
-                    console.log(error)
+                    // console.log(error)
                 }
             )  
         }

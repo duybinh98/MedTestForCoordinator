@@ -35,7 +35,7 @@ export default class RequestLostSampleView extends Component  {
         .then(res => res.json())
         .then(
             (result) => {
-                console.log(result)
+                // console.log(result)
                 let success = false
                 result ? result.message? null : success=true : null;
                 if (success) {
@@ -46,7 +46,7 @@ export default class RequestLostSampleView extends Component  {
                 }
             },            
             (error) => {
-                console.log(error)
+                // console.log(error)
             }
         )  
     }
@@ -89,7 +89,7 @@ export default class RequestLostSampleView extends Component  {
             .then(
                 (result) => {
                     this.setState({lostSampleApi:true})
-                    console.log('result:'+JSON.stringify(result))
+                    // console.log('result:'+JSON.stringify(result))
                     let success = false
                     result ? result.message? null: success=true : null;
                     if (success) {
@@ -105,7 +105,7 @@ export default class RequestLostSampleView extends Component  {
                 },
                 (error) => {
                     this.setState({lostSampleApi:true})
-                    console.log('error:'+error)    
+                    // console.log('error:'+error)    
                 }
             );
         }

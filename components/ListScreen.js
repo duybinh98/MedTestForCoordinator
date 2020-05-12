@@ -103,7 +103,7 @@ export default class ListScreen extends Component  {
 
     
     componentDidMount(){
-        console.log(Dimensions.get('window').width)
+        // console.log(Dimensions.get('window').width)
         // console.log(this.state.userInfo)
         // this.callApiRequestList()
         // this.callApiTestList()
@@ -163,14 +163,14 @@ export default class ListScreen extends Component  {
     }
 
     searchRequest(requestId){
-        console.log(requestId)
+        // console.log(requestId)
         let request = null
         let index = this.state.requestList.length - 1;
         while (index >= 0) {
             // console.log(this.state.testListTemp[index].testTypeName+ ", "+this.state.testListTemp[index].testTypeID)
             if (this.state.requestList[index].requestID == requestId) {
                 request = this.state.requestList[index]
-                console.log(request)
+                // console.log(request)
                 if(this.state.testVersion != request.versionOfTest){
                     fetch(getApiUrl()+"/tests/versions/list-all-test/"+request.versionOfTest,{
                         method: 'GET',
@@ -183,7 +183,7 @@ export default class ListScreen extends Component  {
                     .then(res => res.json())
                     .then(
                         (result) => {
-                            console.log(result)
+                            // console.log(result)
                             let success = false
                             let list = []
                             result ? result.message? null : success=true : null;
@@ -194,7 +194,7 @@ export default class ListScreen extends Component  {
                             }
                         },            
                         (error) => {
-                            console.log(error)
+                            // console.log(error)
                         }
                     )  
                 }
@@ -232,14 +232,14 @@ export default class ListScreen extends Component  {
     }
 
     searchUser(userPhoneNumber){
-        console.log(userPhoneNumber)
+        // console.log(userPhoneNumber)
         let account = null
         let index = this.state.userList.length - 1;
         while (index >= 0) {
             // console.log(this.state.testListTemp[index].testTypeName+ ", "+this.state.testListTemp[index].testTypeID)
             if (this.state.userList[index].phoneNumber == userPhoneNumber) {
                 account = this.state.userList[index]
-                console.log(account)
+                // console.log(account)
                 this.changeToAccountViewScreen(account);
             }
             index -= 1;
@@ -275,7 +275,7 @@ export default class ListScreen extends Component  {
         }))
         setTimeout(() => {
             this.callApiRequestList()
-            // this.callApiTestList()
+            this.callApiTestList()
             // this.callApiArticleList()
             // this.callApiUserList()
             // this.callApiAppointmentList()
@@ -331,7 +331,7 @@ export default class ListScreen extends Component  {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     result ? result.message? null : success=true : null;
                     if (success)
@@ -341,7 +341,7 @@ export default class ListScreen extends Component  {
                     }));
                 },            
                 (error) => {
-                    console.log(error)
+                    // console.log(error)
                     this.setState(previousState => ({
                         requestListApi: true,
                     }));
@@ -366,7 +366,7 @@ export default class ListScreen extends Component  {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     result ? result.message? null : success=true : null;
                     if (success)
@@ -376,7 +376,7 @@ export default class ListScreen extends Component  {
                     }));
                 },            
                 (error) => {
-                    console.log(error)
+                    // console.log(error)
                     this.setState(previousState => ({
                         appointmentListApi: true,
                     }));
@@ -405,7 +405,7 @@ export default class ListScreen extends Component  {
                     }));
                 },            
                 (error) => {
-                    console.log(error)
+                    // console.log(error)
                     this.setState(previousState => ({
                         articleListApi: true,
                     }));
@@ -431,7 +431,7 @@ export default class ListScreen extends Component  {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     result ? result.message? null : success=true : null;
                     if (success)
@@ -441,7 +441,7 @@ export default class ListScreen extends Component  {
                     }));
                 },            
                 (error) => {
-                    console.log(error)
+                    // console.log(error)
                     this.setState(previousState => ({
                         userListApi: true,
                     }));
@@ -467,7 +467,7 @@ export default class ListScreen extends Component  {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     result ? result.message? null : success=true : null;
                     if (success)
@@ -478,7 +478,7 @@ export default class ListScreen extends Component  {
                     }));
                 },
                 (error) => {
-                    console.log(error)
+                    // console.log(error)
                     this.setState(previousState => ({
                         testListApi: true,
                     }));
@@ -492,7 +492,7 @@ export default class ListScreen extends Component  {
         .then(res => res.json())
         .then(
             (result) => {
-                console.log(result)
+                // console.log(result)
                 let success = false
                 result ? result.message? null : success=true : null;
                 if (success)
@@ -501,7 +501,7 @@ export default class ListScreen extends Component  {
                 }));
             },            
             (error) => {
-                console.log(error)
+                // console.log(error)
                 this.callApiDistrictList()
             }
         )  
@@ -585,7 +585,7 @@ export default class ListScreen extends Component  {
                 : this.state.showView == 'ArticleAddView'?
                 <ArticleAddView   token={this.state.token}  userInfo={this.state.userInfo} changeShowView={this.changeShowView} />
                 : this.state.showView == 'ArticleView'?
-                <ArticleView  article={this.state.selectedArticle} changeShowView={this.changeShowView} token={this.state.token}/>
+                <ArticleView  article={this.state.selectedArticle} changeShowView={this.changeShowView} token={this.state.token} userInfo={this.state.userInfo}/>
                 //account
                 : this.state.showView == 'AccountCreateView'?
                 <AccountCreateView  districtList={this.state.districtList} token={this.state.token} changeToAccountViewScreen={this.changeToAccountViewScreen} />
@@ -595,7 +595,7 @@ export default class ListScreen extends Component  {
                 <AccountChangePasswordView account={this.state.selectedAccount} changeShowView={this.changeShowView} token={this.state.token} userInfo={this.state.userInfo} />
                 
                 : this.state.showView == 'RequestListView'? this.state.requestListApi?
-                <RequestListView requestList={this.state.requestList} testVersion={this.state.testVersion} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} districtList={this.state.districtList} token={this.state.token}/>: <LoadingView  />
+                <RequestListView requestList={this.state.requestList} testVersion={this.state.testVersion} changeShowView={this.changeShowView} setSelectedRequest={this.setSelectedRequest} districtList={this.state.districtList} token={this.state.token} testList={this.state.testList}/>: <LoadingView  />
                 : this.state.showView == 'AppointmentListView'? this.state.appointmentListApi?
                 <AppointmentListView appointmentList={this.state.appointmentList} changeShowView={this.changeShowView} setSelectedAppointment={this.setSelectedAppointment} districtList={this.state.districtList}/>: <LoadingView  />
                 : this.state.showView == 'ArticleListView'? this.state.articleListApi?

@@ -155,7 +155,7 @@ export default class TestListView extends Component {
         // console.log(this.state.accountRole)
         if(this.checkValid()){
             this.callApiCreateAccount()
-            console.log(this.state.accountGender)
+            // console.log(this.state.accountGender)
         }
     }
     
@@ -224,7 +224,7 @@ export default class TestListView extends Component {
             .then(
                 (result) => {
                     this.setState({createAccountApi:true})
-                    console.log(JSON.stringify(result))
+                    // console.log(JSON.stringify(result))
                     let success = false
                     result ? result.message? null : success=true : null;
                     if (success){
@@ -237,7 +237,7 @@ export default class TestListView extends Component {
                 },
                 (error) => {
                     this.setState({createAccountApi:true})
-                    console.log('error:'+error)    
+                    // console.log('error:'+error)    
                 }
             );
         }
@@ -248,7 +248,7 @@ export default class TestListView extends Component {
 
     selectPicture = async () =>{
         const result = await ImagePicker.launchImageLibraryAsync()
-        console.log(result)
+        // console.log(result)
         if (!result.cancelled) {
             this.callApiUploadImage(result)
         }
@@ -273,12 +273,12 @@ export default class TestListView extends Component {
             .then(
                 (result) => {
                     this.setState({uploadImageApi:true})
-                    console.log('result:'+JSON.stringify(result))
+                    // console.log('result:'+JSON.stringify(result))
                     this.setState({ accountImage: result.uri });
                 },
                 (error) => {
                     this.setState({uploadImageApi:true})
-                    console.log('error:'+error)
+                    // console.log('error:'+error)
                 }
             );
         }

@@ -102,6 +102,7 @@ export default class AppointmentListView extends Component  {
                     <Text>Số lượng: {this.getAppointmentShowList()?this.getAppointmentShowList().length:'0'}</Text>
                 </View>
             </View>
+            {this.getAppointmentShowList()?this.getAppointmentShowList().length>0?
             <View style={styles.appointmentListFlatListArea}>        
                 <FlatList style={styles.appointmentListFlatList}
                     contentContainerStyle={{
@@ -132,6 +133,15 @@ export default class AppointmentListView extends Component  {
                     >                   
                 </FlatList>        
             </View>
+            :
+            <View style={styles.appointmentListAlertContainer}>
+                <Text>{'Hiện tại chưa có đơn xét khám nào'}</Text>
+            </View>
+            :
+            <View style={styles.appointmentListAlertContainer}>
+                <Text>{'Hiện tại chưa có đơn xét khám nào'}</Text>
+            </View>
+            }
         </View>
     );
     }
@@ -182,6 +192,15 @@ const styles = StyleSheet.create({
         width:componentWidth,
         flex:1,
         flexDirection: 'column',
+        backgroundColor: '',
+        paddingTop:20,
+        paddingBottom:20,
+    },
+    appointmentListAlertContainer: {
+        width:componentWidth,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: '',
         paddingTop:20,
         paddingBottom:20,

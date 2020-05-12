@@ -43,7 +43,7 @@ export default class RequestUpdateResultView extends Component  {
         .then(res => res.json())
         .then(
             (result) => {
-                console.log(result)
+                // console.log(result)
                 let success = false
                 result ? result.message? null : success=true : null;
                 if (success) {
@@ -54,7 +54,7 @@ export default class RequestUpdateResultView extends Component  {
                 }
             },            
             (error) => {
-                console.log(error)
+                // console.log(error)
             }
         )  
     }
@@ -67,9 +67,8 @@ export default class RequestUpdateResultView extends Component  {
     }
 
     selectPicture = async () =>{
-        // console.log(result)
         const result = await ImagePicker.launchImageLibraryAsync()
-        console.log(result)
+        // console.log(result)
         if (!result.cancelled) {
             this.callApiUploadImage(result)
         }
@@ -101,7 +100,7 @@ export default class RequestUpdateResultView extends Component  {
                 },
                 (error) => {
                     this.setState({uploadImageApi:true})
-                    console.log('error:'+error)    
+                    // console.log('error:'+error)    
                 }
             );
         }
@@ -134,7 +133,7 @@ export default class RequestUpdateResultView extends Component  {
                 imageList.push(this.state.imageUriList[index].image)
                 index-=1
             }
-            console.log(imageList)
+            // console.log(imageList)
             fetch(getApiUrl()+'/requests/detail/results/add', {
             method: 'POST',
             headers: {      
@@ -152,7 +151,7 @@ export default class RequestUpdateResultView extends Component  {
             .then(
                 (result) => {
                     this.setState({setResultImpageApi:true})
-                    console.log('result:'+JSON.stringify(result))
+                    // console.log('result:'+JSON.stringify(result))
                     let success = false
                     result ? result.message? null: success=true : null;   
                     if(success){
@@ -165,7 +164,7 @@ export default class RequestUpdateResultView extends Component  {
                 },
                 (error) => {
                     this.setState({setResultImpageApi:true})
-                    console.log('error:'+error)    
+                    // console.log('error:'+error)    
                 }
             );
         }
@@ -192,7 +191,7 @@ export default class RequestUpdateResultView extends Component  {
             .then(
                 (result) => {
                     this.setState({updateRequestApi:true})
-                    console.log('result:'+JSON.stringify(result))
+                    // console.log('result:'+JSON.stringify(result))
                     let success = false
                     result ? result.message? null: success=true : null;
                     if (success) {
@@ -206,7 +205,7 @@ export default class RequestUpdateResultView extends Component  {
                 },
                 (error) => {
                     this.setState({updateRequestApi:true})
-                    console.log('error:'+error)    
+                    // console.log('error:'+error)    
                 }
             );
         }

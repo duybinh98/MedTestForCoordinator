@@ -83,7 +83,7 @@ export default class ArticleAddView extends Component  {
             .then(
                 (result) => {
                     this.setState({createArticleApi:true})
-                    console.log('result:'+JSON.stringify(result))
+                    // console.log('result:'+JSON.stringify(result))
                     let success = false
                     result ? result.success? success=result.success : null : null;
                     if (success) 
@@ -91,7 +91,7 @@ export default class ArticleAddView extends Component  {
                 },
                 (error) => {
                     this.setState({createArticleApi:true})
-                    console.log('error:'+error)    
+                    // console.log('error:'+error)    
                 }
             );
         }
@@ -108,10 +108,8 @@ export default class ArticleAddView extends Component  {
 
 
     selectPicture = async () =>{
-        // const result = await DocumentPicker.getDocumentAsync({copyToCacheDirectory:true})
-        // console.log(result)
         const result = await ImagePicker.launchImageLibraryAsync()
-        console.log(result)
+        // console.log(result)
         if (!result.cancelled) {
             this.callApiUploadImage(result)
         }
@@ -141,7 +139,7 @@ export default class ArticleAddView extends Component  {
                 },
                 (error) => {
                     this.setState({uploadImageApi:true})
-                    console.log('error:'+error)    
+                    // console.log('error:'+error)    
                 }
             );
         }

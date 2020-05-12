@@ -13,6 +13,7 @@ export default class ArticleView extends Component  {
             deleteArticleApi: true,
         };
         this.onDelete = this.onDelete.bind(this)
+        this.checkAdmin = this.checkAdmin.bind(this)
         
     }
 
@@ -25,7 +26,12 @@ export default class ArticleView extends Component  {
     }
 
     onDelete(){
-        this.callApiDeleteArticle()
+        if (this.checkAdmin()) this.callApiDeleteArticle()
+    }
+
+    checkAdmin(){
+        if (this.props.userInfo.role == 'ADMIN') return true
+        return false
     }
 
     callApiDeleteArticle(){
@@ -43,7 +49,7 @@ export default class ArticleView extends Component  {
             .then(
                 (result) => {
                     this.setState({deleteArticleApi:true})
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     result ? result.message? result.message== "Xoá bài viết thành công!"? success=true: null : null : null;
                     if (success)
@@ -51,7 +57,7 @@ export default class ArticleView extends Component  {
                 },            
                 (error) => {
                     this.setState({deleteArticleApi:true})
-                    console.log(error)
+                    // console.log(error)
                 }
             )
         }
@@ -85,11 +91,13 @@ export default class ArticleView extends Component  {
                     </View>   
                                      
                 </View>
+                {this.checkAdmin()?
                 <View style={styles.buttonArea}>
                     <TouchableOpacity style={styles.button} onPress={() => this.onDelete()} disabled={!this.state.deleteArticleApi}>
                         <Text style={{color:'white'}}>Xóa bài viết</Text>
                     </TouchableOpacity> 
                 </View>
+                :null}
             </View>
         </View>
     );

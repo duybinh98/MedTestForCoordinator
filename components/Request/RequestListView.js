@@ -11,12 +11,16 @@ export default class RequestListView extends Component  {
             statusSelected: 'all',
             districtSelected: 'all',
             dataChanged: true,
-            testsList: this.props.testsList,
+            testList: this.props.testList,
             requestList: this.props.requestList,
             requestShowList : this.props.requestList,
             requestCount: this.props.requestList?this.props.requestList.length:'0',
         };
         this.getRequestShowList = this.getRequestShowList.bind(this)
+    }
+
+    componentDidMount(){
+        // console.log(this.props.testVersion)
     }
 
     componentDidUpdate  (prevProps, prevState) {        
@@ -79,7 +83,6 @@ export default class RequestListView extends Component  {
 
 
     render(){
-    const WIDTH = Dimensions.get('window').width
     return (
         <View style={styles.requestListArea}>
             <View style={styles.requestListTopMenuArea}>
@@ -125,6 +128,7 @@ export default class RequestListView extends Component  {
                     <Text>Số lượng: {this.getRequestShowList()?this.getRequestShowList().length:'0'}</Text>
                 </View>
             </View>
+            {this.getRequestShowList()?this.getRequestShowList().length>0?
             <View style={styles.requestListFlatListArea}>
                 <FlatList style={styles.requestListFlatList}
                     contentContainerStyle={{
@@ -158,7 +162,7 @@ export default class RequestListView extends Component  {
                                     requestUpdatedTime={item.requestUpdatedTime}
                                     requestTestVersion={item.versionOfTest}
                                     testVersion={this.props.testVersion}
-                                    testList={this.state.testsList} 
+                                    testList={this.props.testList} 
                                     token={this.props.token}
                                     changeShowView={this.props.changeShowView?this.props.changeShowView: null}
                                     setSelectedRequest={this.props.setSelectedRequest?this.props.setSelectedRequest: null}         
@@ -169,6 +173,15 @@ export default class RequestListView extends Component  {
                     >                   
                 </FlatList>
             </View>
+            :
+            <View style={styles.requestListAlertContainer}>
+                <Text>{'Hiện tại chưa có đơn xét nghiệm nào'}</Text>
+            </View>
+            :
+            <View style={styles.requestListAlertContainer}>
+                <Text>{'Hiện tại chưa có đơn xét nghiệm nào'}</Text>
+            </View>
+            }
         </View>
     );
     }
@@ -220,6 +233,15 @@ const styles = StyleSheet.create({
         width:componentWidth,
         flex:1,
         flexDirection: 'column',
+        backgroundColor: '',
+        paddingTop:20,
+        paddingBottom:20,
+    },
+    requestListAlertContainer: {
+        width:componentWidth,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: '',
         paddingTop:20,
         paddingBottom:20,

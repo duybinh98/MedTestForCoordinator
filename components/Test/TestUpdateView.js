@@ -72,7 +72,7 @@ export default class TestUpdateView extends Component  {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     result ? result.message? null : success=true : null;
                     if (success){
@@ -87,7 +87,7 @@ export default class TestUpdateView extends Component  {
                     }
                 },            
                 (error) => {
-                    console.log(error)
+                    // console.log(error)
                 }
             )  
         }
@@ -126,12 +126,7 @@ export default class TestUpdateView extends Component  {
         
     }
     
-    checkValid(){     
-        // console.log("base "+this.state.testPrice)   
-        // console.log("isNaN "+isNaN(this.state.testPrice))   
-        // console.log("prase "+parseInt(this.state.testPrice))   
-        // var numbers = "/^[0-9]+$/";
-        // console.log("match "+this.state.testPrice.match(numbers))   
+    checkValid(){ 
         if (this.state.testTypeSelectedForCreate == 'none') 
             return this.setState(previousState => ({ 
                 error: this.state.errorList[1]
@@ -172,7 +167,7 @@ export default class TestUpdateView extends Component  {
                 }
                 index -= 1;
             }        
-            console.log(result)
+            // console.log(result)
             fetch(getApiUrl()+'/tests/versions/upgrade-version', {
                 method: 'POST',
                 headers: {
@@ -189,12 +184,12 @@ export default class TestUpdateView extends Component  {
             .then(
                 (result) => {
                     this.setState({updateVersionApi:true})
-                    console.log('result:'+JSON.stringify(result))
+                    // console.log('result:'+JSON.stringify(result))
                     this.callApiGetVersionList()
                 },
                 (error) => {
                     this.setState({updateVersionApi:true})
-                    console.log('error:'+error)    
+                    // console.log('error:'+error)    
                 }
             );
         }
@@ -282,7 +277,7 @@ export default class TestUpdateView extends Component  {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     let list = []
                     result ? result.message? null : success=true : null;
@@ -313,7 +308,7 @@ export default class TestUpdateView extends Component  {
                         }));
                 },            
                 (error) => {
-                    console.log(error)
+                    // console.log(error)
                 }
             )  
         }
@@ -326,8 +321,8 @@ export default class TestUpdateView extends Component  {
             let indexTest = this.state.testList[index].listTest.length -1
             while(indexTest >= 0){
                 if(this.state.testList[index].listTest[indexTest].price.toString() != this.state.testListTemp[index].listTest[indexTest].price) {
-                    console.log(this.state.testList[index].listTest[indexTest])
-                    console.log(this.state.testListTemp[index].listTest[indexTest])
+                    // console.log(this.state.testList[index].listTest[indexTest])
+                    // console.log(this.state.testListTemp[index].listTest[indexTest])
                     return true
                 }
                 indexTest -=1;

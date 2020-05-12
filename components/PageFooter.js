@@ -64,7 +64,7 @@ export default class ListScreen extends Component  {
                         <Text style={{fontSize:10,color:'white'}}>Tầng 17, 19, 20, 21 Tòa nhà Center Building - Hapulico Complex, Số 1 Nguyễn Huy Tưởng, Thanh Xuân, Hà Nội.</Text>
                     </View>
                     <View style={styles.textContainer}>
-                        <Text style={{fontSize:10,color:'white'}}>Update: 05/05/2020 13:30</Text>
+                        <Text style={{fontSize:10,color:'white'}}>Update: 13/05/2020 03:30</Text>
                     </View>
                 </View>
                 

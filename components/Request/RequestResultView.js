@@ -37,14 +37,14 @@ export default class RequestView extends Component  {
         .then(res => res.json())
         .then(
             (result) => {
-                console.log(result)
+                // console.log(result)
                 result ? result.message? null :
                 this.setState(previousState => ({
                     resultList: result,
                 })) :null
             },            
             (error) => {
-                console.log(error)
+                // console.log(error)
             }
         )  
     }

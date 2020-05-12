@@ -54,7 +54,6 @@ export default class TestListView extends Component {
     }
 
     componentDidMount(){
-        // console.log('')
         this.setState(previousState => ({ 
             districtList: this.props.districtList?this.props.districtList:[],
             townList: this.props.districtList?this.props.districtList[0].listTown:[],
@@ -203,7 +202,7 @@ export default class TestListView extends Component {
             .then(
                 (result) => {
                     this.setState({resetPasswordApi:true})
-                    console.log('result:'+JSON.stringify(result))
+                    // console.log('result:'+JSON.stringify(result))
                     let success = false
                     result ? result.message?  success=true : null : null;
                     if (success){
@@ -214,7 +213,7 @@ export default class TestListView extends Component {
                 },
                 (error) => {
                     this.setState({resetPasswordApi:true})  
-                    console.log('error:'+error)  
+                    // console.log('error:'+error)  
                 }
             );
         }
@@ -279,7 +278,7 @@ export default class TestListView extends Component {
     }
 
     callApiUpdateAccountInfo(){
-        console.log(this.state.townSelected)
+        // console.log(this.state.townSelected)
         if(this.state.updateInfoApi){
             this.setState({updateInfoApi:false})
             fetch(getApiUrl()+'/users/update-user/'+this.props.account.accountId, {
@@ -305,7 +304,7 @@ export default class TestListView extends Component {
             .then(
                 (result) => {
                     this.setState({updateInfoApi:true})
-                    console.log('result:'+JSON.stringify(result))
+                    // console.log('result:'+JSON.stringify(result))
                     let success = false
                     result ? result.message? null : success=true : null;
                     if (success) {
@@ -320,7 +319,7 @@ export default class TestListView extends Component {
                 },
                 (error) => {
                     this.setState({updateInfoApi:true})
-                    console.log('error:'+error)
+                    // console.log('error:'+error)
                 }
             );
         }
@@ -329,7 +328,7 @@ export default class TestListView extends Component {
 
     selectPicture = async () =>{
         const result = await ImagePicker.launchImageLibraryAsync()
-        console.log(result)
+        // console.log(result)
         if (!result.cancelled) {
             this.callApiUploadImage(result)
         }
@@ -359,7 +358,7 @@ export default class TestListView extends Component {
                     });
                 },
                 (error) => {
-                    console.log(error)    
+                    // console.log(error)    
                     this.setState({uploadImageApi:true})
                 }
             );

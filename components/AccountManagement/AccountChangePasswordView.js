@@ -104,7 +104,7 @@ export default class TestListView extends Component {
             .then(
                 (result) => {
                     this.setState({changePasswordApi:true})
-                    console.log('result:'+JSON.stringify(result))
+                    // console.log('result:'+JSON.stringify(result))
                     let success = false
                     result ? result.message? result.message == "Thay đổi mật khẩu thành công!"? success=true : null : null : null;
                     if (success){
@@ -117,7 +117,7 @@ export default class TestListView extends Component {
                 },
                 (error) => {
                     this.setState({changePasswordApi:true})
-                    console.log('error:'+error)    
+                    // console.log('error:'+error)    
                     
                 }
             );

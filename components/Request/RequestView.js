@@ -51,7 +51,7 @@ export default class RequestView extends Component  {
             .then(
                 (result) => {
                     this.setState({nurseDetailApi:true})
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     result ? result.message? null : success=true : null;
                     if (success) {
@@ -60,7 +60,7 @@ export default class RequestView extends Component  {
                 },            
                 (error) => {
                     this.setState({nurseDetailApi:true})
-                    console.log(error)
+                    // console.log(error)
                 }
             )  
         }
@@ -81,7 +81,7 @@ export default class RequestView extends Component  {
             .then(
                 (result) => {
                     this.setState({coordinatorDetailApi:true})
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     result ? result.message? null : success=true : null;
                     if (success) {
@@ -90,7 +90,7 @@ export default class RequestView extends Component  {
                 },            
                 (error) => {
                     this.setState({coordinatorDetailApi:true})
-                    console.log(error)
+                    // console.log(error)
                 }
             )  
         }
@@ -115,7 +115,7 @@ export default class RequestView extends Component  {
         .then(res => res.json())
         .then(
             (result) => {
-                console.log(result)
+                // console.log(result)
                 let success = false
                 result ? result.message? null : success=true : null;
                 if (success) {
@@ -126,7 +126,7 @@ export default class RequestView extends Component  {
                 }
             },            
             (error) => {
-                console.log(error)
+                // console.log(error)
             }
         )  
     }
@@ -151,14 +151,15 @@ export default class RequestView extends Component  {
             .then(
                 (result) => {
                     this.setState({takingSampleApi:true})
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     result ? result.message? null : success=true : null;
                     if (success) {
-                        let request = this.props.request
-                        request.requestStatus = 'waitingforresult'
-                        this.props.setSelectedRequest(request)
-                        this.props.changeShowView('RequestView')
+                        // let request = this.props.request
+                        // request.requestStatus = 'waitingforresult'
+                        // this.props.setSelectedRequest(request)
+                        // this.props.changeShowView('RequestView')
+                        this.callApiDetail()
                     }
                     else{
                         this.setState({error:result.message})
@@ -168,7 +169,7 @@ export default class RequestView extends Component  {
                 },            
                 (error) => {
                     this.setState({takingSampleApi:true})
-                    console.log(error)
+                    // console.log(error)
                 }
             )  
         }

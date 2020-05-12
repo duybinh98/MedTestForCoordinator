@@ -36,7 +36,7 @@ export default class AppointmentView extends Component  {
         .then(res => res.json())
         .then(
             (result) => {
-                console.log(result)
+                // console.log(result)
                 let success = false
                 result ? result.message? null : success=true : null;
                 if (success) {
@@ -46,7 +46,7 @@ export default class AppointmentView extends Component  {
                 }
             },            
             (error) => {
-                console.log(error)
+                // console.log(error)
             }
         )  
     }
@@ -71,7 +71,7 @@ export default class AppointmentView extends Component  {
             .then(
                 (result) => {
                     this.setState({acceptAppointmentApi:true})
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     result ? result.message? result.message=="Xác nhận đặt cuộc hẹn thành công!" ? success=true : null : null :null;
                     if (success) {
@@ -86,7 +86,7 @@ export default class AppointmentView extends Component  {
                 },            
                 (error) => {
                     this.setState({acceptAppointmentApi:true})
-                    console.log(error)
+                    // console.log(error)
                 }
             )  
         }

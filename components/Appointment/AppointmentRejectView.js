@@ -36,17 +36,18 @@ export default class AppointmentLostSampleView extends Component  {
         .then(res => res.json())
         .then(
             (result) => {
-                console.log(result)
+                // console.log(result)
                 let success = false
                 result ? result.message? null : success=true : null;
                 if (success) {
                     let appointment = this.props.appointment
                     appointment.appointmentStatus = result.appointment_status
                     this.props.setSelectedAppointment(appointment)
+                    this.props.changeShowView('AppointmentView')
                 }
             },            
             (error) => {
-                console.log(error)
+                // console.log(error)
             }
         )  
     }
@@ -90,7 +91,7 @@ export default class AppointmentLostSampleView extends Component  {
             .then(
                 (result) => {
                     this.setState({rejectAppointmentApi:true})
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     result ? result.message? result.message == "Xác nhận điều phối viên huỷ cuộc hẹn thành công!"? success=true : null : null : null;
                     if (success) {
@@ -109,7 +110,7 @@ export default class AppointmentLostSampleView extends Component  {
                 },            
                 (error) => {
                     this.setState({rejectAppointmentApi:true})
-                    console.log(error)
+                    // console.log(error)
                 }
             )  
         }

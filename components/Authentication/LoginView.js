@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import { StyleSheet, Text, View, TouchableOpacity,TextInput, Dimensions} from 'react-native';
 import {getApiUrl,screenWidth} from './../Common/CommonFunction'
+import * as Crypto from 'expo-crypto';
 
 import PageFooter from './../PageFooter'
 
@@ -32,6 +33,7 @@ export default class Login extends Component  {
 
     login(){
         if(this.checkValid()){
+            // this.callApiLoginWithHash()
             this.callApiLogin()
         }    
     }
@@ -75,7 +77,7 @@ export default class Login extends Component  {
             .then(
                 (result) => {
                     this.setState({loginApi:true})
-                    console.log(result)
+                    // console.log(result)
                     let success = false
                     result ? result.message? null : success=true : null;
                     if (success) this.props.loginSuccess(result.userInfo,result.token)
@@ -85,12 +87,50 @@ export default class Login extends Component  {
                 },            
                 (error) => {
                     this.setState({loginApi:true})
-                    console.log(error)
+                    // console.log(error)
                     
                 }
             )
         }
-        
+    }
+
+    callApiLoginWithHash(){
+        Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256,this.state.password).then(hashedPassword => 
+        {
+            if(this.state.loginApi){
+                this.setState({loginApi:false})
+                fetch(getApiUrl()+"/users/test-hash",{
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        phoneNumber: this.state.phoneNumber,
+                        password: hashedPassword,
+                    }),
+                })
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        this.setState({loginApi:true})
+                        // console.log(result)
+                        let success = false
+                        result ? result.message? null : success=true : null;
+                        if (success) this.props.loginSuccess(result.userInfo,result.token)
+                        else{
+                            this.setState({error: result.message})
+                        }
+                    },            
+                    (error) => {
+                        this.setState({loginApi:true})
+                        // console.log(error)
+                        
+                    }
+                )
+            }
+        }
+        )
     }
 
     render(){
