@@ -1,7 +1,7 @@
 {
   "files": {
-    "app.js": "/MedTestForCoordinator/static/js/app.06284423.chunk.js",
-    "app.js.map": "/MedTestForCoordinator/static/js/app.06284423.chunk.js.map",
+    "app.js": "/MedTestForCoordinator/static/js/app.621aacba.chunk.js",
+    "app.js.map": "/MedTestForCoordinator/static/js/app.621aacba.chunk.js.map",
     "runtime~app.js": "/MedTestForCoordinator/static/js/runtime~app.90dec588.js",
     "runtime~app.js.map": "/MedTestForCoordinator/static/js/runtime~app.90dec588.js.map",
     "static/js/2.500e308e.chunk.js": "/MedTestForCoordinator/static/js/2.500e308e.chunk.js",
@@ -19,6 +19,6 @@
   "entrypoints": [
     "static/js/runtime~app.90dec588.js",
     "static/js/2.500e308e.chunk.js",
-    "static/js/app.06284423.chunk.js"
+    "static/js/app.621aacba.chunk.js"
   ]
 }
