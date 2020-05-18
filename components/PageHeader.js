@@ -78,7 +78,7 @@ export default class ListScreen extends Component  {
                         <Text style={{fontSize:25, fontWeight:'bold',color:'white'}}>MedTest</Text>
                     </View>
                     <View style={styles.hotlineContainer}>
-                        <Text style={{fontSize:14}}>Hotline: 1900561252</Text>
+                        <Text style={{fontSize:14}}>Hotline: 0961591593</Text>
                     </View>
                 </View>
             </View>
